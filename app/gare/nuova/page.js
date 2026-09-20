@@ -8,7 +8,7 @@ export default async function Nuova({ searchParams }) {
   const errors = sp.err ? JSON.parse(sp.err) : {};
   return (
     <main>
-      <p className="back"><a href="/gare">Torna alle gare</a></p>
+      <p className="back"><a href="/gare/impostazioni">Torna alle impostazioni</a></p>
       <h1>Crea una gara</h1>
       <CompetitionForm action="/api/gare" values={sp} errors={errors} submit="Crea gara" />
     </main>

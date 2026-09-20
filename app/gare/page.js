@@ -16,9 +16,9 @@ export default async function Gare() {
     <main>
       <h1>Gare</h1>
       <p>Ogni gara ha i suoi km e le sue date. Le stesse corse Strava valgono per tutte.</p>
-      <p><a className="button" href="/gare/nuova">Crea una gara</a></p>
+
       {comps.length === 0 ? (
-        <p>Ancora nessuna gara. Creane una per iniziare.</p>
+        <p>Ancora nessuna gara. Si creano da Impostazioni gare, qui sotto.</p>
       ) : (
         <ul className="comps">
           {comps.map((c) => (
@@ -35,6 +35,7 @@ export default async function Gare() {
           ))}
         </ul>
       )}
+      <p className="settings-link"><a href="/gare/impostazioni">Impostazioni gare</a></p>
     </main>
   );
 }

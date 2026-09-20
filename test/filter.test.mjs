@@ -114,3 +114,21 @@ test('classifica: record e volte oltre i km (le corse senza tempo non contano)',
   ]);
   assert.deepEqual(r.map((x) => [x.user_id, x.time_s, x.reached]), [[2, 2950, 1], [1, 3000, 2]]);
 });
+
+test('classifica: tutti i cugini, chi non ha tempi in fondo in ordine alfabetico', () => {
+  const runs = [
+    { user_id: 1, athlete_name: 'Riccardo', time_s: 3000, start_date: '2026-10-01' },
+    { user_id: 2, athlete_name: 'Mimmo', time_s: 2900, start_date: '2026-10-02' },
+  ];
+  const people = [
+    { user_id: 1, athlete_name: 'Riccardo' }, { user_id: 2, athlete_name: 'Mimmo' },
+    { user_id: 3, athlete_name: 'Tonino' }, { user_id: 4, athlete_name: 'Alfredo' },
+  ];
+  const r = standings(runs, people);
+  assert.deepEqual(r.map((x) => [x.athlete_name, x.time_s, x.reached]),
+    [['Mimmo', 2900, 1], ['Riccardo', 3000, 1], ['Alfredo', null, 0], ['Tonino', null, 0]]);
+});
+test('classifica senza nessun tempo: solo i nomi, in ordine alfabetico', () => {
+  const r = standings([], [{ user_id: 2, athlete_name: 'Nunzia' }, { user_id: 1, athlete_name: 'Franco' }]);
+  assert.deepEqual(r.map((x) => x.athlete_name), ['Franco', 'Nunzia']);
+});

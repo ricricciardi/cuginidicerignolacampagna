@@ -15,5 +15,5 @@ export async function POST(req) {
   const [c] = await sql`insert into competitions (name, km, start_date, end_date, created_by)
                         values (${value.name}, ${value.km}, ${value.start_date}, ${value.end_date}, ${userId})
                         returning id`;
-  return go(req, `/gare/${c.id}?creata=1`);
+  return go(req, "/gare/impostazioni?creata=1");
 }

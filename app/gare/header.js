@@ -1,10 +1,9 @@
-import { compWindow, phase, fmtDay } from '@/lib/competition';
+import { compWindow, fmtDay } from '@/lib/competition';
 import Countdown from '../countdown';
 
 // Testata comune alle pagine di una gara: nome, regole, sezioni e conto alla rovescia.
 export default function CompetitionHeader({ c, current }) {
   const { start, end } = compWindow(c);
-  const editable = phase(c) === 'before';
   return (
     <>
       <p className="back"><a href="/gare">Tutte le gare</a></p>
@@ -12,7 +11,6 @@ export default function CompetitionHeader({ c, current }) {
       <p className="comp-rules">
         Primi {c.km}&nbsp;km dalla partenza, corse su strada con GPS dal {fmtDay(c.start_date)} al {fmtDay(c.end_date)}.
       </p>
-      {editable && <p className="back"><a href={`/gare/${c.id}/modifica`}>Modifica gara</a></p>}
       <Countdown serverNow={Date.now()} start={start.getTime()} end={end.getTime()}
                  startLabel={fmtDay(c.start_date)} endLabel={fmtDay(c.end_date)} />
       <nav className="subtabs" aria-label="Sezioni della gara">

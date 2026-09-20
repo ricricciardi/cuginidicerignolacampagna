@@ -35,18 +35,19 @@
   font-size: 100%;
   line-height: var(--lh-body);
   color: var(--ink);
-  background: var(--night);
+  min-height: 100%;
+  background:
+    radial-gradient(60rem 30rem at 110% -10%, rgba(255, 47, 178, .35), transparent 60%),
+    radial-gradient(50rem 30rem at -20% 30%, rgba(46, 242, 255, .22), transparent 60%),
+    linear-gradient(180deg, var(--night-2), var(--night) 60%) var(--night);
+  background-attachment: fixed;
   -webkit-text-size-adjust: 100%;
   font-feature-settings: "tnum" 0;
 }
 * { box-sizing: border-box; }
 body {
   margin: 0; min-height: 100vh; font-size: var(--fs-m);
-  background:
-    radial-gradient(60rem 30rem at 110% -10%, rgba(255, 47, 178, .35), transparent 60%),
-    radial-gradient(50rem 30rem at -20% 30%, rgba(46, 242, 255, .22), transparent 60%),
-    linear-gradient(180deg, var(--night-2), var(--night) 60%);
-  background-attachment: fixed;
+  background: transparent;
   padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px)
            env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
 }
@@ -194,8 +195,8 @@ form.stack button { margin-top: var(--s2); }
 .board small, .history small { color: var(--muted); }
 .board .time { font-size: var(--fs-l); line-height: 1; font-weight: 900; font-style: italic; font-variant-numeric: tabular-nums;
   color: var(--lime); text-shadow: 0 0 14px rgba(215,255,31,.45); }
-.board li:first-child a { border-color: rgba(255,47,178,.7); box-shadow: 0 0 26px rgba(255,47,178,.35), inset 0 1px 0 rgba(255,255,255,.3); }
-.board li:first-child .pos { color: var(--pink); text-shadow: 0 0 12px rgba(255,47,178,.7); }
+.board .leader a { border-color: rgba(255,47,178,.7); box-shadow: 0 0 26px rgba(255,47,178,.35), inset 0 1px 0 rgba(255,255,255,.3); }
+.board .leader .pos { color: var(--pink); text-shadow: 0 0 12px rgba(255,47,178,.7); }
 .board li.me a { border-color: rgba(46,242,255,.6); }
 .board li.me .who::after { content: "Tu"; font-size: var(--fs-xs); line-height: var(--lh-snug); font-weight: 800; color: var(--cyan); }
 
@@ -328,4 +329,40 @@ label { align-content: start; }
   .board .who strong { font-size: var(--fs-s); }
   .board .time { font-size: var(--fs-m); }
   .board .count { font-size: var(--fs-m); }
+}
+
+/* Password con pulsante mostra/nascondi */
+.password-wrap { position: relative; display: block; }
+.password-wrap input { padding-right: 3.25rem; }
+.password-wrap .reveal {
+  position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; min-height: 40px; padding: 0; border-radius: 10px;
+  color: var(--muted); background: transparent; box-shadow: none;
+}
+.password-wrap .reveal:hover { color: var(--ink); }
+.password-wrap .reveal[aria-pressed="true"] { color: var(--lime); }
+
+/* Classifica: chi non ha ancora un tempo */
+.board .senza-tempo a { opacity: .6; }
+.board .senza-tempo .time, .board .senza-tempo .pos, .board .senza-tempo .count { color: var(--muted); text-shadow: none; }
+
+/* Impostazioni gare: voce piccola, in fondo all'elenco */
+.settings-link { margin: var(--s5) 0 0; text-align: center; }
+.settings-link a { display: inline-flex; align-items: center; min-height: var(--tap);
+  font-size: var(--fs-s); font-weight: 600; color: var(--muted); }
+.settings-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--s3); }
+.settings-list li { padding: var(--s4); display: grid; gap: var(--s3);
+  background: var(--glass); border: 1px solid var(--line); border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25); }
+.row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s4);
+  padding-top: var(--s2); border-top: 1px solid var(--line); }
+.row-actions a { display: inline-flex; align-items: center; min-height: var(--tap);
+  font-size: var(--fs-s); font-weight: 700; }
+.row-actions .danger { color: var(--error); }
+.row-actions .locked { font-size: var(--fs-s); color: var(--muted); }
+button.danger {
+  color: #fff;
+  background: linear-gradient(180deg, rgba(255,255,255,.35) 0%, rgba(255,255,255,.06) 50%, rgba(255,255,255,0) 51%), #c0273f;
+  box-shadow: 0 0 18px rgba(192,39,63,.4), inset 0 -2px 0 rgba(0,0,0,.2);
 }
