@@ -2,7 +2,12 @@ import './globals.css';
 import { getUserId } from '@/lib/session';
 import Nav from './nav';
 
-export const metadata = { title: 'Cuginidicerignolacampagna' };
+export const metadata = {
+  title: 'Cuginidicerignolacampagna',
+  description: 'La gara di corsa dei cugini, con i tempi presi da Strava.',
+  // Nome sotto l'icona quando il sito viene salvato sulla schermata Home
+  appleWebApp: { capable: true, title: 'Cugini', statusBarStyle: 'black-translucent' },
+};
 export const viewport = {
   width: 'device-width',
   initialScale: 1,

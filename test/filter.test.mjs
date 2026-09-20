@@ -132,3 +132,10 @@ test('classifica senza nessun tempo: solo i nomi, in ordine alfabetico', () => {
   const r = standings([], [{ user_id: 2, athlete_name: 'Nunzia' }, { user_id: 1, athlete_name: 'Franco' }]);
   assert.deepEqual(r.map((x) => x.athlete_name), ['Franco', 'Nunzia']);
 });
+
+import { validateName } from '../lib/competition.js';
+test('nome: sempre modificabile, ma non vuoto né troppo lungo', () => {
+  assert.deepEqual(validateName({ name: '  Gara dei cugini ' }).value, { name: 'Gara dei cugini' });
+  assert.ok(validateName({ name: '   ' }).errors.name);
+  assert.ok(validateName({ name: 'x'.repeat(61) }).errors.name);
+});

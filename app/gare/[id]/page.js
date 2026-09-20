@@ -3,6 +3,7 @@ import { getUserId } from '@/lib/session';
 import { loadCompetition, competitionRuns, standings, participants } from '@/lib/standings';
 import { fmtTime, fmtDate } from '@/lib/format';
 import CompetitionHeader from '../header';
+import Avatar from '../../avatar';
 
 const NOTICES = {
   creata: 'Gara creata.',
@@ -28,15 +29,16 @@ export default async function Classifica({ params, searchParams }) {
       ) : (
         <>
         <div className="board-head" aria-hidden="true">
-          <span>Pos.</span><span>Cugino</span><span>Volte</span><span>Record</span>
+          <span>Pos.</span><span /><span>Cugino</span><span>Volte</span><span>Record</span>
         </div>
         <ol className="board">
           {rows.map((r, i) => (
             <li key={r.user_id} className={[r.user_id === me ? 'me' : '', r.time_s == null ? 'senza-tempo' : '', i === 0 && r.time_s != null ? 'leader' : ''].filter(Boolean).join(' ') || undefined}>
               <a href={`/gare/${c.id}/atleta/${r.user_id}`}>
                 <span className="pos">{r.time_s != null ? i + 1 : '—'}</span>
+                <Avatar name={r.athlete_name} src={r.avatar_url} />
                 <span className="who">
-                  <strong>{r.athlete_name || 'Atleta senza nome'}</strong>
+                  <strong title={r.athlete_name || 'Atleta senza nome'}>{r.athlete_name || 'Atleta senza nome'}</strong>
                   <small>{r.time_s != null ? fmtDate(r) : 'Nessuna corsa in gara'}</small>
                 </span>
                 <span className="count" aria-label={`${r.reached} ${r.reached === 1 ? 'volta' : 'volte'} oltre i ${c.km} km`}>{r.reached}</span>

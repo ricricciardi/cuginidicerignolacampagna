@@ -5,6 +5,7 @@ import { loadCompetition, competitionRuns } from '@/lib/standings';
 import { markRecords } from '@/lib/efforts';
 import { ProgressChart } from '@/lib/chart';
 import { fmtTime, fmtDate, fmtKm } from '@/lib/format';
+import Avatar from '../../../../avatar';
 
 export default async function Atleta({ params }) {
   const me = await getUserId();
@@ -14,7 +15,7 @@ export default async function Atleta({ params }) {
   const uid = Number(p.uid);
   if (!c || !Number.isInteger(uid)) notFound();
 
-  const [athlete] = await sql`select athlete_name from strava_connections
+  const [athlete] = await sql`select athlete_name, avatar_url from strava_connections
                               where user_id = ${uid} and consent_at is not null`;
   if (!athlete) notFound();
 
@@ -26,7 +27,10 @@ export default async function Atleta({ params }) {
   return (
     <main>
       <p className="back"><a href={`/gare/${c.id}`}>Torna a {c.name}</a></p>
-      <h1>{athlete.athlete_name || 'Atleta senza nome'}</h1>
+      <div className="athlete-head">
+        <Avatar name={athlete.athlete_name} src={athlete.avatar_url} size="lg" />
+        <h1>{athlete.athlete_name || 'Atleta senza nome'}</h1>
+      </div>
       {best != null ? (
         <>
           <dl className="stats summary">

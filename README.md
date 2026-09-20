@@ -37,8 +37,9 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
 - Ora italiana: si parte alle 00:00 del giorno di inizio e si chiude alle 24:00 del
   giorno di fine. Conta l'ora di partenza della corsa: una corsa fatta entro la
   chiusura vale anche se arriva dopo.
-- Qualsiasi iscritto può creare una gara e modificarla finché non è partita.
-  Dopo la partenza è bloccata (controllo lato server).
+- Qualsiasi iscritto crea, modifica ed elimina le gare da Impostazioni gare.
+- Il nome si cambia sempre; km e date solo finché la gara non è partita
+  (controllo lato server, non solo nel modulo).
 - Le stesse corse valgono per tutte le gare: il tempo di ogni gara si calcola dai
   parziali salvati, senza richiamare Strava.
 
@@ -59,6 +60,7 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
 - Ogni notte Vercel Cron chiama `/api/cron/sync` (vercel.json, `0 2 * * *` in UTC:
   le 4:00 italiane d'estate, le 3:00 d'inverno). Sul piano Hobby l'orario è garantito
   solo entro l'ora (±59 minuti).
+- A ogni lettura aggiorna nome e foto profilo dell'atleta da Strava (una chiamata in più).
 - Legge le corse che servono alle gare già partite: periodo = unione dei loro periodi,
   distanza oltre i km della gara più corta. Se nessuna gara è partita non fa nulla.
 - Aggiorna tutti gli iscritti, partendo da chi è stato aggiornato meno di recente. Se

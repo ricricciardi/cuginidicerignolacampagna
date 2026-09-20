@@ -3,6 +3,7 @@ import { sql } from '@/lib/db';
 import { getUserId } from '@/lib/session';
 import { fmtTime, fmtPace, fmtDate, fmtKm } from '@/lib/format';
 import { syncScope } from '@/lib/sync';
+import Avatar from '../avatar';
 
 const fmtStamp = (d) => new Date(d).toLocaleString('it-IT', {
   timeZone: 'Europe/Rome', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
@@ -25,7 +26,7 @@ export default async function Dashboard({ searchParams }) {
   if (!userId) redirect('/login');
   const sp = await searchParams;
 
-  const [conn] = await sql`select athlete_name, last_synced_at from strava_connections where user_id = ${userId}`;
+  const [conn] = await sql`select athlete_name, avatar_url, last_synced_at from strava_connections where user_id = ${userId}`;
   const runs = await sql`select * from activities where user_id = ${userId} order by start_date desc`;
   const pending = Number(sp.pending ?? 0);
   const anyStarted = Boolean(await syncScope());
@@ -46,7 +47,8 @@ export default async function Dashboard({ searchParams }) {
 
       {conn ? (
         <div className="bar">
-          <span>
+          <span className="connected">
+            <Avatar name={conn.athlete_name} src={conn.avatar_url} />
             Collegato come <strong>{conn.athlete_name || 'atleta Strava'}</strong>.
             {' '}Le corse si aggiornano da sole ogni notte
             {conn.last_synced_at ? `; ultimo aggiornamento ${fmtStamp(conn.last_synced_at)}.` : '.'}
@@ -62,7 +64,7 @@ export default async function Dashboard({ searchParams }) {
           <label className="check">
             <input type="checkbox" name="consenso" value="1" required />
             <span>
-              Acconsento che il mio nome Strava, le date e i tempi delle mie corse, comprese
+              Acconsento che il mio nome Strava, la mia foto Strava, le date e i tempi delle mie corse, comprese
               quelle impostate come «Solo io», siano visibili agli altri iscritti al sito
               nelle classifiche e nei confronti delle gare e nella mia pagina dei progressi.
             </span>

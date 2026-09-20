@@ -24,7 +24,7 @@ export default async function Impostazioni({ searchParams }) {
       <h1>Impostazioni gare</h1>
       {notice && <div className="notice">{NOTICES[notice]}</div>}
       {sp.error === 'bloccata' && <div className="notice error">La gara è partita: non si può più modificare.</div>}
-      <p>Qui si creano, si modificano e si eliminano le gare. Una gara partita non si può più modificare, ma si può eliminare.</p>
+      <p>Qui si creano, si modificano e si eliminano le gare. Di una gara partita si può cambiare solo il nome; km e date restano quelli.</p>
       <p><a className="button" href="/gare/nuova">Crea una gara</a></p>
 
       {comps.length === 0 ? (
@@ -39,9 +39,9 @@ export default async function Impostazioni({ searchParams }) {
                 <span className="comp-status">{statusLine(c, now)}</span>
               </div>
               <div className="row-actions">
-                {c.phase === 'before'
-                  ? <a href={`/gare/${c.id}/modifica`}>Modifica</a>
-                  : <span className="locked">Non modificabile</span>}
+                <a href={`/gare/${c.id}/modifica`}>
+                  {c.phase === 'before' ? 'Modifica' : 'Rinomina'}
+                </a>
                 <a className="danger" href={`/gare/${c.id}/elimina`}>Elimina</a>
               </div>
             </li>

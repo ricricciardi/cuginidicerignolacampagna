@@ -9,6 +9,7 @@ create table if not exists strava_connections (
   user_id         integer primary key references users(id) on delete cascade,
   athlete_id      bigint not null unique,
   athlete_name    text,
+  avatar_url      text,                  -- foto profilo Strava
   access_token    text not null,
   refresh_token   text not null,
   expires_at      bigint not null,
