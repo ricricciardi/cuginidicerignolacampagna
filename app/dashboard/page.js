@@ -4,6 +4,7 @@ import { sql } from '@/lib/db';
 import { fmtTime, fmtPace, fmtDate, fmtKm } from '@/lib/format';
 import { syncScope } from '@/lib/sync';
 import SyncButton from './sync-button';
+import { InstallBanner } from '../install-app';
 
 const fmtStamp = (d) => new Date(d).toLocaleString('it-IT', {
   timeZone: 'Europe/Rome', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
@@ -29,6 +30,7 @@ export default async function Dashboard({ searchParams }) {
 
   return (
     <main>
+      <InstallBanner />
       <h1>Le mie corse</h1>
       <p>Corse su strada con GPS nei periodi delle gare. I tempi per ogni gara sono nelle pagine delle gare.</p>
 

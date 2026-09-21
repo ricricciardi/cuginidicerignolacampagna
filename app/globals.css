@@ -704,6 +704,17 @@ option { color: #140a24; }
 @keyframes sk-pulse { from { opacity: .55; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .nav-content::before { animation: none !important; } }
 
+/* Aggiungi alla schermata Home (install-app.js) */
+.install-banner { position: relative; margin: 0 0 var(--s5); padding: var(--s4) var(--s6) var(--s4) var(--s4);
+  border-radius: 18px; border: 1px solid rgba(215,255,31,.4); background: rgba(215,255,31,.08); }
+.install-banner p, .install-guide p { margin: 0 0 var(--s3); font-size: var(--fs-s); color: var(--ink); }
+.install-banner button:not(.quiet), .install-guide button { width: 100%; }
+.install-close { position: absolute; top: var(--s1); right: var(--s1); font-size: var(--fs-m); }
+.install-steps { margin: 0; padding-left: 1.3rem; display: grid; gap: var(--s2); font-size: var(--fs-s); line-height: var(--lh-snug); }
+.install-steps li::marker { font-weight: 900; color: var(--lime); }
+.share-icon { vertical-align: -3px; color: var(--cyan); }
+.install-guide { margin-top: var(--s3); }
+
 /* Caricamento (app/loading.js): sagome con un riflesso che scorre */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
   clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect } from 'react';
+import './install-app'; // tiene da parte l'invito all'installazione, che arriva al caricamento
 
 // Effetto pressione dei pulsantoni, in tutto il sito: premendo il pulsante si gonfia un attimo
 // e poi si schiaccia; lasciandolo torna su con un rimbalzo. Usa la proprietà `scale`, separata
