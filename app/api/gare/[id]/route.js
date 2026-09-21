@@ -4,6 +4,7 @@ import { getUserId } from '@/lib/session';
 import { isAdmin } from '@/lib/admin';
 import { validate, formToQuery } from '@/lib/competition';
 import { loadCompetition, setParticipants } from '@/lib/standings';
+import { notifyAdded } from '@/lib/notify';
 
 const go = (req, path) => NextResponse.redirect(new URL(path, req.url), 303);
 
@@ -23,6 +24,7 @@ export async function POST(req, { params }) {
             set name = ${value.name}, km = ${value.km}, start_date = ${value.start_date},
                 end_date = ${value.end_date}, age_grading = ${value.age_grading}, updated_at = now()
             where id = ${c.id}`;
-  await setParticipants(c.id, value.participants);
+  const added = await setParticipants(c.id, value.participants);
+  await notifyAdded({ id: c.id, name: value.name, km: value.km }, added, userId);
   return go(req, '/gare/impostazioni?modificata=1');
 }

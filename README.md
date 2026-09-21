@@ -31,6 +31,21 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
   `users.photo_v`. Ha la precedenza su quella di Strava e si serve da `/api/foto/<id>?v=…`,
   solo a chi ha fatto l'accesso.
 
+## Notifiche push
+
+- Si attivano da Il mio account → Notifiche, per dispositivo. Su iPhone solo dall'app
+  aggiunta alla schermata Home (iOS 16.4+).
+- Servono le variabili `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` (da
+  `npx web-push generate-vapid-keys`) e `VAPID_SUBJECT` (`mailto:…`). Senza, non parte niente.
+- Quando partono (lib/notify.js):
+  - sorpassi e nuovi record: confronto delle classifiche a tempo prima e dopo
+    l'aggiornamento (notturno o «Aggiorna adesso da Strava»), per le gare in corso o chiuse
+    da meno di 3 giorni;
+  - gara che parte oggi / ultimo giorno: dall'aggiornamento notturno, una volta sola
+    (`notifications_sent`);
+  - aggiunto a una gara: quando l'amministratore salva i partecipanti (non a sé stesso).
+- Le iscrizioni scadute si cancellano da sole al primo invio fallito.
+
 ## Regole di selezione (lib/filter.js)
 
 - `sport_type` uguale a `Run`: esclude trail (`TrailRun`) e virtuale (`VirtualRun`).

@@ -63,3 +63,19 @@ create table if not exists activities (
 );
 create index if not exists activities_user_idx on activities(user_id, start_date desc);
 create index if not exists activities_start_idx on activities(start_date);
+
+-- Notifiche push: un'iscrizione per dispositivo (browser o app sulla schermata Home).
+create table if not exists push_subscriptions (
+  endpoint    text primary key,
+  user_id     integer not null references users(id) on delete cascade,
+  p256dh      text not null,
+  auth        text not null,
+  created_at  timestamptz not null default now()
+);
+create index if not exists push_subscriptions_user_idx on push_subscriptions(user_id);
+
+-- Notifiche già mandate che non vanno ripetute (es. «parte oggi» di una gara).
+create table if not exists notifications_sent (
+  key      text primary key,
+  sent_at  timestamptz not null default now()
+);

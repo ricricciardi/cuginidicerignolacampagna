@@ -6,6 +6,8 @@ import ProfileForm from './profile-form';
 import PhotoPicker from './photo-picker';
 import StravaLogo from '../strava-logo';
 import StravaConsent from '../strava-consent';
+import PushToggle from './push-toggle';
+import { pushPublicKey } from '@/lib/push';
 
 const fmtStamp = (d) => new Date(d).toLocaleString('it-IT', {
   timeZone: 'Europe/Rome', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -112,6 +114,8 @@ export default async function Account({ searchParams }) {
           <StravaConsent />
         )}
       </section>
+
+      <PushToggle publicKey={pushPublicKey()} />
 
       {admin && (
         <section className="card" aria-labelledby="admin-title">

@@ -200,3 +200,30 @@ test('classifica per età e sesso: punteggio più alto in testa, chi non ha dati
   assert.deepEqual(r.map((x) => [x.athlete_name, x.pct, x.reached, x.missing ?? null]),
     [['Nunzia', 58.5, 1, null], ['Riccardo', 57.0, 2, null], ['Alfredo', null, 0, 'corse'], ['Mimmo', null, 1, 'dati']]);
 });
+
+import { standingsChanges } from '../lib/standings-diff.js';
+const gara15 = { name: 'Quindici', km: 15 };
+const snap = (...rows) => new Map(rows.map(([uid, time_s, name], i) => [uid, { pos: i + 1, time_s, name }]));
+test('notifiche: nuovo record a chi migliora, sorpasso a chi viene superato', () => {
+  const before = snap([1, 4000, 'Anna'], [2, 4100, 'Bruno'], [3, 4200, 'Carlo']);
+  const after = snap([3, 3900, 'Carlo'], [1, 4000, 'Anna'], [2, 4100, 'Bruno']);
+  const n = standingsChanges(gara15, before, after);
+  assert.deepEqual(n.map((x) => [x.userId, x.title]), [
+    [3, 'Nuovo record in Quindici'], [1, 'Sorpasso in Quindici'], [2, 'Sorpasso in Quindici']]);
+  assert.equal(n[1].body, 'Carlo ti ha superato: ora sei 2°.');
+  assert.equal(n[0].body, '1:05:00 sui primi 15 km: sei 1°.');
+});
+test('notifiche: primo tempo è un record; chi arriva dopo di te non ti supera', () => {
+  const n = standingsChanges(gara15, snap([1, 4000, 'Anna']), snap([1, 4000, 'Anna'], [2, 4100, 'Bruno']));
+  assert.deepEqual(n.map((x) => [x.userId, x.title]), [[2, 'Nuovo record in Quindici']]);
+});
+test('notifiche: nessun cambiamento, nessuna notifica', () => {
+  const s = snap([1, 4000, 'Anna'], [2, 4100, 'Bruno']);
+  assert.deepEqual(standingsChanges(gara15, s, s), []);
+});
+test('notifiche: superato da due cugini insieme', () => {
+  const before = snap([1, 4000, 'Anna'], [2, 4100, 'Bruno'], [3, 4200, 'Carlo']);
+  const after = snap([2, 3800, 'Bruno'], [3, 3900, 'Carlo'], [1, 4000, 'Anna']);
+  const a = standingsChanges(gara15, before, after).find((x) => x.userId === 1);
+  assert.equal(a.body, 'Bruno e Carlo ti hanno superato: ora sei 3°.');
+});

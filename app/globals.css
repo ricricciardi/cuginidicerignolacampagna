@@ -163,6 +163,9 @@ button, .button {
   font-size: var(--fs-m); line-height: var(--lh-body); color: var(--ink); }
 .onboarding-steps li::marker { font-weight: 900; color: var(--lime); }
 .onboarding .strava-card { margin: 0 0 var(--s4); }
+.push-actions { display: grid; gap: var(--s2); margin-top: var(--s4); }
+.push-actions .button, .push-actions > button:not(.quiet) { width: 100%; }
+.push-msg { margin-top: var(--s3); }
 .onboarding-exit { margin-top: var(--s5); text-align: center; }
 
 /* Registrazione nella pagina di accesso: staccata dal modulo e ben visibile */
