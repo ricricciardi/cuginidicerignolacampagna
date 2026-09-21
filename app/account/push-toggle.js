@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { InstallGuide } from '../install-app';
 
 // Chiave pubblica VAPID (base64 url) nel formato che vuole il browser.
 const keyBytes = (b64) => {
@@ -79,7 +78,10 @@ export default function PushToggle({ publicKey }) {
       {!publicKey ? (
         <p className="hint">Le notifiche non sono ancora attive sul sito.</p>
       ) : state === 'ios' ? (
-        <InstallGuide />
+        <div className="notice">
+          Su iPhone le notifiche arrivano solo dall&apos;app: aggiungila alla schermata Home
+          seguendo i passi nella scheda <a href="#installa">App</a> qui sotto.
+        </div>
       ) : state === 'unsupported' ? (
         <p className="hint">Questo browser non supporta le notifiche.</p>
       ) : state === 'denied' ? (

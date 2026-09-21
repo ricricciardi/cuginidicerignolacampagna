@@ -714,6 +714,7 @@ option { color: #140a24; }
 .install-steps li::marker { font-weight: 900; color: var(--lime); }
 .share-icon { vertical-align: -3px; color: var(--cyan); }
 .install-guide { margin-top: var(--s3); }
+.logout + .card { margin-top: var(--s6); }
 
 /* Caricamento (app/loading.js): sagome con un riflesso che scorre */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;

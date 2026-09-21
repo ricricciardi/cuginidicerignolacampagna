@@ -47,11 +47,11 @@ const ShareIcon = () => (
   </svg>
 );
 
-function Guide({ state, onInstall }) {
+function Guide({ state, onInstall, hideIntro = false }) {
   if (state === 'prompt') {
     return (
       <>
-        <p>Installa Cugini come app: si apre dalla sua icona, come le altre app, e ricevi le notifiche.</p>
+        {!hideIntro && <p>Installa Cugini come app: si apre dalla sua icona, come le altre app, e ricevi le notifiche.</p>}
         <button type="button" onClick={onInstall}>Installa l&apos;app</button>
       </>
     );
@@ -59,7 +59,7 @@ function Guide({ state, onInstall }) {
   if (state === 'ios-safari') {
     return (
       <>
-        <p>Aggiungi Cugini alla schermata Home: si apre come un&apos;app e puoi ricevere le notifiche.</p>
+        {!hideIntro && <p>Aggiungi Cugini alla schermata Home: si apre come un&apos;app e puoi ricevere le notifiche.</p>}
         <ol className="install-steps">
           <li>Tocca <ShareIcon /> <strong>Condividi</strong> nella barra di Safari.</li>
           <li>Scorri e tocca <strong>Aggiungi alla schermata Home</strong>.</li>
@@ -100,9 +100,26 @@ export function InstallBanner() {
   );
 }
 
-// Guida sempre disponibile (scheda Notifiche dell'account).
-export function InstallGuide() {
+// Scheda «App», sempre visibile in fondo all'account: cosa fare su questo dispositivo.
+export function InstallCard() {
   const state = useInstallState();
-  if (!state || state === 'installed' || state === 'none') return null;
-  return <div className="install-guide"><Guide state={state} onInstall={install} /></div>;
+  return (
+    <section className="card" id="installa" aria-labelledby="installa-title">
+      <div className="card-head">
+        <h2 id="installa-title">App</h2>
+        {state === 'installed' && <span className="pill ok">Installata</span>}
+      </div>
+      <p>Installa Cugini come app: si apre dalla sua icona, come le altre app, e ricevi le notifiche.</p>
+      {state === 'installed' ? (
+        <p className="hint">Stai già usando l&apos;app ✓</p>
+      ) : state === 'none' ? (
+        <p className="hint">
+          Questo browser non la propone da solo: cerca nel suo menu <strong>Installa app</strong> o
+          <strong> Aggiungi alla schermata Home</strong>. Sul telefono funziona con Chrome su Android e con Safari su iPhone.
+        </p>
+      ) : state ? (
+        <div className="install-guide"><Guide state={state} onInstall={install} hideIntro /></div>
+      ) : null}
+    </section>
+  );
 }

@@ -8,6 +8,7 @@ import PhotoPicker from './photo-picker';
 import StravaLogo from '../strava-logo';
 import StravaConsent from '../strava-consent';
 import PushToggle from './push-toggle';
+import { InstallCard } from '../install-app';
 import { pushPublicKey } from '@/lib/push';
 
 const fmtStamp = (d) => new Date(d).toLocaleString('it-IT', {
@@ -138,6 +139,8 @@ export default async function Account({ searchParams }) {
           <button className="quiet" type="submit">Esci dall'account</button>
         </form>
       </section>
+
+      <InstallCard />
     </main>
   );
 }
