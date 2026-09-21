@@ -28,6 +28,9 @@ export default async function Dashboard({ searchParams }) {
       <h1>Le mie corse</h1>
       <p>Corse su strada con GPS nei periodi delle gare. I tempi per ogni gara sono nelle pagine delle gare.</p>
 
+      {sp.connected && (
+        <div className="notice">Strava collegato, sei dentro! Premi Aggiorna adesso da Strava per leggere le tue corse.</div>
+      )}
       {sp.error && <div className="notice error">{ERRORS[sp.error] ?? 'Qualcosa non ha funzionato.'}</div>}
       {sp.synced !== undefined && (
         <div className="notice">
@@ -49,7 +52,7 @@ export default async function Dashboard({ searchParams }) {
           )}
         </div>
       ) : (
-        <div className="notice">Per vedere le tue corse <a href="/account#strava">collega Strava dal tuo account</a>.</div>
+        <div className="notice">Per vedere le tue corse <a href="/collega-strava">collega Strava</a>.</div>
       )}
 
       {runs.length > 0 ? (

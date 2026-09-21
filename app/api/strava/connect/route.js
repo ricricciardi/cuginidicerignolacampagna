@@ -1,13 +1,16 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import { sql } from '@/lib/db';
 import { getUserId } from '@/lib/session';
 import { authorizeUrl } from '@/lib/strava';
 
 export async function GET(req) {
-  if (!(await getUserId())) return NextResponse.redirect(new URL('/login', req.url));
+  const userId = await getUserId();
+  if (!userId) return NextResponse.redirect(new URL('/login', req.url));
   // Senza consenso a mostrare i tempi agli altri iscritti non si collega Strava.
   if (new URL(req.url).searchParams.get('consenso') !== '1') {
-    return NextResponse.redirect(new URL('/account?error=consent#strava', req.url));
+    const [had] = await sql`select 1 from strava_connections where user_id = ${userId}`;
+    return NextResponse.redirect(new URL(had ? '/account?error=consent#strava' : '/collega-strava?error=consent', req.url));
   }
   const state = crypto.randomUUID(); // protezione CSRF sul ritorno da Strava
   (await cookies()).set('strava_state', state, {

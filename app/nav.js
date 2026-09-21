@@ -6,6 +6,8 @@ import SegmentedLinks from './segmented-links';
 // L'ultimo tab è il proprio account: solo la foto Strava (o le iniziali).
 export default function Nav({ name, avatar }) {
   const path = usePathname();
+  // Nella pagina «Collega Strava» non ci sono tab: finché non colleghi Strava non c'è altro da fare.
+  if (path.startsWith('/collega-strava')) return null;
   const on = (href) => path.startsWith(href);
   return (
     <SegmentedLinks className="tabs" label="Sezioni" items={[

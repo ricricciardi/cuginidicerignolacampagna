@@ -3,6 +3,7 @@ import { sql } from '@/lib/db';
 import { getUserId } from '@/lib/session';
 import Nav from './nav';
 import Brand from './brand';
+import PressFx from './press-fx';
 
 export const metadata = {
   title: 'Cuginidicerignolacampagna',
@@ -32,6 +33,7 @@ export default async function RootLayout({ children }) {
         </header>
         {loggedIn && <Nav name={me?.athlete_name ?? me?.email} avatar={me?.avatar_url} />}
         {children}
+        <PressFx />
       </body>
     </html>
   );

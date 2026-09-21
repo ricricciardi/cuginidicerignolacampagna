@@ -147,6 +147,29 @@ button, .button {
   --glow: rgba(215,255,31,.45);
   box-shadow: 0 0 22px var(--glow), inset 0 -2px 0 rgba(0,0,0,.2);
 }
+.button.secondary {
+  --glow: rgba(215,255,31,.25);
+  color: var(--lime); background: rgba(215,255,31,.08);
+  box-shadow: inset 0 0 0 2px var(--lime), 0 0 18px var(--glow);
+}
+.button.secondary:active { box-shadow: inset 0 0 0 2px var(--lime), inset 0 2px 6px rgba(0,0,0,.35), 0 0 8px var(--glow); }
+@media (hover: hover) and (pointer: fine) {
+  .button.secondary:hover { box-shadow: inset 0 0 0 2px var(--lime), 0 0 26px var(--glow); }
+}
+/* Pagina di benvenuto «Collega Strava» */
+.onboarding .step { margin: 0 0 var(--s1); font-size: var(--fs-xs); font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--accent); }
+.onboarding-steps { margin: 0 0 var(--s5); padding-left: 1.4rem; display: grid; gap: var(--s2);
+  font-size: var(--fs-m); line-height: var(--lh-body); color: var(--ink); }
+.onboarding-steps li::marker { font-weight: 900; color: var(--lime); }
+.onboarding .strava-card { margin: 0 0 var(--s4); }
+.onboarding-exit { margin-top: var(--s5); text-align: center; }
+
+/* Registrazione nella pagina di accesso: staccata dal modulo e ben visibile */
+.signup { display: grid; gap: var(--s3); margin-top: var(--s6); padding-top: var(--s5); border-top: 1px solid var(--line);
+  text-align: center; }
+.signup p { margin: 0 auto; font-weight: 700; color: var(--ink); }
+.signup .button { width: 100%; }
 .button.strava .strava-logo { flex: none; margin-right: var(--s2); }
 .button.strava {
   color: #fff;
@@ -161,10 +184,9 @@ form.stack button, .bar .button, .bar button, .consent .button { width: 100%; }
 form.stack button { margin-top: var(--s2); }
 :focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 
-/* Pulsantoni premuti: scendono di un pixel, si rimpiccioliscono appena, si scuriscono e il
-   bagliore si spegne, con l'ombra interna in alto come un tasto schiacciato. La pressione è
-   istantanea e il rilascio morbido, così sul telefono si sente anche con un tocco rapido.
-   L'hover solo con mouse vero: sui touch resterebbe acceso dopo il tocco. */
+/* Pulsantoni premuti: scendono di un pixel, si scuriscono e il bagliore si spegne, con l'ombra
+   interna in alto come un tasto schiacciato. Il gonfiarsi-e-schiacciarsi con rimbalzo lo fa
+   press-fx.js (proprietà scale). L'hover solo con mouse vero: sui touch resterebbe acceso. */
 button:not(.quiet):not(.reveal):not(.photo-button), .button {
   -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
   transition: transform .18s cubic-bezier(.3, 1.4, .5, 1), box-shadow .18s ease, filter .18s ease;
@@ -176,7 +198,7 @@ button:not(.quiet):not(.reveal):not(.photo-button), .button {
   }
 }
 button:not(.quiet):not(.reveal):not(.photo-button):active, .button:active {
-  transform: translateY(1px) scale(.97);
+  transform: translateY(1px);
   filter: brightness(.9);
   box-shadow: 0 0 8px var(--glow), inset 0 2px 5px rgba(0,0,0,.35);
   transition-duration: .05s;
@@ -657,5 +679,3 @@ option { color: #140a24; }
 .rules-table td:last-child { padding-right: 0; font-weight: 800; color: var(--lime); }
 .rules-table thead th { font-size: var(--fs-xs); font-weight: 700; color: var(--muted); }
 .rules-table tbody th { font-weight: 600; color: var(--ink); }
-.site-footer { max-width: 40rem; margin: 0 auto; padding: 0 1.25rem var(--s6); text-align: center; }
-.site-footer a { display: inline-flex; align-items: center; min-height: var(--tap); font-size: var(--fs-s); color: var(--muted); font-weight: 600; }

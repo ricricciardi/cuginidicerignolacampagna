@@ -5,6 +5,7 @@ import { isAdmin } from '@/lib/admin';
 import ProfileForm from './profile-form';
 import PhotoPicker from './photo-picker';
 import StravaLogo from '../strava-logo';
+import StravaConsent from '../strava-consent';
 
 const fmtStamp = (d) => new Date(d).toLocaleString('it-IT', {
   timeZone: 'Europe/Rome', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -68,9 +69,6 @@ export default async function Account({ searchParams }) {
             : revoked ? <span className="pill warn">Da ricollegare</span>
             : <span className="pill ok">Collegato</span>}
         </div>
-        {sp.collega && !conn && (
-          <div className="notice">Per vedere le gare e le tue corse collega prima il tuo account Strava.</div>
-        )}
         {sp.error && sp.error !== 'profilo' && <div className="notice error">{ERRORS[sp.error] ?? 'Qualcosa non ha funzionato.'}</div>}
         {sp.connected && <div className="notice">Strava collegato. Ora aggiorna le corse da <a href="/dashboard">Le mie corse</a>.</div>}
         {sp.disconnected && <div className="notice">Strava scollegato. Le tue corse salvate sono state cancellate.</div>}
@@ -111,17 +109,7 @@ export default async function Account({ searchParams }) {
             </details>
           </div>
         ) : (
-          <form className="consent" method="get" action="/api/strava/connect">
-            <label className="check">
-              <input type="checkbox" name="consenso" value="1" required />
-              <span>
-                Acconsento che il mio nome Strava, la mia foto Strava, le date e i tempi delle mie corse, comprese
-                quelle impostate come «Solo io», siano visibili agli altri iscritti al sito
-                nelle classifiche, compresa quella per età e sesso, nei confronti delle gare e nella mia pagina dei progressi.
-              </span>
-            </label>
-            <button className="button strava" type="submit"><StravaLogo />Collega con Strava</button>
-          </form>
+          <StravaConsent />
         )}
       </section>
 
