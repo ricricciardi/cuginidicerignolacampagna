@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getUserId } from '@/lib/session';
+import { validProfile } from '@/lib/profile';
 
 const go = (req, path) => NextResponse.redirect(new URL(path, req.url), 303);
 
@@ -9,17 +10,12 @@ export async function POST(req) {
   const userId = await getUserId();
   if (!userId) return go(req, '/login');
   const fd = await req.formData();
-  const sex = String(fd.get('sex') ?? '');
-  const birth = String(fd.get('birth_date') ?? '');
-  const parsed = new Date(birth + 'T00:00:00Z');
-  const valid = /^\d{4}-\d{2}-\d{2}$/.test(birth) && !Number.isNaN(parsed.getTime()) &&
-    parsed.toISOString().slice(0, 10) === birth &&
-    birth >= '1920-01-01' && birth <= new Date().toISOString().slice(0, 10);
+  const profile = validProfile(fd.get('sex'), fd.get('birth_date'));
   // Dal modulo con JavaScript arriva Accept: application/json e si risponde senza reindirizzare.
   const json = (req.headers.get('accept') ?? '').includes('application/json');
-  if (!['M', 'F'].includes(sex) || !valid) {
+  if (!profile) {
     return json ? NextResponse.json({ ok: false }, { status: 400 }) : go(req, '/account?error=profilo#profilo');
   }
-  await sql`update users set sex = ${sex}, birth_date = ${birth} where id = ${userId}`;
+  await sql`update users set sex = ${profile.sex}, birth_date = ${profile.birth} where id = ${userId}`;
   return json ? NextResponse.json({ ok: true }) : go(req, '/account?profilo=1#profilo');
 }

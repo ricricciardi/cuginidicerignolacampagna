@@ -227,3 +227,13 @@ test('notifiche: superato da due cugini insieme', () => {
   const a = standingsChanges(gara15, before, after).find((x) => x.userId === 1);
   assert.equal(a.body, 'Bruno e Carlo ti hanno superato: ora sei 3°.');
 });
+
+import { validProfile } from '../lib/profile.js';
+test('profilo: sesso e data di nascita validi', () => {
+  const oggi = new Date('2026-09-21T12:00:00Z');
+  assert.deepEqual(validProfile('F', '1986-09-18', oggi), { sex: 'F', birth: '1986-09-18' });
+  assert.equal(validProfile('X', '1986-09-18', oggi), null);
+  assert.equal(validProfile('M', '2027-01-01', oggi), null);
+  assert.equal(validProfile('M', '1986-02-30', oggi), null);
+  assert.equal(validProfile('M', '9999-99-99', oggi), null);
+});

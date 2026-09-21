@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { syncUser, syncScope } from '@/lib/sync';
-import { standingsSnapshot, notifyStandings, notifyRaceDays } from '@/lib/notify';
+import { standingsSnapshot, notifyStandings, notifyRaceDays, notifyBirthdays } from '@/lib/notify';
 
 export const maxDuration = 60;     // secondi, limite della funzione su Vercel
 const TIME_BUDGET_MS = 50_000;     // margine per chiudere prima del limite
@@ -15,10 +15,11 @@ export async function GET(req) {
   }
   // Notifiche «parte oggi» e «ultimo giorno»: anche quando non c'è niente da leggere.
   const raceDays = await notifyRaceDays();
+  const birthdays = await notifyBirthdays();
   // Nessuna gara partita: niente da leggere.
   // DA DECIDERE: fino a quando, dopo la chiusura, continuare a raccogliere corse arrivate in ritardo.
   const scope = await syncScope();
-  if (!scope) return NextResponse.json({ skipped: 'nessuna gara partita', raceDays });
+  if (!scope) return NextResponse.json({ skipped: 'nessuna gara partita', raceDays, birthdays });
   const before = await standingsSnapshot(); // per le notifiche di record e sorpassi
 
   const started = Date.now();
@@ -37,6 +38,7 @@ export async function GET(req) {
     report.done++;
   }
   report.raceDays = raceDays;
+  report.birthdays = birthdays;
   report.notified = report.saved ? await notifyStandings(before, await standingsSnapshot()) : 0;
   console.log('aggiornamento notturno', JSON.stringify(report));
   return NextResponse.json(report);

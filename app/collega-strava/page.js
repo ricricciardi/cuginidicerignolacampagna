@@ -11,6 +11,7 @@ const ERRORS = {
   denied: 'Hai annullato il collegamento su Strava. Nessun problema: riprova quando vuoi.',
   scope: 'Su Strava è stato tolto il permesso di leggere le attività. Riprova lasciandolo attivo.',
   athlete_taken: 'Questo account Strava è già collegato a un altro utente del sito.',
+  profilo: 'Controlla sesso e data di nascita: la data deve essere reale e non futura.',
 };
 
 // Benvenuto: dopo accesso o registrazione, chi non ha ancora Strava arriva qui per collegarlo.
@@ -30,13 +31,13 @@ export default async function CollegaStrava({ searchParams }) {
         il sito le legge da lì, da solo, ogni notte.
       </p>
       <ol className="onboarding-steps">
-        <li>Spunta il consenso qui sotto.</li>
+        <li>Indica sesso e data di nascita e spunta il consenso qui sotto.</li>
         <li>Premi <strong>Collega con Strava</strong> e accedi a Strava.</li>
         <li>Su Strava lascia attivi i permessi e premi <strong>Autorizza</strong>.</li>
       </ol>
       {sp.error && <div className="notice error">{ERRORS[sp.error] ?? 'Qualcosa non ha funzionato. Riprova.'}</div>}
       <div className="card strava-card">
-        <StravaConsent />
+        <StravaConsent profile={{ today: new Date().toISOString().slice(0, 10) }} />
       </div>
       <p className="hint">
         Il sito legge solo le corse, non modifica niente su Strava. Puoi scollegarlo quando vuoi dal tuo account.

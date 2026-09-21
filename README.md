@@ -43,7 +43,8 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
     da meno di 3 giorni;
   - gara che parte oggi / ultimo giorno: dall'aggiornamento notturno, una volta sola
     (`notifications_sent`);
-  - aggiunto a una gara: quando l'amministratore salva i partecipanti (non a sé stesso).
+  - aggiunto a una gara: quando l'amministratore salva i partecipanti (non a sé stesso);
+  - auguri di compleanno: dall'aggiornamento notturno, solo al festeggiato, una volta all'anno.
 - Le iscrizioni scadute si cancellano da sole al primo invio fallito.
 
 ## Regole di selezione (lib/filter.js)
@@ -96,7 +97,7 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
 
 ## Aggiornamento dei dati (lib/sync.js)
 
-- Ogni notte Vercel Cron chiama `/api/cron/sync` (vercel.json, `0 2 * * *` in UTC:
+- Ogni notte Vercel Cron chiama `/api/cron/sync` (vercel.json, `0 5 * * *` in UTC, le 7 in Italia con l'ora legale e le 6 con quella solare:
   le 4:00 italiane d'estate, le 3:00 d'inverno). Sul piano Hobby l'orario è garantito
   solo entro l'ora (±59 minuti).
 - A ogni lettura aggiorna nome e foto profilo dell'atleta da Strava (una chiamata in più).

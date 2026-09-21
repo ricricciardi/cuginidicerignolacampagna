@@ -56,7 +56,7 @@ export default async function Account({ searchParams }) {
 
       <section className="card" id="profilo" aria-labelledby="profilo-title">
         <div className="card-head">
-          <h2 id="profilo-title">Classifica per età e sesso</h2>
+          <h2 id="profilo-title">Dati per il punteggio</h2>
           {me?.sex && me?.birth_date ? <span className="pill ok">Completo</span> : <span className="pill">Da compilare</span>}
         </div>
         <p className="hint">

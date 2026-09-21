@@ -73,7 +73,7 @@ export default function PushToggle({ publicKey }) {
         <h2 id="notifiche-title">Notifiche</h2>
         {state !== 'loading' && pill}
       </div>
-      <p className="hint">Sorpassi e nuovi record nelle tue gare, gare che partono o finiscono, e quando ti aggiungono a una gara.</p>
+      <p className="hint">Sorpassi e nuovi record nelle tue gare, gare che partono o finiscono, quando ti aggiungono a una gara e gli auguri di compleanno.</p>
 
       {!publicKey ? (
         <p className="hint">Le notifiche non sono ancora attive sul sito.</p>

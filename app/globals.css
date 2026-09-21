@@ -215,6 +215,8 @@ button, .button {
 .push-actions { display: grid; gap: var(--s2); margin-top: var(--s4); }
 .push-actions .button, .push-actions > button:not(.quiet) { width: 100%; }
 .push-msg { margin-top: var(--s3); }
+.consent-profile { display: grid; gap: var(--s3); padding-bottom: var(--s4); border-bottom: 1px solid var(--line); }
+.consent-profile .hint { margin: 0; }
 .onboarding-exit { margin-top: var(--s5); text-align: center; }
 
 /* Registrazione nella pagina di accesso: staccata dal modulo e ben visibile */
