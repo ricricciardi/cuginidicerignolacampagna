@@ -97,8 +97,8 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
 
 ## Aggiornamento dei dati (lib/sync.js)
 
-- Ogni notte Vercel Cron chiama `/api/cron/sync` (vercel.json, `0 5 * * *` in UTC, le 7 in Italia con l'ora legale e le 6 con quella solare:
-  le 4:00 italiane d'estate, le 3:00 d'inverno). Sul piano Hobby l'orario è garantito
+- Ogni notte Vercel Cron chiama `/api/cron/sync` (vercel.json, `0 5 * * *` in UTC:
+  le 7:00 italiane d'estate, le 6:00 d'inverno). Sul piano Hobby l'orario è garantito
   solo entro l'ora (±59 minuti).
 - A ogni lettura aggiorna nome e foto profilo dell'atleta da Strava (una chiamata in più).
 - Legge le corse che servono alle gare già partite: periodo = unione dei loro periodi,
