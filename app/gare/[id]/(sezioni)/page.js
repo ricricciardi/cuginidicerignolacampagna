@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { loadCompetitionFor, competitionRuns, standings, ageStandings, participants, visibleCompetitionCount } from '@/lib/standings';
+import { loadCompetitionFor, competitionRuns, standings, ageStandings, participants } from '@/lib/standings';
 import { bestKmSplit } from '@/lib/efforts';
 import { fmtTime, fmtDate, fmtElevation, fmtDist } from '@/lib/format';
 import { fmtPct, MIN_GRADE_M } from '@/lib/agegrade';
-import CompetitionHeader from '../header';
-import Avatar from '../../avatar';
+import Avatar from '../../../avatar';
 import ViewTabs from './view-tabs';
 import { getT } from '@/lib/lingua';
 import { requireStravaUser } from '@/lib/admin';
@@ -23,7 +22,7 @@ export default async function Classifica({ params, searchParams }) {
   // Punteggio solo se la gara lo prevede e dal miglio in su (sotto non ci sono tabelle).
   const graded = c.age_grading && c.distance_m >= MIN_GRADE_M;
   // In parallelo: sono indipendenti, così si aspetta la più lenta invece della somma.
-  const [runs, people, count, t] = await Promise.all([competitionRuns(c), participants(c), visibleCompetitionCount(me), getT()]);
+  const [runs, people, t] = await Promise.all([competitionRuns(c), participants(c), getT()]);
   const notice = Object.keys(NOTICES).find((k) => sp[k]);
 
   // Le classifiche si preparano tutte insieme e si cambiano nel browser (view-tabs.js).
@@ -43,16 +42,15 @@ export default async function Classifica({ params, searchParams }) {
   const initial = Math.max(0, views.findIndex((v) => v.key === sp.vista));
 
   return (
-    <main>
+    <>
       {notice && <div className="notice">{t(NOTICES[notice])}</div>}
-      <CompetitionHeader c={c} current="classifica" many={count > 1} />
 
       <div className="nav-content" data-nav="Sezioni della gara">
         <ViewTabs ariaLabel={t('Tipo di classifica')} initial={initial}
           items={views.map(({ href, label }) => ({ href, label }))}
           panels={views.map((v) => <Board key={v.key} view={v} c={c} me={me} t={t} />)} />
       </div>
-    </main>
+    </>
   );
 }
 

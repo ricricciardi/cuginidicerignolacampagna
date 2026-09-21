@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import { compWindow, fmtDay } from '@/lib/competition';
 import Countdown from '../countdown';
-import SegmentedLinks from '../segmented-links';
+import GaraTabs from './gara-tabs';
 import { getT } from '@/lib/lingua';
 import { fmtDist } from '@/lib/format';
 
 // Testata comune alle pagine di una gara: nome, regole, sezioni e conto alla rovescia.
 // «Tutte le gare» solo se l'utente ne vede più di una (many): con una sola l'elenco rimanda qui.
-export default async function CompetitionHeader({ c, current, many }) {
+export default async function CompetitionHeader({ c, many }) {
   const t = await getT();
   const { start, end } = compWindow(c);
   return (
@@ -19,10 +19,7 @@ export default async function CompetitionHeader({ c, current, many }) {
       </p>
       <Countdown serverNow={Date.now()} start={start.getTime()} end={end.getTime()}
                  startLabel={fmtDay(c.start_date)} endLabel={fmtDay(c.end_date)} />
-      <SegmentedLinks className="subtabs" label="Sezioni della gara" ariaLabel={t('Sezioni della gara')} scroll={false} items={[
-        { href: `/gare/${c.id}`, label: t('Classifica'), current: current === 'classifica' },
-        { href: `/gare/${c.id}/confronto`, label: t('Confronto'), current: current === 'confronto' },
-      ]} />
+      <GaraTabs id={c.id} ariaLabel={t('Sezioni della gara')} labels={[t('Classifica'), t('Confronto')]} />
     </>
   );
 }

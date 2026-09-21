@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import SegmentedLinks from '../../segmented-links';
+import SegmentedLinks from '../../../segmented-links';
 
 // Le viste (Punteggio, Tempo, Miglior parziale; o quelle del Confronto) arrivano già tutte dal server: si passa dall'una all'altra
 // nel browser. Prima si navigava, e mentre arrivava la vista nuova la schermata di caricamento

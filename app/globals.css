@@ -845,6 +845,7 @@ button.rules-link { color: var(--cyan); }
 .sk-line.short { width: 70%; margin-bottom: var(--s3); }
 .sk-card { height: 7.5rem; border-radius: 18px; }
 .sk-card.small { height: 4.5rem; }
+.sk-section { min-height: 100vh; align-content: start; } /* sotto la testata della gara (gare/[id]/(sezioni)/loading.js) */
 @media (prefers-reduced-motion: reduce) { .sk::after { animation: none; } }
 
 /* Switch della lingua (lang-switch.js) */

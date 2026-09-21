@@ -1,9 +1,8 @@
 import { notFound } from 'next/navigation';
-import { loadCompetitionFor, competitionRuns, participants, periodActivities, visibleCompetitionCount } from '@/lib/standings';
+import { loadCompetitionFor, competitionRuns, participants, periodActivities } from '@/lib/standings';
 import { raceDays, dayCells, effort, improvement, pacing, WEEKLY_AFTER_DAYS } from '@/lib/compare';
-import CompetitionHeader from '../../header';
 import ViewTabs from '../view-tabs';
-import Avatar from '../../../avatar';
+import Avatar from '../../../../avatar';
 import { getT } from '@/lib/lingua';
 import { requireStravaUser } from '@/lib/admin';
 import { fmtDist, fmtTime, fmtPace, fmtShortDate } from '@/lib/format';
@@ -26,9 +25,7 @@ export default async function Confronto({ params, searchParams }) {
   const me = await requireStravaUser();
   const c = await loadCompetitionFor((await params).id, me);
   if (!c) notFound();
-  const [runs, people, acts, count, t] = await Promise.all([
-    competitionRuns(c), participants(c), periodActivities(c), visibleCompetitionCount(me), getT(),
-  ]);
+  const [runs, people, acts, t] = await Promise.all([competitionRuns(c), participants(c), periodActivities(c), getT()]);
   const days = raceDays(c, romeToday());
   const train = effort(acts, people);
   const weekly = days.length > WEEKLY_AFTER_DAYS;
@@ -56,8 +53,7 @@ export default async function Confronto({ params, searchParams }) {
   );
 
   return (
-    <main>
-      <CompetitionHeader c={c} current="confronto" many={count > 1} />
+    <>
       <div className="nav-content" data-nav="Sezioni della gara">
       {people.length === 0 ? (
         <p>{t('Nessun cugino ha ancora collegato Strava. Chi lo collega compare qui.')}</p>
@@ -133,7 +129,7 @@ export default async function Confronto({ params, searchParams }) {
           ]} />
       )}
       </div>
-    </main>
+    </>
   );
 }
 
