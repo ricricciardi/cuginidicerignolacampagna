@@ -42,6 +42,14 @@ export default async function CollegaStrava({ searchParams }) {
       <p className="hint">
         Il sito legge solo le corse, non modifica niente su Strava. Puoi scollegarlo quando vuoi dal tuo account.
       </p>
+      {process.env.DEV_FAKE_DB === '1' && process.env.NODE_ENV !== 'production' && (
+        // Solo in locale: stessi campi del modulo, ma invece di Strava simula il collegamento.
+        <p className="onboarding-exit">
+          <button className="quiet" type="submit" form="strava-consent" formAction="/api/dev/strava-finto">
+            Simula collegamento Strava (solo in locale)
+          </button>
+        </p>
+      )}
       <form className="onboarding-exit" method="post" action="/api/auth/logout">
         <button className="quiet" type="submit">Non ora, esci</button>
       </form>

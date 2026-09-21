@@ -787,8 +787,10 @@ option { color: #140a24; }
 .tour-icon { font-size: 3.25rem; line-height: 1; margin-bottom: var(--s4); }
 .tour h2 { margin: 0 0 var(--s3); font-size: var(--fs-xl); line-height: var(--lh-tight); color: var(--lime); }
 .tour p { margin: 0 auto; font-size: var(--fs-m); line-height: var(--lh-body); color: var(--ink); min-height: 6.2em; }
-.tour-step { animation: tour-in .35s cubic-bezier(.3, 1.3, .5, 1); }
+.tour-step { animation: tour-in .35s cubic-bezier(.3, 1.3, .5, 1); touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.tour-step[data-dir="back"] { animation-name: tour-in-back; }
 @keyframes tour-in { from { opacity: 0; transform: translateX(24px); } }
+@keyframes tour-in-back { from { opacity: 0; transform: translateX(-24px); } }
 .tour-dots { display: flex; justify-content: center; gap: 8px; margin: var(--s5) 0; }
 .tour-dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.2); transition: all .25s ease; }
 .tour-dots span.on { width: 22px; border-radius: 4px; background: var(--lime); }

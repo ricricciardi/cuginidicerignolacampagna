@@ -32,9 +32,11 @@ export default function Tour({ enabled }) {
   const dialog = useRef(null);
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
+  const [dir, setDir] = useState(1); // 1 avanti, -1 indietro: da che lato entra la schermata
+  const swipe = useRef(null);
 
   useEffect(() => {
-    if (enabled && !seen() && !SKIP.some((p) => path.startsWith(p))) { setStep(0); setOpen(true); }
+    if (enabled && !seen() && !SKIP.some((p) => path.startsWith(p))) { setDir(1); setStep(0); setOpen(true); }
   }, [enabled, path]);
   useEffect(() => {
     const reopen = () => { setStep(0); setOpen(true); };
@@ -50,6 +52,24 @@ export default function Tour({ enabled }) {
 
   const close = () => { markSeen(); setOpen(false); };
   const last = step === STEPS.length - 1;
+  const go = (d) => {
+    const n = step + d;
+    if (n < 0) return;
+    if (n >= STEPS.length) { close(); return; }
+    setDir(d); setStep(n);
+  };
+
+  // Swipe: dito a sinistra = avanti, a destra = indietro (almeno 40 px, più in orizzontale che in verticale).
+  const onPointerDown = (e) => { swipe.current = { x: e.clientX, y: e.clientY }; };
+  const onPointerUp = (e) => {
+    const s0 = swipe.current;
+    swipe.current = null;
+    if (!s0) return;
+    const dx = e.clientX - s0.x, dy = e.clientY - s0.y;
+    if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx < 0 && !last) go(1);
+    if (dx > 0) go(-1);
+  };
   const s = STEPS[step];
 
   return (
@@ -58,7 +78,8 @@ export default function Tour({ enabled }) {
       {open && (
         <>
           <button type="button" className="quiet tour-skip" onClick={close}>Salta</button>
-          <div className="tour-step" key={step}>
+          <div className="tour-step" key={step} data-dir={dir < 0 ? 'back' : undefined}
+               onPointerDown={onPointerDown} onPointerUp={onPointerUp} onPointerCancel={() => { swipe.current = null; }}>
             <div className="tour-icon" aria-hidden="true">{s.icon}</div>
             <h2 id="tour-title">{s.title}</h2>
             <p>{s.text}</p>
@@ -68,9 +89,9 @@ export default function Tour({ enabled }) {
           </div>
           <div className="tour-actions">
             {step > 0
-              ? <button type="button" className="quiet" onClick={() => setStep(step - 1)}>Indietro</button>
+              ? <button type="button" className="quiet" onClick={() => go(-1)}>Indietro</button>
               : <span />}
-            <button type="button" onClick={() => (last ? close() : setStep(step + 1))}>
+            <button type="button" onClick={() => go(1)}>
               {last ? 'Iniziamo' : 'Avanti'}
             </button>
           </div>

@@ -5,7 +5,7 @@ import StravaLogo from './strava-logo';
 // che si salvano prima di andare su Strava. I campi partono sempre vuoti.
 export default function StravaConsent({ profile = null }) {
   return (
-    <form className="consent" method="get" action="/api/strava/connect">
+    <form id="strava-consent" className="consent" method="get" action="/api/strava/connect">
       {profile && (
         <div className="consent-profile">
           <p className="hint">Per il punteggio per età e sesso. La data di nascita non viene mai mostrata agli altri.</p>
