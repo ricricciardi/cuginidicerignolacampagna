@@ -49,6 +49,17 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
     («Nuovo tempo 10 minuti e 23 secondi — Riccardo stat atteint, vè chien!!», frase fissa in tutte le lingue).
 - Le iscrizioni scadute si cancellano da sole al primo invio fallito.
 
+## Avvisi in tempo reale da Strava (webhook)
+
+- `/api/strava/webhook`: Strava avvisa di corse create, modificate, cancellate e di accessi revocati.
+  Gli avvisi non sono firmati: prima di salvare o cancellare si ricontrolla su Strava con il token
+  del cugino (lib/strava-webhook.js). Una corsa cancellata o non più valida esce dalle classifiche;
+  una corsa nuova arriva subito, con classifiche e notifiche.
+- Iscrizione una tantum: Il mio account → Amministrazione → «Attiva o controlla gli aggiornamenti da
+  Strava» (usa STRAVA_CLIENT_ID/SECRET e APP_URL; la parola di verifica deriva da CRON_SECRET).
+- In fondo alle pagine c'è il logo ufficiale «Powered by Strava» (public/powered-by-strava.svg),
+  come chiedono le regole di Strava.
+
 ## Regole di selezione (lib/filter.js)
 
 - `sport_type` uguale a `Run`: esclude trail (`TrailRun`) e virtuale (`VirtualRun`).

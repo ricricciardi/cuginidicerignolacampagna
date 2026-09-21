@@ -102,6 +102,7 @@ const sections = (t) => [
         <li>{t('Ogni mattina il sito legge da Strava le corse nuove di tutti i partecipanti.')}</li>
         <li>{t('In Le mie corse il pulsante «Aggiorna adesso da Strava» legge subito le proprie.')}</li>
         <li>{t('Se una gara viene allungata o anticipata, le corse del nuovo periodo arrivano con l\'aggiornamento successivo.')}</li>
+        <li>{t('Se una corsa viene cancellata o modificata su Strava (per esempio diventa una camminata), cambia anche qui: una corsa che non vale più esce dalle classifiche.')}</li>
       </ul>
     ),
   },

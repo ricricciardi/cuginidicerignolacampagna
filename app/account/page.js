@@ -124,7 +124,7 @@ export default async function Account({ searchParams }) {
       <PushToggle publicKey={pushPublicKey()} />
 
       {admin && (
-        <section className="card" aria-labelledby="admin-title">
+        <section className="card" id="admin" aria-labelledby="admin-title">
           <div className="card-head">
             <h2 id="admin-title">{t('Amministrazione')}</h2>
             <span className="pill ok">{t('Admin')}</span>
@@ -133,6 +133,14 @@ export default async function Account({ searchParams }) {
             <li><Link href="/gare/impostazioni">{t('Impostazioni gare')}<small>{t('Crea, modifica ed elimina le gare')}</small></Link></li>
             <li><Link href="/account/utenti">{t('Utenti')}<small>{t('Chi è iscritto, stato di Strava, elimina')}</small></Link></li>
           </ul>
+          {/* Avvisi in tempo reale da Strava: corse nuove, modificate o cancellate (una volta sola) */}
+          {sp.webhook === 'attivo' && <div className="notice">{t('Gli aggiornamenti in tempo reale da Strava sono già attivi.')}</div>}
+          {sp.webhook === 'attivato' && <div className="notice">{t('Aggiornamenti in tempo reale da Strava attivati.')}</div>}
+          {sp.webhook === 'errore' && <div className="notice error">{t('Strava non ha accettato l\'iscrizione. Riprova tra qualche minuto.')}</div>}
+          <form className="webhook-form" method="post" action="/api/strava/webhook/iscrizione">
+            <p className="hint">{t('Con gli aggiornamenti in tempo reale, le corse nuove, modificate o cancellate su Strava si aggiornano subito anche qui. Basta attivarli una volta.')}</p>
+            <button className="button secondary" type="submit">{t('Attiva o controlla gli aggiornamenti da Strava')}</button>
+          </form>
         </section>
       )}
 

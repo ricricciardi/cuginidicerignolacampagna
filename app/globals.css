@@ -646,6 +646,9 @@ button.photo-button:active { transform: scale(.96); transition-duration: .05s; }
 .admin-links li:last-child a { border-bottom: 0; padding-bottom: 0; }
 .admin-links a::after { content: '›'; justify-self: end; margin-top: -1.9em; font-size: var(--fs-l); color: var(--muted); }
 .admin-links small { font-weight: 400; color: var(--muted); }
+.webhook-form { display: grid; gap: var(--s3); margin-top: var(--s4); padding-top: var(--s4); border-top: 1px solid var(--line); }
+.webhook-form .hint { margin: 0; }
+.webhook-form .button { width: 100%; }
 .users-list .user-main { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s3); }
 .users-list .user-main strong { display: block; overflow-wrap: anywhere; }
 .users-list .user-main small { color: var(--muted); overflow-wrap: anywhere; }
@@ -826,4 +829,9 @@ button.rules-link { color: var(--cyan); }
   box-shadow: 0 0 14px rgba(215,255,31,.4); }
 .lang-switch.compact { display: flex; width: max-content; margin: 0 0 var(--s4) auto; }
 .lang-switch.compact button { min-height: 36px; padding: 0 var(--s3); font-size: var(--fs-xs); }
+
+/* «Powered by Strava» in fondo alle pagine (logo ufficiale, non modificato) */
+.strava-attrib { max-width: 40rem; margin: 0 auto; padding: 0 1.25rem var(--s6); display: flex; justify-content: center; }
+.strava-attrib a { display: inline-flex; align-items: center; min-height: var(--tap); opacity: .85; }
+.strava-attrib img { display: block; width: 146px; height: auto; }
 

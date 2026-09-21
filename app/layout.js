@@ -34,6 +34,14 @@ export default async function RootLayout({ children }) {
         </header>
         {loggedIn && <Nav name={me?.athlete_name ?? me?.email} avatar={me?.avatar_url} />}
         {children}
+        {/* Obbligo delle regole di Strava: logo ufficiale «Powered by Strava» dove si mostrano i loro dati */}
+        {loggedIn && (
+          <footer className="strava-attrib">
+            <a href="https://www.strava.com" target="_blank" rel="noopener">
+              <img src="/powered-by-strava.svg" alt="Powered by Strava" width="146" height="15" />
+            </a>
+          </footer>
+        )}
         <PressFx />
         {loggedIn && <Tour enabled={Boolean(me?.strava)} />}
         </LangProvider>
