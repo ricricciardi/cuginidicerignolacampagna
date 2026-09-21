@@ -23,7 +23,7 @@ const sections = (t) => [
     id: 'corse', title: t('Quali corse valgono'),
     body: (
       <ul>
-        <li>{t('Solo attività Strava di tipo corsa su strada, registrate con il GPS.')}</li>
+        <li>{t('Solo attività Strava di tipo corsa o camminata su strada, registrate con il GPS.')}</li>
         <li>{t('Non valgono il tapis roulant, il trail, le corse virtuali e le attività inserite a mano o senza traccia GPS.')}</li>
         <li>{t('Valgono anche le attività impostate su Strava come visibili «Solo io».')}</li>
         <li>{t('La corsa deve superare la distanza della gara. Non serve fermarsi: si può correre di più.')}</li>

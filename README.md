@@ -63,7 +63,7 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
 
 ## Regole di selezione (lib/filter.js)
 
-- `sport_type` uguale a `Run`: esclude trail (`TrailRun`) e virtuale (`VirtualRun`).
+- `sport_type` uguale a `Run` o `Walk`: esclude trail (`TrailRun`), virtuale (`VirtualRun`) ed escursione (`Hike`).
 - Escluso il tapis roulant (`trainer: true`).
 - Distanza strettamente maggiore di 10.000 m.
 - Escluse le attività senza GPS: inserite a mano o registrate senza traccia.

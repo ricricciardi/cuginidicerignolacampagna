@@ -133,6 +133,12 @@ export default async function Account({ searchParams }) {
             <li><Link href="/gare/impostazioni">{t('Impostazioni gare')}<small>{t('Crea, modifica ed elimina le gare')}</small></Link></li>
             <li><Link href="/account/utenti">{t('Utenti')}<small>{t('Chi è iscritto, stato di Strava, elimina')}</small></Link></li>
           </ul>
+          {sp.tutti === 'ok' && <div className="notice">{t('Aggiornati {fatti} iscritti su {di}: {n} corse nuove salvate.', { fatti: sp.fatti, di: sp.di, n: sp.salvate })}{sp.resta && ` ${t('Non è finito tutto: premi di nuovo tra qualche minuto.')}`}</div>}
+          {sp.tutti === 'nessuna_gara' && <div className="notice">{t('Nessuna gara è ancora partita: non c\'è niente da leggere.')}</div>}
+          <form className="webhook-form" method="post" action="/api/strava/sync-tutti">
+            <p className="hint">{t('Legge subito da Strava le corse nuove di tutti gli iscritti, come l\'aggiornamento del mattino. Può metterci fino a un minuto.')}</p>
+            <button className="button secondary" type="submit">{t('Aggiorna tutti da Strava')}</button>
+          </form>
           {/* Avvisi in tempo reale da Strava: corse nuove, modificate o cancellate (una volta sola) */}
           {sp.webhook === 'attivo' && <div className="notice">{t('Gli aggiornamenti in tempo reale da Strava sono già attivi.')}</div>}
           {sp.webhook === 'attivato' && <div className="notice">{t('Aggiornamenti in tempo reale da Strava attivati.')}</div>}

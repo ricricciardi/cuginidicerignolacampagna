@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { sql } from '@/lib/db';
 import { requireAdminPage } from '@/lib/admin';
 import Avatar from '../../avatar';
+import RaceToggle from './race-toggle';
 import { phase } from '@/lib/competition';
 import { getT } from '@/lib/lingua';
 import { fmtDist } from '@/lib/format';
@@ -73,8 +74,7 @@ export default async function Utenti({ searchParams }) {
                           {c.name}
                           <small>{fmtDist(c.distance_m)} · {phase(c, now) === 'running' ? t('in corso') : t('da iniziare')}</small>
                         </span>
-                        <form method="post" action={`/api/utenti/${u.id}/gare`}>
-                          <input type="hidden" name="competition_id" value={c.id} />
+                        <RaceToggle action={`/api/utenti/${u.id}/gare`} competitionId={c.id}>
                           {inside ? (
                             <>
                               <span className="in-race">{t('In gara ✓')}</span>
@@ -83,7 +83,7 @@ export default async function Utenti({ searchParams }) {
                           ) : (
                             <button className="button small" type="submit" name="azione" value="aggiungi">{t('Aggiungi')}</button>
                           )}
-                        </form>
+                        </RaceToggle>
                       </li>
                     );
                   })}

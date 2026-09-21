@@ -11,6 +11,7 @@ export default async function Register({ searchParams }) {
   const t = await getT();
   return (
     <main>
+      <p className="back"><Link href="/login">{t('Torna all\'accesso')}</Link></p>
       <h1>{t('Crea un account')}</h1>
       <p>{t('Dopo la registrazione potrai collegare il tuo account Strava.')}</p>
       {error && <div className="notice error">{t(ERRORS[error] ?? 'Registrazione non riuscita.')}</div>}
@@ -19,7 +20,6 @@ export default async function Register({ searchParams }) {
         <PasswordField label={t('Password')} autoComplete="new-password" minLength={8} hint={t('Almeno 8 caratteri.')} />
         <button type="submit">{t('Crea account')}</button>
       </form>
-      <p className="switch">{t('Hai già un account?')} <Link href="/login">{t('Accedi')}</Link></p>
     </main>
   );
 }
