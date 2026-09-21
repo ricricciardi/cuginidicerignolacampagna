@@ -830,8 +830,9 @@ button.rules-link { color: var(--cyan); }
 .lang-switch.compact { display: flex; width: max-content; margin: 0 0 var(--s4) auto; }
 .lang-switch.compact button { min-height: 36px; padding: 0 var(--s3); font-size: var(--fs-xs); }
 
-/* «Powered by Strava» in fondo alle pagine (logo ufficiale, non modificato) */
-.strava-attrib { max-width: 40rem; margin: 0 auto; padding: 0 1.25rem var(--s6); display: flex; justify-content: center; }
-.strava-attrib a { display: inline-flex; align-items: center; min-height: var(--tap); opacity: .85; }
-.strava-attrib img { display: block; width: 146px; height: auto; }
-
+/* «Powered by Strava» come nota a piè di pagina: il nostro nome, poi il logo ufficiale (non modificato) */
+.strava-attrib { max-width: 40rem; margin: 0 auto; padding: 0 1.25rem var(--s6); display: flex; flex-wrap: wrap;
+  justify-content: center; align-items: center; gap: 2px var(--s2); opacity: .55;
+  font-size: var(--fs-xs); color: var(--muted); }
+.strava-attrib a { display: inline-flex; align-items: center; min-height: var(--tap); }
+.strava-attrib img { display: block; width: 110px; height: auto; }

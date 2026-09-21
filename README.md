@@ -57,8 +57,9 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
   una corsa nuova arriva subito, con classifiche e notifiche.
 - Iscrizione una tantum: Il mio account → Amministrazione → «Attiva o controlla gli aggiornamenti da
   Strava» (usa STRAVA_CLIENT_ID/SECRET e APP_URL; la parola di verifica deriva da CRON_SECRET).
-- In fondo alle pagine c'è il logo ufficiale «Powered by Strava» (public/powered-by-strava.svg),
-  come chiedono le regole di Strava.
+- Nelle pagine con dati di Strava (gare e Le mie corse) c'è in fondo «Un'app dei
+  Cuginidicerignolacampagna · dati da» + logo ufficiale «Powered by Strava» (public/powered-by-strava.svg),
+  come chiedono le regole di Strava (app/strava-attrib.js).
 
 ## Regole di selezione (lib/filter.js)
 
