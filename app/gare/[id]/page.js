@@ -29,13 +29,16 @@ export default async function Classifica({ params, searchParams }) {
   // Le classifiche si preparano tutte insieme e si cambiano nel browser (view-tabs.js).
   // Miglior parziale: il km più veloce di ogni corsa, solo per curiosità.
   const kmRuns = runs.map((r) => ({ ...r, time_s: bestKmSplit(r.splits), elev_m: null }));
+  // Punteggio per primo (è la classifica più importante) e senza parametri nell'indirizzo;
+  // senza punteggio la prima è Tempo.
+  const base = `/gare/${c.id}`;
   const views = [
-    { key: 'tempo', href: `/gare/${c.id}`, label: t('Tempo'), rows: standings(runs, people) },
-    { key: 'tratto', href: `/gare/${c.id}?vista=tratto`, label: t('Miglior parziale'), rows: standings(kmRuns, people),
-      legend: t('Il chilometro più veloce di ogni corsa in gara, dai parziali di Strava. È solo per curiosità: non cambia la classifica della gara.') },
-    graded && { key: 'eta', href: `/gare/${c.id}?vista=eta`, label: t('Punteggio'), rows: ageStandings(runs, people), byAge: true,
+    graded && { key: 'eta', href: base, label: t('Punteggio'), rows: ageStandings(runs, people), byAge: true,
       legend: <>{t('Punteggio USATF 2025: il tuo tempo confrontato con il migliore al mondo per la tua età e il tuo sesso. Più alto è meglio.')}
         {' '}<Link href="/regolamento#eta">{t('Come si calcola')}</Link></> },
+    { key: 'tempo', href: graded ? `${base}?vista=tempo` : base, label: t('Tempo'), rows: standings(runs, people) },
+    { key: 'tratto', href: `${base}?vista=tratto`, label: t('Miglior parziale'), rows: standings(kmRuns, people),
+      legend: t('Il chilometro più veloce di ogni corsa in gara, dai parziali di Strava. È solo per curiosità: non cambia la classifica della gara.') },
   ].filter(Boolean);
   const initial = Math.max(0, views.findIndex((v) => v.key === sp.vista));
 

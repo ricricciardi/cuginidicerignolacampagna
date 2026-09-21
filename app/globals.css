@@ -697,7 +697,7 @@ option { color: #140a24; }
 
 /* Classifica: scelta tra tempo e punteggio per età e sesso */
 .view-switch { margin: 0 0 var(--s4); }
-/* Fino a tre voci (Tempo, Miglior parziale, Punteggio): larghezze secondo il testo, su una riga. */
+/* Fino a tre voci (Punteggio, Tempo, Miglior parziale): larghezze secondo il testo, su una riga. */
 .view-switch { grid-auto-columns: auto; max-width: 100%; }
 .view-switch a { padding: 0 var(--s3); white-space: nowrap; }
 .board .pct { text-align: right; font-size: var(--fs-l); line-height: 1; font-weight: 900; font-style: italic;
