@@ -15,14 +15,24 @@ export default function SegmentedLinks({ items, label, className, scroll = true,
   const [active, setActive] = useState(current);
   useEffect(() => setActive(current), [current]);
 
+  // Mentre arriva la vista nuova, il contenuto sotto il selettore (.nav-content con
+  // data-nav = label) diventa uno skeleton. Si toglie quando la vista cambia o, per sicurezza, dopo 8 s.
+  useEffect(() => {
+    if (document.documentElement.dataset.navPending === label) delete document.documentElement.dataset.navPending;
+  }, [current, label]);
+  const startPending = () => {
+    const root = document.documentElement;
+    root.dataset.navPending = label;
+    setTimeout(() => { if (root.dataset.navPending === label) delete root.dataset.navPending; }, 8000);
+  };
+
   const nav = useRef(null);
   const links = useRef([]);
   const thumbEl = useRef(null);
 
   // A ogni tocco il cursore si gonfia e rimbalza alla sua misura (anche sulla voce già scelta).
   // Usa la proprietà scale, separata da transform, così non disturba lo scorrimento.
-  const pulse = () => {
-    const el = thumbEl.current;
+  const pulse = (el = thumbEl.current) => {
     if (!el?.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     el.animate(
       [{ scale: '1' }, { scale: '1.06', offset: 0.3 }, { scale: '0.98', offset: 0.65 }, { scale: '1' }],
@@ -68,8 +78,10 @@ export default function SegmentedLinks({ items, label, className, scroll = true,
               aria-current={i === active ? 'page' : undefined}
               onClick={(e) => {
                 if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+                if (i !== active) startPending();
                 setActive(i);
-                if (items[i].thumb !== false) pulse();
+                // Senza cursore (tab dell'account) pulsa la foto al suo posto.
+                pulse(items[i].thumb === false ? e.currentTarget.firstElementChild : undefined);
               }}>
           {it.label}
         </Link>

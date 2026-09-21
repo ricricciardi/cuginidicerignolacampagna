@@ -31,10 +31,12 @@ export default async function Classifica({ params, searchParams }) {
       {notice && <div className="notice">{NOTICES[notice]}</div>}
       <CompetitionHeader c={c} current="classifica" many={count > 1} />
 
+      <div className="nav-content" data-nav="Sezioni della gara">
       {c.age_grading && <SegmentedLinks className="segmented view-switch" label="Tipo di classifica" scroll={false} replace items={[
         { href: `/gare/${c.id}`, label: 'Tempo', current: !byAge },
         { href: `/gare/${c.id}?vista=eta`, label: 'Punteggio', current: byAge },
       ]} />}
+      <div className="nav-content" data-nav="Tipo di classifica">
       {byAge && (
         <p className="legend">
           Punteggio USATF 2025: il tuo tempo confrontato con il migliore al mondo per la tua età e il tuo sesso.
@@ -77,6 +79,8 @@ export default async function Classifica({ params, searchParams }) {
         </ol>
         </>
       )}
+      </div>
+      </div>
     </main>
   );
 }

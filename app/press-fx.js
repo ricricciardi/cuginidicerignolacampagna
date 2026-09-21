@@ -11,6 +11,8 @@ const RELEASE = [{ scale: '0.94' }, { scale: '1.04', offset: 0.45 }, { scale: '0
 
 export default function PressFx() {
   useEffect(() => {
+    // Pagina caricata bene: la prossima volta app/error.js può di nuovo ricaricare da solo.
+    try { sessionStorage.removeItem('ricaricato'); } catch {}
     if (!Element.prototype.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let pressed = null;
 

@@ -17,12 +17,14 @@ export default async function Confronto({ params }) {
   return (
     <main>
       <CompetitionHeader c={c} current="confronto" many={count > 1} />
+      <div className="nav-content" data-nav="Sezioni della gara">
       {series.length === 0 ? (
         <p>Ancora nessun tempo da confrontare. I primi arrivano la notte dopo la partenza.</p>
       ) : (
         <CompareChart series={series} me={me} km={c.km}
                       start={start.getTime()} end={Math.min(Date.now(), end.getTime())} />
       )}
+      </div>
     </main>
   );
 }
