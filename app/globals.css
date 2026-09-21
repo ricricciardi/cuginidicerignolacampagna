@@ -498,7 +498,7 @@ input:disabled { opacity: .5; }
   font-size: var(--fs-s); font-weight: 800; color: var(--muted); }
 .avatar.lg { width: 72px; height: 72px; font-size: var(--fs-l); }
 .avatar.sm { width: 32px; height: 32px; font-size: var(--fs-xs); }
-.account-head { display: flex; align-items: center; gap: var(--s4); }
+.account-head { display: flex; align-items: center; gap: var(--s4); margin-bottom: var(--s5); }
 .account-head h1 { margin: 0; }
 /* Scheda di una sezione dell'account */
 .card form.stack { margin-top: var(--s4); }
