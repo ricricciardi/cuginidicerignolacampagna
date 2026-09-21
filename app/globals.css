@@ -416,7 +416,7 @@ button[data-state="saving"] { opacity: .75; }
 /* Confronto */
 .compare { display: grid; gap: var(--s3); }
 .compare .legend { margin: 0; }
-.segmented { display: inline-grid; grid-template-columns: 1fr 1fr; padding: 4px; gap: 4px; justify-self: start;
+.segmented { display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; padding: 4px; gap: 4px; justify-self: start;
   border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.06); }
 .segmented button { min-height: var(--tap); padding: 0 var(--s4); font-size: var(--fs-s); font-weight: 700;
   background: none; box-shadow: none; color: var(--muted); }
@@ -697,6 +697,9 @@ option { color: #140a24; }
 
 /* Classifica: scelta tra tempo e punteggio per età e sesso */
 .view-switch { margin: 0 0 var(--s4); }
+/* Fino a tre voci (Tempo, Miglior tratto, Punteggio): larghezze secondo il testo, su una riga. */
+.view-switch { grid-auto-columns: auto; max-width: 100%; }
+.view-switch a { padding: 0 var(--s3); white-space: nowrap; }
 .board .pct { text-align: right; font-size: var(--fs-l); line-height: 1; font-weight: 900; font-style: italic;
   font-variant-numeric: tabular-nums; color: var(--lime); text-shadow: 0 0 14px rgba(215,255,31,.45); }
 .board .senza-tempo .pct { color: var(--muted); text-shadow: none; }
