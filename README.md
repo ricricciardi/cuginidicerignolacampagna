@@ -44,7 +44,9 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
   - gara che parte oggi / ultimo giorno: dall'aggiornamento notturno, una volta sola
     (`notifications_sent`);
   - aggiunto a una gara: quando l'amministratore salva i partecipanti (non a sé stesso);
-  - auguri di compleanno: dall'aggiornamento notturno, solo al festeggiato, una volta all'anno.
+  - auguri di compleanno: dall'aggiornamento notturno, solo al festeggiato, una volta all'anno;
+  - nuovo tempo: per ogni corsa nuova che vale in una gara, a tutti i partecipanti (anche a chi ha corso)
+    («Nuovo tempo 10 minuti e 23 secondi — Riccardo stat atteint, vè chien!!», frase fissa in tutte le lingue).
 - Le iscrizioni scadute si cancellano da sole al primo invio fallito.
 
 ## Regole di selezione (lib/filter.js)

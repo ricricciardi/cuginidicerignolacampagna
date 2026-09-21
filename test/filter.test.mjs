@@ -255,3 +255,11 @@ test('tempo alla distanza di gara: dai 100 m se ci sono, se no dai parziali al k
   assert.equal(timeAtDistance({ splits: run.splits }, 2000), 510); // senza stream, km interi
   assert.equal(timeAtDistance({ splits: run.splits }, 1500), null); // senza stream, sotto il km intero no
 });
+
+import { fmtTimeWords } from '../lib/format.js';
+test('tempo in parole per le notifiche', () => {
+  assert.equal(fmtTimeWords(623), '10 minuti e 23 secondi');
+  assert.equal(fmtTimeWords(4023), '1 ora, 7 minuti e 3 secondi');
+  assert.equal(fmtTimeWords(600), '10 minuti');
+  assert.equal(fmtTimeWords(3661), '1 ora, 1 minuto e 1 secondo');
+});

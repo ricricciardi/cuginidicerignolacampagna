@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { getUserId } from '@/lib/session';
 import { syncUser, syncScope } from '@/lib/sync';
-import { standingsSnapshot, notifyStandings } from '@/lib/notify';
+import { standingsSnapshot, notifyStandings, notifyNewTimes } from '@/lib/notify';
 
 export const maxDuration = 60; // secondi, limite della funzione su Vercel
 
@@ -18,7 +18,10 @@ export async function POST(req) {
   const before = await standingsSnapshot();
   const r = await syncUser(conn, await syncScope());
   // Corse nuove: record e sorpassi (a chi viene superato arriva la notifica).
-  if (r.saved) await notifyStandings(before, await standingsSnapshot());
+  if (r.saved) {
+    await notifyStandings(before, await standingsSnapshot());
+    await notifyNewTimes(userId, r.savedIds);
+  }
   const q = new URLSearchParams({ synced: String(r.saved), pending: String(r.pending) });
   if (r.error) q.set('error', r.error);
   return go(req, `/dashboard?${q}`);

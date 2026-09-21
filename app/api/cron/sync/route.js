@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { syncUser, syncScope } from '@/lib/sync';
-import { standingsSnapshot, notifyStandings, notifyRaceDays, notifyBirthdays } from '@/lib/notify';
+import { standingsSnapshot, notifyStandings, notifyRaceDays, notifyBirthdays, notifyNewTimes } from '@/lib/notify';
 
 export const maxDuration = 60;     // secondi, limite della funzione su Vercel
 const TIME_BUDGET_MS = 50_000;     // margine per chiudere prima del limite
@@ -31,6 +31,7 @@ export async function GET(req) {
   for (const conn of conns) {
     if (Date.now() - started > TIME_BUDGET_MS) { report.stopped = 'tempo'; break; }
     const r = await syncUser(conn, scope);
+    report.newTimes = (report.newTimes ?? 0) + await notifyNewTimes(conn.user_id, r.savedIds);
     report.saved += r.saved;
     report.pending += r.pending;
     if (r.error === 'rate') { report.stopped = 'limite Strava'; break; }
