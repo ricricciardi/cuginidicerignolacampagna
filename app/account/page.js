@@ -8,6 +8,7 @@ import PhotoPicker from './photo-picker';
 import StravaLogo from '../strava-logo';
 import StravaConsent from '../strava-consent';
 import PushToggle from './push-toggle';
+import { ReopenTour } from '../tour';
 import { InstallCard } from '../install-app';
 import { pushPublicKey } from '@/lib/push';
 
@@ -137,6 +138,7 @@ export default async function Account({ searchParams }) {
 
       <section className="logout">
         <Link className="rules-link" href="/regolamento">Regolamento</Link>
+        <ReopenTour />
         <form method="post" action="/api/auth/logout">
           <button className="quiet" type="submit">Esci dall'account</button>
         </form>

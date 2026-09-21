@@ -4,6 +4,7 @@ import { getUserId } from '@/lib/session';
 import Nav from './nav';
 import Brand from './brand';
 import PressFx from './press-fx';
+import Tour from './tour';
 
 export const metadata = {
   title: 'Cuginidicerignolacampagna',
@@ -31,6 +32,7 @@ export default async function RootLayout({ children }) {
         {loggedIn && <Nav name={me?.athlete_name ?? me?.email} avatar={me?.avatar_url} />}
         {children}
         <PressFx />
+        {loggedIn && <Tour enabled={Boolean(me?.strava)} />}
       </body>
     </html>
   );
