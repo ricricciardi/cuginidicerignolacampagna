@@ -43,6 +43,12 @@
   font-feature-settings: "tnum" 0;
 }
 * { box-sizing: border-box; }
+/* Tocco: niente evidenziatore di iOS/Android (su questo sfondo sembrava viola). Il riscontro
+   visivo lo danno gli effetti di pressione dei singoli elementi. */
+html { -webkit-tap-highlight-color: transparent; }
+/* Pulsanti e voci di navigazione: tenendo premuto non si seleziona il testo e non compare il menu di iOS */
+button, .button, .tabs a, .subtabs a, .segmented a, .board a, .comps a, .admin-links a, .history summary, .brand {
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 body {
   margin: 0; min-height: 100vh; font-size: var(--fs-m);
   background: transparent;
