@@ -18,6 +18,8 @@ export default async function Gare() {
                 order by c.start_date desc, c.id desc`)
     .map((c) => ({ ...c, phase: phase(c, now) }))
     .sort((a, b) => ORDER[a.phase] - ORDER[b.phase]);
+  // Una sola gara: inutile passare dall'elenco, si va dritti alla classifica.
+  if (comps.length === 1) redirect(`/gare/${comps[0].id}`);
 
   return (
     <main>

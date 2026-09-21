@@ -29,7 +29,7 @@ export default async function Classifica({ params, searchParams }) {
   return (
     <main>
       {notice && <div className="notice">{NOTICES[notice]}</div>}
-      <CompetitionHeader c={c} current="classifica" />
+      <CompetitionHeader c={c} current="classifica" userId={me} />
 
       {c.age_grading && <SegmentedLinks className="segmented view-switch" label="Tipo di classifica" scroll={false} replace items={[
         { href: `/gare/${c.id}`, label: 'Tempo', current: !byAge },

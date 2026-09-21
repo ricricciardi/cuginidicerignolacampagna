@@ -16,7 +16,7 @@ export default async function Confronto({ params }) {
 
   return (
     <main>
-      <CompetitionHeader c={c} current="confronto" />
+      <CompetitionHeader c={c} current="confronto" userId={me} />
       {series.length === 0 ? (
         <p>Ancora nessun tempo da confrontare. I primi arrivano la notte dopo la partenza.</p>
       ) : (

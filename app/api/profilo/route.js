@@ -11,10 +11,15 @@ export async function POST(req) {
   const fd = await req.formData();
   const sex = String(fd.get('sex') ?? '');
   const birth = String(fd.get('birth_date') ?? '');
-  const valid = /^\d{4}-\d{2}-\d{2}$/.test(birth) &&
-    new Date(birth + 'T00:00:00Z').toISOString().slice(0, 10) === birth &&
+  const parsed = new Date(birth + 'T00:00:00Z');
+  const valid = /^\d{4}-\d{2}-\d{2}$/.test(birth) && !Number.isNaN(parsed.getTime()) &&
+    parsed.toISOString().slice(0, 10) === birth &&
     birth >= '1920-01-01' && birth <= new Date().toISOString().slice(0, 10);
-  if (!['M', 'F'].includes(sex) || !valid) return go(req, '/account?error=profilo#profilo');
+  // Dal modulo con JavaScript arriva Accept: application/json e si risponde senza reindirizzare.
+  const json = (req.headers.get('accept') ?? '').includes('application/json');
+  if (!['M', 'F'].includes(sex) || !valid) {
+    return json ? NextResponse.json({ ok: false }, { status: 400 }) : go(req, '/account?error=profilo#profilo');
+  }
   await sql`update users set sex = ${sex}, birth_date = ${birth} where id = ${userId}`;
-  return go(req, '/account?profilo=1#profilo');
+  return json ? NextResponse.json({ ok: true }) : go(req, '/account?profilo=1#profilo');
 }

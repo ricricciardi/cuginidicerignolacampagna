@@ -181,6 +181,7 @@ button:not(.quiet):not(.reveal):active, .button:active {
   transition-duration: .05s;
 }
 button:disabled { cursor: default; filter: none; transform: none; }
+button[data-state="saving"] { opacity: .75; }
 @media (prefers-reduced-motion: reduce) {
   button:not(.quiet):not(.reveal):active, .button:active { transform: none; }
 }

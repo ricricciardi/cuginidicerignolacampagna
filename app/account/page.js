@@ -3,6 +3,7 @@ import { sql } from '@/lib/db';
 import { getUserId } from '@/lib/session';
 import { isAdmin } from '@/lib/admin';
 import Avatar from '../avatar';
+import ProfileForm from './profile-form';
 
 const fmtStamp = (d) => new Date(d).toLocaleString('it-IT', {
   timeZone: 'Europe/Rome', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -55,21 +56,7 @@ export default async function Account({ searchParams }) {
           Servono per confrontare i tempi di età e sesso diversi con le tabelle USATF 2025.
           La data di nascita non viene mai mostrata agli altri: vedono solo il punteggio. <a href="/regolamento#eta">Come funziona</a>
         </p>
-        <form className="stack" method="post" action="/api/profilo">
-          <div className="dates">
-            <label>Sesso
-              <select name="sex" required defaultValue={me?.sex ?? ''}>
-                <option value="" disabled>Scegli</option>
-                <option value="M">Uomo</option>
-                <option value="F">Donna</option>
-              </select>
-            </label>
-            <label>Data di nascita
-              <input type="date" name="birth_date" required defaultValue={me?.birth_date ?? ''} max={new Date().toISOString().slice(0, 10)} />
-            </label>
-          </div>
-          <button type="submit">Salva</button>
-        </form>
+        <ProfileForm sex={me?.sex} birthDate={me?.birth_date} today={new Date().toISOString().slice(0, 10)} />
       </section>
 
       <section className="card strava-card" aria-labelledby="strava-title">
