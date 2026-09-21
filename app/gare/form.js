@@ -17,7 +17,7 @@ export default async function CompetitionForm({ action, values, people, errors =
       <label>{t('Distanza in metri')}
         <input name="distance_m" type="number" inputMode="numeric" required min={DIST_MIN} max={DIST_MAX} step={DIST_STEP}
                defaultValue={values.distance_m ?? ''} placeholder="5000" />
-        <span className="hint">{t('A passi di 100 m: 500 per mezzo chilometro, 5000 per 5 km, 21100 per la mezza maratona. Conta il tempo al passaggio di questa distanza, anche se la corsa è più lunga.')}</span>
+        <span className="hint">{t('A passi di 100 m: 500 per mezzo chilometro, 5000 per 5 km, 21100 per la mezza maratona. Se la corsa è più lunga, conta il tempo al passaggio di questa distanza (o il tratto migliore, vedi sotto).')}</span>
         {err('distance_m')}
       </label>
       <div className="dates">
@@ -39,6 +39,14 @@ export default async function CompetitionForm({ action, values, people, errors =
         <span>
           <strong>{t('Applica il coefficiente età e sesso')}</strong>
           {t('Aggiunge la classifica a punteggio accanto a quella a tempo. Vale dal miglio (1.609 m) in su: per le gare più corte c\'è solo il tempo.')}
+        </span>
+      </label>
+
+      <label className="check toggle">
+        <input type="checkbox" name="best_segment" defaultChecked={values.best_segment ?? false} />
+        <span>
+          <strong>{t('Conta il miglior tratto della corsa')}</strong>
+          {t('Vale il tratto più veloce lungo quanto la gara, in qualunque punto della corsa: in una gara di 1 km, chi corre 5 km prende il suo km migliore. Spenta, conta il tempo dalla partenza.')}
         </span>
       </label>
 

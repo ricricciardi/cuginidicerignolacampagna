@@ -83,6 +83,9 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
   vede (l'amministratore le vede tutte).
 - Per ogni gara si sceglie se applicare il coefficiente età e sesso (`age_grading`):
   senza, c'è solo la classifica a tempo.
+- Per ogni gara si sceglie anche se contare il miglior tratto (`best_segment`): il pezzo più
+  veloce lungo quanto la gara, in qualunque punto della corsa, invece del tempo dalla partenza.
+  Colonna aggiunta dopo: `alter table competitions add column if not exists best_segment boolean not null default false;`
 - Le stesse corse valgono per tutte le gare: il tempo di ogni gara si calcola dai
   parziali salvati, senza richiamare Strava.
 

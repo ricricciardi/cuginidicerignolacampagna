@@ -107,11 +107,11 @@ test('stato in una riga', () => {
   assert.equal(statusLine(gara, new Date('2027-09-26T12:00:00Z')), 'Conclusa');
 });
 test('modulo valido', () => assert.deepEqual(
-  validate({ name: ' Prova ', distance_m: '5000', start_date: '2026-09-01', end_date: '2026-09-30', participants: ['2', '1', '2'], age_grading: 'on' }).value,
-  { name: 'Prova', distance_m: 5000, start_date: '2026-09-01', end_date: '2026-09-30', participants: [2, 1], age_grading: true }));
+  validate({ name: ' Prova ', distance_m: '5000', start_date: '2026-09-01', end_date: '2026-09-30', participants: ['2', '1', '2'], age_grading: 'on', best_segment: 'on' }).value,
+  { name: 'Prova', distance_m: 5000, start_date: '2026-09-01', end_date: '2026-09-30', participants: [2, 1], age_grading: true, best_segment: true }));
 test('modulo: un solo partecipante arriva come stringa, coefficiente spento se non spuntato', () => assert.deepEqual(
   validate({ name: 'x', distance_m: '500', start_date: '2026-09-01', end_date: '2026-09-02', participants: '3' }).value,
-  { name: 'x', distance_m: 500, start_date: '2026-09-01', end_date: '2026-09-02', participants: [3], age_grading: false }));
+  { name: 'x', distance_m: 500, start_date: '2026-09-01', end_date: '2026-09-02', participants: [3], age_grading: false, best_segment: false }));
 test('modulo: senza partecipanti rifiutato', () =>
   assert.ok(validate({ name: 'x', distance_m: '5000', start_date: '2026-09-01', end_date: '2026-09-02' }).errors.participants));
 test('modulo: distanza in metri a passi di 100, da 100 a 100.000', () => {

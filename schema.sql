@@ -35,6 +35,7 @@ create table if not exists competitions (
   start_date  text not null check (start_date ~ '^\d{4}-\d{2}-\d{2}$'),  -- ora italiana, dalle 00:00
   end_date    text not null check (end_date ~ '^\d{4}-\d{2}-\d{2}$'),    -- ora italiana, fino alle 24:00
   age_grading boolean not null default true,  -- classifica a punteggio (coefficiente età e sesso)
+  best_segment boolean not null default false,  -- tempo sul tratto più veloce della corsa, non sui primi metri
   created_by  integer references users(id) on delete set null,
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now(),

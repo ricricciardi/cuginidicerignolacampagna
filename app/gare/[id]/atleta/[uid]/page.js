@@ -50,7 +50,9 @@ export default async function Atleta({ params }) {
           <div className="chart-wrap"><ProgressChart runs={runs} dist={fmtDist(c.distance_m)} t={t} /></div>
         </>
       ) : (
-        <p>{t('Nessun tempo sui primi {dist} in questa gara.', { dist: fmtDist(c.distance_m) })}</p>
+        <p>{c.best_segment
+          ? t('Nessun tempo su {dist} in questa gara.', { dist: fmtDist(c.distance_m) })
+          : t('Nessun tempo sui primi {dist} in questa gara.', { dist: fmtDist(c.distance_m) })}</p>
       )}
       {timed.length > 0 && c.distance_m >= 1000 && <p className="legend">{t('Tocca una corsa per vedere i parziali al km.', { dist: fmtDist(c.distance_m) })}</p>}
       <ul className="history">
