@@ -1,6 +1,6 @@
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
+import { requireStravaUser } from '@/lib/admin';
 import { sql } from '@/lib/db';
-import { getUserId } from '@/lib/session';
 import { loadCompetitionFor, competitionRuns } from '@/lib/standings';
 import { markRecords } from '@/lib/efforts';
 import { ProgressChart } from '@/lib/chart';
@@ -10,17 +10,17 @@ import Splits from '../../../splits';
 import RunDetails from '../../../run-details';
 
 export default async function Atleta({ params }) {
-  const me = await getUserId();
-  if (!me) redirect('/login');
+  const me = await requireStravaUser();
   const p = await params;
   const c = await loadCompetitionFor(p.id, me);
   const uid = Number(p.uid);
   if (!c || !Number.isInteger(uid)) notFound();
 
   // Solo chi partecipa a questa gara ha una pagina qui.
-  const [athlete] = await sql`select s.athlete_name, s.avatar_url from strava_connections s
-                              join competition_participants p on p.user_id = s.user_id and p.competition_id = ${c.id}
-                              where s.user_id = ${uid} and s.consent_at is not null`;
+  const [athlete] = await sql`select c.athlete_name, coalesce('/api/foto/' || u.id || '?v=' || u.photo_v, c.avatar_url) as avatar_url
+                              from strava_connections c join users u on u.id = c.user_id
+                              join competition_participants p on p.user_id = c.user_id and p.competition_id = ${c.id}
+                              where c.user_id = ${uid} and c.consent_at is not null`;
   if (!athlete) notFound();
 
   const runs = markRecords(await competitionRuns(c, uid));

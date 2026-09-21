@@ -4,7 +4,9 @@ create table if not exists users (
   password_hash text not null,
   sex           text check (sex in ('M', 'F')),                     -- per la classifica per età e sesso
   birth_date    text check (birth_date ~ '^\d{4}-\d{2}-\d{2}$'),  -- mai mostrata agli altri
-  is_admin      boolean not null default false,                   -- gestisce gare e utenti; si imposta solo dal database
+  is_admin      boolean not null default false,
+  photo         text,    -- foto caricata nel sito: JPEG 256x256 in base64; ha la precedenza su quella di Strava
+  photo_v       bigint,  -- versione della foto (per la cache del browser); null = foto di Strava                   -- gestisce gare e utenti; si imposta solo dal database
   created_at    timestamptz not null default now()
 );
 

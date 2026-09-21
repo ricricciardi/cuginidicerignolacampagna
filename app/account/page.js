@@ -2,8 +2,9 @@ import { redirect } from 'next/navigation';
 import { sql } from '@/lib/db';
 import { getUserId } from '@/lib/session';
 import { isAdmin } from '@/lib/admin';
-import Avatar from '../avatar';
 import ProfileForm from './profile-form';
+import PhotoPicker from './photo-picker';
+import StravaLogo from '../strava-logo';
 
 const fmtStamp = (d) => new Date(d).toLocaleString('it-IT', {
   timeZone: 'Europe/Rome', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -24,7 +25,7 @@ export default async function Account({ searchParams }) {
   if (!userId) redirect('/login');
   const sp = await searchParams;
 
-  const [me] = await sql`select email, sex, birth_date from users where id = ${userId}`;
+  const [me] = await sql`select email, sex, birth_date, photo_v from users where id = ${userId}`;
   const [conn] = await sql`select athlete_name, avatar_url, scope, connected_at, last_synced_at, last_sync_error
                            from strava_connections where user_id = ${userId}`;
 
@@ -35,17 +36,17 @@ export default async function Account({ searchParams }) {
   return (
     <main>
       <div className="account-head">
-        <Avatar name={conn?.athlete_name ?? me?.email} src={conn?.avatar_url} size="lg" />
+        <PhotoPicker name={conn?.athlete_name ?? me?.email}
+                     src={me?.photo_v ? `/api/foto/${userId}?v=${me.photo_v}` : conn?.avatar_url}
+                     custom={Boolean(me?.photo_v)} strava={Boolean(conn?.avatar_url)} />
         <div>
           <h1>{conn?.athlete_name || 'Il mio account'}</h1>
           <p className="hint">{me?.email}</p>
         </div>
       </div>
 
-      {sp.error && <div className="notice error">{ERRORS[sp.error] ?? 'Qualcosa non ha funzionato.'}</div>}
-      {sp.connected && <div className="notice">Strava collegato. Ora aggiorna le corse da <a href="/dashboard">Le mie corse</a>.</div>}
+      {sp.error === 'profilo' && <div className="notice error">{ERRORS.profilo}</div>}
       {sp.profilo && <div className="notice">Dati salvati.</div>}
-      {sp.disconnected && <div className="notice">Strava scollegato. Le tue corse salvate sono state cancellate.</div>}
 
       <section className="card" id="profilo" aria-labelledby="profilo-title">
         <div className="card-head">
@@ -59,13 +60,20 @@ export default async function Account({ searchParams }) {
         <ProfileForm sex={me?.sex} birthDate={me?.birth_date} today={new Date().toISOString().slice(0, 10)} />
       </section>
 
-      <section className="card strava-card" aria-labelledby="strava-title">
+      {/* #strava: ci portano i link «collega Strava» e i ritorni da Strava; i loro messaggi stanno qui. */}
+      <section className="card strava-card" id="strava" aria-labelledby="strava-title">
         <div className="card-head">
           <h2 id="strava-title">Strava</h2>
           {!conn ? <span className="pill">Non collegato</span>
             : revoked ? <span className="pill warn">Da ricollegare</span>
             : <span className="pill ok">Collegato</span>}
         </div>
+        {sp.collega && !conn && (
+          <div className="notice">Per vedere le gare e le tue corse collega prima il tuo account Strava.</div>
+        )}
+        {sp.error && sp.error !== 'profilo' && <div className="notice error">{ERRORS[sp.error] ?? 'Qualcosa non ha funzionato.'}</div>}
+        {sp.connected && <div className="notice">Strava collegato. Ora aggiorna le corse da <a href="/dashboard">Le mie corse</a>.</div>}
+        {sp.disconnected && <div className="notice">Strava scollegato. Le tue corse salvate sono state cancellate.</div>}
         {conn ? (
           <div className="strava-status">
             {revoked ? (
@@ -88,7 +96,7 @@ export default async function Account({ searchParams }) {
                     : 'Ricollega e lascia attivo il permesso sulle attività private per contare anche le corse «Solo io».'}
                 </p>
                 <input type="hidden" name="consenso" value="1" />
-                <button className="button strava" type="submit">Ricollega Strava</button>
+                <button className="button strava" type="submit"><StravaLogo />Ricollega Strava</button>
               </form>
             )}
             <details className="disconnect">
@@ -112,7 +120,7 @@ export default async function Account({ searchParams }) {
                 nelle classifiche, compresa quella per età e sesso, nei confronti delle gare e nella mia pagina dei progressi.
               </span>
             </label>
-            <button className="button strava" type="submit">Collega con Strava</button>
+            <button className="button strava" type="submit"><StravaLogo />Collega con Strava</button>
           </form>
         )}
       </section>

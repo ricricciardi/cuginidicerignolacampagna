@@ -1,14 +1,12 @@
 import { redirect } from 'next/navigation';
 import { sql } from '@/lib/db';
-import { getUserId } from '@/lib/session';
-import { isAdmin } from '@/lib/admin';
+import { isAdmin, requireStravaUser } from '@/lib/admin';
 import { phase, statusLine, fmtDay } from '@/lib/competition';
 
 const ORDER = { running: 0, before: 1, over: 2 };
 
 export default async function Gare() {
-  const userId = await getUserId();
-  if (!userId) redirect('/login');
+  const userId = await requireStravaUser();
   const admin = await isAdmin(userId);
   const now = new Date();
   const comps = (admin

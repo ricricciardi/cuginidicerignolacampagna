@@ -15,15 +15,15 @@ export async function GET(req) {
   const expected = jar.get('strava_state')?.value;
   jar.delete('strava_state');
   if (!expected || url.searchParams.get('state') !== expected) {
-    return go(req, '/account?error=state');
+    return go(req, '/account?error=state#strava');
   }
 
   // DA DECIDERE: comportamento quando l'utente rifiuta o toglie il permesso.
   // DA DECIDERE: se toglie la spunta sulle attività private resta activity:read e le "Solo io" non arrivano.
-  if (url.searchParams.get('error')) return go(req, '/account?error=denied');
+  if (url.searchParams.get('error')) return go(req, '/account?error=denied#strava');
   const scopes = (url.searchParams.get('scope') ?? '').split(',');
   if (!scopes.includes('activity:read') && !scopes.includes('activity:read_all')) {
-    return go(req, '/account?error=scope');
+    return go(req, '/account?error=scope#strava');
   }
 
   const t = await exchangeCode(url.searchParams.get('code'));
@@ -42,8 +42,8 @@ export async function GET(req) {
                 consent_at = now(), connected_at = now()`;
   } catch (e) {
     // DA DECIDERE: stesso account Strava già collegato a un altro utente del sito.
-    if (e.code === '23505') return go(req, '/account?error=athlete_taken');
+    if (e.code === '23505') return go(req, '/account?error=athlete_taken#strava');
     throw e;
   }
-  return go(req, '/account?connected=1');
+  return go(req, '/account?connected=1#strava');
 }

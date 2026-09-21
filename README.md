@@ -23,6 +23,14 @@ revocare l'accesso all'app.
 In locale: copia `.env.example` in `.env.local`, compila i valori, poi
 `npm install` e `npm run dev`. I test del filtro: `npm test`.
 
+## Foto profilo
+
+- Di base è quella di Strava, aggiornata a ogni lettura.
+- Dall'account si può caricare una foto: il browser la ritaglia quadrata e la riduce a
+  256×256 JPEG (~20 KB), che si salva in `users.photo` (base64) con la versione in
+  `users.photo_v`. Ha la precedenza su quella di Strava e si serve da `/api/foto/<id>?v=…`,
+  solo a chi ha fatto l'accesso.
+
 ## Regole di selezione (lib/filter.js)
 
 - `sport_type` uguale a `Run`: esclude trail (`TrailRun`) e virtuale (`VirtualRun`).
@@ -82,7 +90,7 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
 - Aggiorna tutti gli iscritti, partendo da chi è stato aggiornato meno di recente. Se
   finisce il tempo (50 secondi) o il limite di richieste Strava, riprende la notte dopo.
 - Serve la variabile `CRON_SECRET`: Vercel la manda come `Authorization: Bearer`.
-- Il pulsante "Aggiorna adesso" aggiorna solo chi lo preme, in qualsiasi momento.
+- Il pulsante "Aggiorna adesso da Strava" aggiorna solo chi lo preme, in qualsiasi momento.
 
 ## Limiti noti
 

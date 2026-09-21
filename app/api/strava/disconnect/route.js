@@ -21,5 +21,5 @@ export async function POST(req) {
   }
   await sql`delete from activities where user_id = ${userId}`;
   await sql`delete from strava_connections where user_id = ${userId}`;
-  return go(req, '/account?disconnected=1');
+  return go(req, '/account?disconnected=1#strava');
 }

@@ -1,8 +1,8 @@
-import { redirect } from 'next/navigation';
+import { requireStravaUser } from '@/lib/admin';
 import { sql } from '@/lib/db';
-import { getUserId } from '@/lib/session';
 import { fmtTime, fmtPace, fmtDate, fmtKm } from '@/lib/format';
 import { syncScope } from '@/lib/sync';
+import SyncButton from './sync-button';
 
 const fmtStamp = (d) => new Date(d).toLocaleString('it-IT', {
   timeZone: 'Europe/Rome', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
@@ -15,8 +15,7 @@ const ERRORS = {
 };
 
 export default async function Dashboard({ searchParams }) {
-  const userId = await getUserId();
-  if (!userId) redirect('/login');
+  const userId = await requireStravaUser();
   const sp = await searchParams;
 
   const [conn] = await sql`select athlete_name, avatar_url, last_synced_at from strava_connections where user_id = ${userId}`;
@@ -33,7 +32,7 @@ export default async function Dashboard({ searchParams }) {
       {sp.synced !== undefined && (
         <div className="notice">
           {sp.synced} corse nuove salvate.
-          {pending > 0 && ` Ne restano ${pending}: premi di nuovo Aggiorna adesso o aspetta l\'aggiornamento di stanotte.`}
+          {pending > 0 && ` Ne restano ${pending}: premi di nuovo Aggiorna adesso da Strava o aspetta l\'aggiornamento di stanotte.`}
         </div>
       )}
 
@@ -46,11 +45,11 @@ export default async function Dashboard({ searchParams }) {
           {!anyStarted ? (
             <div className="notice">Sei pronto. Le corse si leggono da quando parte la prima gara.</div>
           ) : (
-            <form method="post" action="/api/strava/sync"><button type="submit">Aggiorna adesso</button></form>
+            <SyncButton />
           )}
         </div>
       ) : (
-        <div className="notice">Per vedere le tue corse <a href="/account">collega Strava dal tuo account</a>.</div>
+        <div className="notice">Per vedere le tue corse <a href="/account#strava">collega Strava dal tuo account</a>.</div>
       )}
 
       {runs.length > 0 ? (
@@ -76,7 +75,7 @@ export default async function Dashboard({ searchParams }) {
           </ul>
         </>
       ) : conn ? (
-        <p>Nessuna corsa salvata. Si aggiornano ogni notte, oppure premi Aggiorna adesso.</p>
+        <p>Nessuna corsa salvata. Si aggiornano ogni notte, oppure premi Aggiorna adesso da Strava.</p>
       ) : null}
     </main>
   );

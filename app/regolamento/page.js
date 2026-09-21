@@ -112,7 +112,7 @@ const SECTIONS = [
     body: (
       <ul>
         <li>Ogni notte il sito legge da Strava le corse nuove di tutti i partecipanti.</li>
-        <li>In Le mie corse il pulsante «Aggiorna adesso» legge subito le proprie.</li>
+        <li>In Le mie corse il pulsante «Aggiorna adesso da Strava» legge subito le proprie.</li>
         <li>Se una gara viene allungata o anticipata, le corse del nuovo periodo arrivano con l&apos;aggiornamento successivo.</li>
       </ul>
     ),
@@ -134,7 +134,7 @@ const SECTIONS = [
     body: (
       <ul>
         <li>
-          Gli altri partecipanti della stessa gara vedono nome e foto del profilo Strava, date, km, tempi, parziali al km
+          Gli altri partecipanti della stessa gara vedono il nome Strava, la foto (quella caricata nel sito o, se non c&apos;è, quella di Strava), date, km, tempi, parziali al km
           e dislivello delle corse valide, il numero di volte e, nelle gare con il coefficiente, il punteggio.
         </li>
         <li>Chi non partecipa a una gara non vede niente di quella gara.</li>

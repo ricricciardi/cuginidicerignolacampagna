@@ -1,11 +1,11 @@
-import { notFound, redirect } from 'next/navigation';
-import { getUserId } from '@/lib/session';
+import { notFound } from 'next/navigation';
 import { loadCompetitionFor, competitionRuns, standings, ageStandings, participants } from '@/lib/standings';
 import { fmtTime, fmtDate, fmtElevation } from '@/lib/format';
 import { fmtPct } from '@/lib/agegrade';
 import CompetitionHeader from '../header';
 import Avatar from '../../avatar';
 import SegmentedLinks from '../../segmented-links';
+import { requireStravaUser } from '@/lib/admin';
 
 const NOTICES = {
   creata: 'Gara creata.',
@@ -13,8 +13,7 @@ const NOTICES = {
 };
 
 export default async function Classifica({ params, searchParams }) {
-  const me = await getUserId();
-  if (!me) redirect('/login');
+  const me = await requireStravaUser();
   const c = await loadCompetitionFor((await params).id, me);
   if (!c) notFound();
   const sp = await searchParams;

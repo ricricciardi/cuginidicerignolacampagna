@@ -14,7 +14,7 @@ export default async function Utenti({ searchParams }) {
   const sp = await searchParams;
   const users = await sql`
     select u.id, u.email, u.is_admin, u.created_at, u.sex is not null and u.birth_date is not null as profilo,
-           c.user_id is not null as strava, c.athlete_name, c.avatar_url, c.last_sync_error,
+           c.user_id is not null as strava, c.athlete_name, coalesce('/api/foto/' || u.id || '?v=' || u.photo_v, c.avatar_url) as avatar_url, c.last_sync_error,
            (select count(*) from activities a where a.user_id = u.id)::int as corse
     from users u left join strava_connections c on c.user_id = u.id
     order by u.created_at asc`;

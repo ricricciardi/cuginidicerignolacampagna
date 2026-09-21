@@ -103,7 +103,7 @@ small { font-size: var(--fs-xs); line-height: var(--lh-snug); letter-spacing: .0
 .brand span { min-width: 0; }
 /* Barra delle sezioni: tre segmenti uguali, quello attivo in fluo */
 .tabs {
-  max-width: calc(40rem - 2.5rem); margin: var(--s2) 1.25rem 0; padding: 4px;
+  max-width: calc(40rem - 2.5rem); margin: var(--s5) 1.25rem 0; padding: 4px;
   display: grid; grid-template-columns: 1fr 1fr auto; gap: 4px;
   border-radius: 999px; border: 1px solid var(--line); background: var(--glass);
 }
@@ -147,6 +147,7 @@ button, .button {
   --glow: rgba(215,255,31,.45);
   box-shadow: 0 0 22px var(--glow), inset 0 -2px 0 rgba(0,0,0,.2);
 }
+.button.strava .strava-logo { flex: none; margin-right: var(--s2); }
 .button.strava {
   color: #fff;
   background:
@@ -164,17 +165,17 @@ form.stack button { margin-top: var(--s2); }
    bagliore si spegne, con l'ombra interna in alto come un tasto schiacciato. La pressione è
    istantanea e il rilascio morbido, così sul telefono si sente anche con un tocco rapido.
    L'hover solo con mouse vero: sui touch resterebbe acceso dopo il tocco. */
-button:not(.quiet):not(.reveal), .button {
+button:not(.quiet):not(.reveal):not(.photo-button), .button {
   -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none;
   transition: transform .18s cubic-bezier(.3, 1.4, .5, 1), box-shadow .18s ease, filter .18s ease;
 }
 @media (hover: hover) and (pointer: fine) {
-  button:not(.quiet):not(.reveal):hover, .button:hover {
+  button:not(.quiet):not(.reveal):not(.photo-button):hover, .button:hover {
     filter: brightness(1.08) saturate(1.1);
     box-shadow: 0 0 30px var(--glow), inset 0 -2px 0 rgba(0,0,0,.2);
   }
 }
-button:not(.quiet):not(.reveal):active, .button:active {
+button:not(.quiet):not(.reveal):not(.photo-button):active, .button:active {
   transform: translateY(1px) scale(.97);
   filter: brightness(.9);
   box-shadow: 0 0 8px var(--glow), inset 0 2px 5px rgba(0,0,0,.35);
@@ -183,7 +184,7 @@ button:not(.quiet):not(.reveal):active, .button:active {
 button:disabled { cursor: default; filter: none; transform: none; }
 button[data-state="saving"] { opacity: .75; }
 @media (prefers-reduced-motion: reduce) {
-  button:not(.quiet):not(.reveal):active, .button:active { transform: none; }
+  button:not(.quiet):not(.reveal):not(.photo-button):active, .button:active { transform: none; }
 }
 
 /* Avvisi */
@@ -429,7 +430,14 @@ main > p > .button { width: 100%; }
 .hint { font-size: var(--fs-xs); line-height: var(--lh-snug); color: var(--muted); font-weight: 400; margin: 0; }
 .field-error { font-size: var(--fs-xs); line-height: var(--lh-snug); color: var(--error); font-weight: 600; }
 .dates { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
-input[type="date"] { color-scheme: dark; min-width: 0; }
+/* Data: su iPhone Safari il campo nativo ignora la larghezza (esce dalla colonna), è più alto
+   degli altri e centra il testo. Senza aspetto nativo si comporta come gli altri campi. */
+input[type="date"] {
+  color-scheme: dark; min-width: 0; max-width: 100%; display: block;
+  -webkit-appearance: none; appearance: none; height: 48px; line-height: normal;
+}
+input[type="date"]::-webkit-date-and-time-value { text-align: left; margin: 0; min-height: 1.3em; }
+input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; cursor: pointer; }
 label { align-content: start; }
 
 /* Classifica su schermi stretti: più spazio ai nomi, senza spezzare le parole */
@@ -501,6 +509,18 @@ input:disabled { opacity: .5; }
 .avatar.sm { width: 32px; height: 32px; font-size: var(--fs-xs); }
 .account-head { display: flex; align-items: center; gap: var(--s4); margin-bottom: var(--s5); }
 .account-head h1 { margin: 0; }
+/* Foto dell'account: si tocca per cambiarla, con il badge della fotocamera */
+.photo-picker { display: grid; justify-items: center; gap: var(--s1); flex: none; }
+button.photo-button { position: relative; padding: 0; min-height: 0; border-radius: 50%; background: none;
+  box-shadow: none; }
+button.photo-button { -webkit-tap-highlight-color: transparent; transition: transform .18s ease; }
+button.photo-button:active { transform: scale(.96); transition-duration: .05s; }
+.photo-badge { position: absolute; right: -2px; bottom: -2px; width: 28px; height: 28px; border-radius: 50%;
+  display: grid; place-items: center; color: #140a24; background: var(--lime);
+  border: 2px solid var(--night); box-shadow: 0 0 10px rgba(215,255,31,.45); }
+.photo-actions { display: grid; justify-items: center; text-align: center; max-width: 9rem; }
+.photo-actions:empty { display: none; }
+.photo-actions button.quiet { font-size: var(--fs-xs); min-height: 32px; }
 /* Scheda di una sezione dell'account */
 .card form.stack { margin-top: var(--s4); }
 .card { margin: var(--s5) 0; padding: var(--s4) var(--s4) var(--s5);
@@ -511,6 +531,8 @@ input:disabled { opacity: .5; }
   padding-bottom: var(--s3); margin-bottom: var(--s4); border-bottom: 1px solid var(--line); }
 .card-head h2 { margin: 0; }
 .strava-card { border-top: 3px solid var(--accent); }
+.card[id] { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 4.75rem); } /* sotto l'intestazione fissa */
+.card .notice { margin-bottom: var(--s4); }
 .strava-card .consent { margin: 0; padding: 0; background: none; border: 0; box-shadow: none;
   -webkit-backdrop-filter: none; backdrop-filter: none; }
 .pill { flex: none; padding: var(--s1) var(--s3); border-radius: 999px; font-size: var(--fs-xs); font-weight: 700;
