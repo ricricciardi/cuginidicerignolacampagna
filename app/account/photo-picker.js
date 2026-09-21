@@ -1,35 +1,17 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import Avatar from '../avatar';
+import PhotoCropper from './photo-cropper';
 
-const SIZE = 256; // lato della foto salvata, in pixel
-
-// Ritaglia al centro un quadrato e lo rimpicciolisce a 256x256 JPEG (~20 KB), nel browser.
-async function toSquareJpeg(file) {
-  const url = URL.createObjectURL(file);
-  try {
-    const img = new Image();
-    img.src = url;
-    await img.decode();
-    const side = Math.min(img.naturalWidth, img.naturalHeight);
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = SIZE;
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(img, (img.naturalWidth - side) / 2, (img.naturalHeight - side) / 2, side, side, 0, 0, SIZE, SIZE);
-    return await new Promise((ok) => canvas.toBlob(ok, 'image/jpeg', 0.85));
-  } finally {
-    URL.revokeObjectURL(url);
-  }
-}
-
-// Foto dell'account: tocca per sceglierne una dal telefono; si può tornare a quella di Strava.
+// Foto dell'account: tocca per sceglierne una dal telefono, poi la sistemi nell'editor
+// (spostala e ingrandiscila nel cerchio). Si può tornare a quella di Strava.
 export default function PhotoPicker({ name, src, custom, strava }) {
   const router = useRouter();
   const input = useRef(null);
   const [state, setState] = useState('idle'); // idle | saving | error
   const [preview, setPreview] = useState(null);
+  const [editing, setEditing] = useState(null); // file scelto, aperto nell'editor
 
   const send = async (init) => {
     setState('saving');
@@ -44,22 +26,23 @@ export default function PhotoPicker({ name, src, custom, strava }) {
     }
   };
 
-  const onFile = async (e) => {
+  const onFile = (e) => {
     const file = e.target.files?.[0];
     e.target.value = '';
-    if (!file) return;
-    let blob;
-    try {
-      blob = await toSquareJpeg(file);
-    } catch {
-      setState('error');
-      return;
-    }
+    if (file) { setState('idle'); setEditing(file); }
+  };
+
+  const onCropped = (blob) => {
+    setEditing(null);
     setPreview(URL.createObjectURL(blob));
     const fd = new FormData();
     fd.append('photo', blob, 'foto.jpg');
     send({ method: 'POST', body: fd });
   };
+  const onCancelCrop = useCallback((failed) => {
+    setEditing(null);
+    if (failed === true) setState('error'); // immagine che il browser non sa aprire
+  }, []);
 
   return (
     <div className="photo-picker">
@@ -71,6 +54,7 @@ export default function PhotoPicker({ name, src, custom, strava }) {
         </span>
       </button>
       <input ref={input} type="file" accept="image/*" hidden onChange={onFile} />
+      {editing && <PhotoCropper file={editing} onCancel={onCancelCrop} onDone={onCropped} />}
       <div className="photo-actions">
         {state === 'saving' && <span className="hint">Salvataggio…</span>}
         {state === 'error' && <span className="field-error" role="status">Foto non caricata. Riprova con un&apos;altra immagine.</span>}

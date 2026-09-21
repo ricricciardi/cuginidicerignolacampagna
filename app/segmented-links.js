@@ -17,6 +17,18 @@ export default function SegmentedLinks({ items, label, className, scroll = true,
 
   const nav = useRef(null);
   const links = useRef([]);
+  const thumbEl = useRef(null);
+
+  // A ogni tocco il cursore si gonfia e rimbalza alla sua misura (anche sulla voce già scelta).
+  // Usa la proprietà scale, separata da transform, così non disturba lo scorrimento.
+  const pulse = () => {
+    const el = thumbEl.current;
+    if (!el?.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    el.animate(
+      [{ scale: '1' }, { scale: '1.12', offset: 0.3 }, { scale: '0.95', offset: 0.6 }, { scale: '1.03', offset: 0.8 }, { scale: '1' }],
+      { duration: 520, easing: 'ease-out' },
+    );
+  };
   const [thumb, setThumb] = useState(null); // { x, w, show, animate }
 
   useLayoutEffect(() => {
@@ -48,13 +60,17 @@ export default function SegmentedLinks({ items, label, className, scroll = true,
   return (
     <nav ref={nav} className={`${className} sliding`} aria-label={label} style={style}
          data-ready={thumb ? '' : undefined} data-animate={thumb?.animate ? '' : undefined}>
-      <span className="slide-thumb" aria-hidden="true" data-hidden={thumb && !thumb.show ? '' : undefined} />
+      <span ref={thumbEl} className="slide-thumb" aria-hidden="true" data-hidden={thumb && !thumb.show ? '' : undefined} />
       {items.map((it, i) => (
         <Link key={it.href} href={it.href} scroll={scroll} replace={replace}
               ref={(el) => { links.current[i] = el; }}
               className={it.className} aria-label={it.ariaLabel} title={it.title}
               aria-current={i === active ? 'page' : undefined}
-              onClick={(e) => { if (!e.metaKey && !e.ctrlKey && !e.shiftKey) setActive(i); }}>
+              onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+                setActive(i);
+                if (items[i].thumb !== false) pulse();
+              }}>
           {it.label}
         </Link>
       ))}
