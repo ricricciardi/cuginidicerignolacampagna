@@ -220,10 +220,8 @@ button, .button {
 .onboarding-exit { margin-top: var(--s5); text-align: center; }
 
 /* Registrazione nella pagina di accesso: staccata dal modulo e ben visibile */
-.signup { display: grid; gap: var(--s3); margin-bottom: var(--s5); padding-bottom: var(--s5); border-bottom: 1px solid var(--line);
-  text-align: center; }
-.signup p { margin: 0 auto; font-weight: 700; color: var(--ink); }
-.signup .button { width: 100%; }
+.choices { display: grid; gap: var(--s3); margin-top: var(--s5); }
+.choices .button { width: 100%; }
 .button.strava .strava-logo { flex: none; margin-right: var(--s2); }
 .button.strava {
   color: #fff;
