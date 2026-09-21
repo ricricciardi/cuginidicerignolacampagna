@@ -15,7 +15,7 @@ export default async function CompetitionHeader({ c, current, many }) {
       {many && <p className="back"><Link href="/gare">{t('Tutte le gare')}</Link></p>}
       <h1>{c.name}</h1>
       <p className="comp-rules">
-        {t(c.best_segment ? 'Miglior tratto di {dist}, corse su strada con GPS dal {dal} al {al}.' : 'Primi {dist} dalla partenza, corse su strada con GPS dal {dal} al {al}.', { dist: fmtDist(c.distance_m), dal: fmtDay(c.start_date), al: fmtDay(c.end_date) })}
+        {t(c.best_segment ? 'Miglior parziale di {dist}, corse su strada con GPS dal {dal} al {al}.' : 'Primi {dist} dalla partenza, corse su strada con GPS dal {dal} al {al}.', { dist: fmtDist(c.distance_m), dal: fmtDay(c.start_date), al: fmtDay(c.end_date) })}
       </p>
       <Countdown serverNow={Date.now()} start={start.getTime()} end={end.getTime()}
                  startLabel={fmtDay(c.start_date)} endLabel={fmtDay(c.end_date)} />

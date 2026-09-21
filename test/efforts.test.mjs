@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { bestTimeOverDistance, timeAtDistance, raceTime } from '../lib/efforts.js';
+import { bestTimeOverDistance, timeAtDistance, raceTime, bestKmSplit } from '../lib/efforts.js';
 
 // 3 km: primo km in 300 s, secondo in 240 s, terzo in 270 s (passaggi ogni 100 m, passo costante per km).
 const marks = [];
@@ -19,3 +19,5 @@ test('raceTime segue l\'impostazione della gara', () => {
   assert.equal(raceTime(run, { distance_m: 1000, best_segment: true }), 240);
   assert.equal(raceTime(run, { distance_m: 1000, best_segment: false }), 300);
 });
+test('km più veloce dai parziali, ignorando l\'ultimo incompleto', () =>
+  assert.equal(bestKmSplit([{ m: 1000, s: 554 }, { m: 1000, s: 550 }, { m: 1000, s: 562 }, { m: 590, s: 200 }]), 550));

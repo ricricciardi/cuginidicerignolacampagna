@@ -35,7 +35,7 @@ const sections = (t) => [
     body: (
       <ul>
         <li>{t('Conta il tempo al passaggio della distanza della gara, dalla partenza: per una gara da 10 km il tempo al decimo chilometro, per una da 500 m il tempo ai 500 metri.')}</li>
-        <li>{t('Alcune gare contano invece il miglior tratto: il pezzo più veloce lungo quanto la gara, in qualunque punto della corsa. In una gara da 1 km, chi corre 5 km prende il suo chilometro migliore. Nelle impostazioni della gara si vede quale regola vale.')}</li>
+        <li>{t('Alcune gare contano invece il miglior parziale: il pezzo più veloce lungo quanto la gara, in qualunque punto della corsa. In una gara da 1 km, chi corre 5 km prende il suo chilometro migliore. Nelle impostazioni della gara si vede quale regola vale.')}</li>
         <li>{t('Si calcola dalla traccia di Strava, con i tempi di passaggio ogni 100 metri; per le corse lette prima di questa novità, dai parziali al chilometro. La precisione è di un paio di secondi.')}</li>
         <li>{t('È il tempo trascorso, come il cronometro di una gara: le soste e le pause dell\'orologio sono comprese.')}</li>
         <li>{t('Se Strava non fornisce né la traccia né i parziali, la corsa non ha un tempo e non conta.')}</li>

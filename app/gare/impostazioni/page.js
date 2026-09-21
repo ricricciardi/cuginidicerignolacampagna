@@ -42,7 +42,7 @@ export default async function Impostazioni({ searchParams }) {
                 <small>
                   {t(c.people === 1 ? '{n} partecipante' : '{n} partecipanti', { n: c.people })}
                   {' · '}{c.age_grading ? t('con coefficiente età e sesso') : t('solo tempo')}
-                  {c.best_segment && <>{' · '}{t('miglior tratto')}</>}
+                  {c.best_segment && <>{' · '}{t('miglior parziale')}</>}
                 </small>
                 <span className="comp-status">{statusLine(c, now, t)}</span>
               </div>

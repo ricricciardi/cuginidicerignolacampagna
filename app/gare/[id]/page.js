@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { loadCompetitionFor, competitionRuns, standings, ageStandings, participants, visibleCompetitionCount } from '@/lib/standings';
+import { bestKmSplit } from '@/lib/efforts';
 import { fmtTime, fmtDate, fmtElevation, fmtDist } from '@/lib/format';
 import { fmtPct, MIN_GRADE_M } from '@/lib/agegrade';
 import CompetitionHeader from '../header';
@@ -22,10 +23,11 @@ export default async function Classifica({ params, searchParams }) {
   // Punteggio solo se la gara lo prevede e dal miglio in su (sotto non ci sono tabelle).
   const graded = c.age_grading && c.distance_m >= MIN_GRADE_M;
   const byAge = graded && sp.vista === 'eta';
-  // Miglior tratto come classifica in più, solo dove «Tempo» conta dalla partenza.
-  const bySegment = !c.best_segment && sp.vista === 'tratto';
+  // Miglior parziale: classifica in più sul km più veloce di ogni corsa (solo per curiosità).
+  const bySegment = sp.vista === 'tratto';
   // In parallelo: sono indipendenti, così si aspetta la più lenta invece della somma.
-  const [runs, people, count, t] = await Promise.all([competitionRuns(bySegment ? { ...c, best_segment: true } : c), participants(c), visibleCompetitionCount(me), getT()]);
+  const [runs, people, count, t] = await Promise.all([competitionRuns(c), participants(c), visibleCompetitionCount(me), getT()]);
+  if (bySegment) for (const r of runs) Object.assign(r, { time_s: bestKmSplit(r.splits), elev_m: null });
   const rows = byAge ? ageStandings(runs, people) : standings(runs, people);
   const notice = Object.keys(NOTICES).find((k) => sp[k]);
   const hasScore = (r) => (byAge ? r.pct != null : r.time_s != null);
@@ -37,11 +39,11 @@ export default async function Classifica({ params, searchParams }) {
       <CompetitionHeader c={c} current="classifica" many={count > 1} />
 
       <div className="nav-content" data-nav="Sezioni della gara">
-      {(graded || !c.best_segment) && <SegmentedLinks className="segmented view-switch" label="Tipo di classifica" ariaLabel={t('Tipo di classifica')} scroll={false} replace items={[
+      <SegmentedLinks className="segmented view-switch" label="Tipo di classifica" ariaLabel={t('Tipo di classifica')} scroll={false} replace items={[
         { href: `/gare/${c.id}`, label: t('Tempo'), current: !byAge && !bySegment },
-        !c.best_segment && { href: `/gare/${c.id}?vista=tratto`, label: t('Miglior tratto'), current: bySegment },
+        { href: `/gare/${c.id}?vista=tratto`, label: t('Miglior parziale'), current: bySegment },
         graded && { href: `/gare/${c.id}?vista=eta`, label: t('Punteggio'), current: byAge },
-      ].filter(Boolean)} />}
+      ].filter(Boolean)} />
       <div className="nav-content" data-nav="Tipo di classifica">
       {meMissing && (
         <div className="notice">{t('Per comparire qui inserisci sesso e data di nascita in')} <Link href="/account#profilo">{t('il tuo account')}</Link>.</div>
@@ -81,7 +83,7 @@ export default async function Classifica({ params, searchParams }) {
       )}
       {bySegment && (
         <p className="legend legend-after">
-          {t('Il tratto più veloce di {dist} in qualunque punto della corsa, non solo dalla partenza. È solo per curiosità: la gara si vince con il tempo dalla partenza.', { dist: fmtDist(c.distance_m) })}
+          {t('Il chilometro più veloce di ogni corsa in gara, dai parziali di Strava. È solo per curiosità: non cambia la classifica della gara.')}
         </p>
       )}
       {byAge && (
