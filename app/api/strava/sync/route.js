@@ -12,7 +12,7 @@ export async function POST(req) {
   const userId = await getUserId();
   if (!userId) return go(req, '/login');
   const [conn] = await sql`select * from strava_connections where user_id = ${userId}`;
-  if (!conn) return go(req, '/dashboard?error=not_connected');
+  if (!conn) return go(req, '/account?error=not_connected');
 
   const r = await syncUser(conn, await syncScope());
   const q = new URLSearchParams({ synced: String(r.saved), pending: String(r.pending) });

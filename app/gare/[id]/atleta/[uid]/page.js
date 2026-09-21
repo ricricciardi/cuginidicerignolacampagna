@@ -1,22 +1,26 @@
 import { notFound, redirect } from 'next/navigation';
 import { sql } from '@/lib/db';
 import { getUserId } from '@/lib/session';
-import { loadCompetition, competitionRuns } from '@/lib/standings';
+import { loadCompetitionFor, competitionRuns } from '@/lib/standings';
 import { markRecords } from '@/lib/efforts';
 import { ProgressChart } from '@/lib/chart';
-import { fmtTime, fmtDate, fmtKm } from '@/lib/format';
+import { fmtTime, fmtDate, fmtKm, fmtElevation } from '@/lib/format';
 import Avatar from '../../../../avatar';
+import Splits from '../../../splits';
+import RunDetails from '../../../run-details';
 
 export default async function Atleta({ params }) {
   const me = await getUserId();
   if (!me) redirect('/login');
   const p = await params;
-  const c = await loadCompetition(p.id);
+  const c = await loadCompetitionFor(p.id, me);
   const uid = Number(p.uid);
   if (!c || !Number.isInteger(uid)) notFound();
 
-  const [athlete] = await sql`select athlete_name, avatar_url from strava_connections
-                              where user_id = ${uid} and consent_at is not null`;
+  // Solo chi partecipa a questa gara ha una pagina qui.
+  const [athlete] = await sql`select s.athlete_name, s.avatar_url from strava_connections s
+                              join competition_participants p on p.user_id = s.user_id and p.competition_id = ${c.id}
+                              where s.user_id = ${uid} and s.consent_at is not null`;
   if (!athlete) notFound();
 
   const runs = markRecords(await competitionRuns(c, uid));
@@ -45,19 +49,32 @@ export default async function Atleta({ params }) {
       ) : (
         <p>Nessun tempo sui primi {c.km} km in questa gara.</p>
       )}
+      {timed.length > 0 && <p className="legend">Tocca una corsa per vedere i parziali dei primi {c.km}&nbsp;km.</p>}
       <ul className="history">
-        {[...runs].reverse().map((r) => (
-          <li key={r.id}>
-            <span>
-              <strong>{fmtDate(r)}</strong>
-              <small>{fmtKm(r.distance_m)} km</small>
-            </span>
-            <span className="time">
-              {r.time_s != null ? fmtTime(r.time_s) : 'n.d.'}
-              {r.isRecord && <em>record</em>}
-            </span>
-          </li>
-        ))}
+        {[...runs].reverse().map((r) => {
+          const head = (
+            <>
+              <span>
+                <strong>{fmtDate(r)}</strong>
+                <small>{[`${fmtKm(r.distance_m)} km`, fmtElevation(r.elev_m)].filter(Boolean).join(' · ')}</small>
+              </span>
+              <span className="time">
+                {r.time_s != null ? fmtTime(r.time_s) : 'n.d.'}
+                {r.isRecord && <em>record</em>}
+              </span>
+            </>
+          );
+          // Senza tempo non ci sono parziali da mostrare. La corsa del record è già aperta.
+          return (
+            <li key={r.id}>
+              {r.time_s == null ? <div className="run-row">{head}</div> : (
+                <RunDetails open={r.time_s === best} head={head}>
+                  <Splits splits={r.splits} km={c.km} />
+                </RunDetails>
+              )}
+            </li>
+          );
+        })}
       </ul>
     </main>
   );

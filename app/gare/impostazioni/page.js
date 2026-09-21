@@ -1,6 +1,5 @@
-import { redirect } from 'next/navigation';
 import { sql } from '@/lib/db';
-import { getUserId } from '@/lib/session';
+import { requireAdminPage } from '@/lib/admin';
 import { phase, statusLine, fmtDay } from '@/lib/competition';
 
 const NOTICES = {
@@ -10,11 +9,12 @@ const NOTICES = {
 };
 
 export default async function Impostazioni({ searchParams }) {
-  if (!(await getUserId())) redirect('/login');
+  await requireAdminPage();
   const sp = await searchParams;
   const now = new Date();
-  const comps = (await sql`select id, name, km, start_date, end_date from competitions
-                           order by start_date desc, id desc`)
+  const comps = (await sql`select c.id, c.name, c.km, c.start_date, c.end_date, c.age_grading,
+                                  (select count(*) from competition_participants p where p.competition_id = c.id)::int as people
+                           from competitions c order by c.start_date desc, c.id desc`)
     .map((c) => ({ ...c, phase: phase(c, now) }));
   const notice = Object.keys(NOTICES).find((k) => sp[k]);
 
@@ -23,8 +23,7 @@ export default async function Impostazioni({ searchParams }) {
       <p className="back"><a href="/gare">Torna alle gare</a></p>
       <h1>Impostazioni gare</h1>
       {notice && <div className="notice">{NOTICES[notice]}</div>}
-      {sp.error === 'bloccata' && <div className="notice error">La gara è partita: non si può più modificare.</div>}
-      <p>Qui si creano, si modificano e si eliminano le gare. Di una gara partita si può cambiare solo il nome; km e date restano quelli.</p>
+      <p>Qui si creano, si modificano e si eliminano le gare e si sceglie chi partecipa. Tutto resta modificabile anche a gara partita.</p>
       <p><a className="button" href="/gare/nuova">Crea una gara</a></p>
 
       {comps.length === 0 ? (
@@ -36,12 +35,14 @@ export default async function Impostazioni({ searchParams }) {
               <div className="comp-main">
                 <strong>{c.name}</strong>
                 <small>{c.km} km, dal {fmtDay(c.start_date)} al {fmtDay(c.end_date)}</small>
+                <small>
+                  {c.people} {c.people === 1 ? 'partecipante' : 'partecipanti'}
+                  {c.age_grading ? ' · con coefficiente età e sesso' : ' · solo tempo'}
+                </small>
                 <span className="comp-status">{statusLine(c, now)}</span>
               </div>
               <div className="row-actions">
-                <a href={`/gare/${c.id}/modifica`}>
-                  {c.phase === 'before' ? 'Modifica' : 'Rinomina'}
-                </a>
+                <a href={`/gare/${c.id}/modifica`}>Modifica</a>
                 <a className="danger" href={`/gare/${c.id}/elimina`}>Elimina</a>
               </div>
             </li>

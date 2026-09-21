@@ -1,10 +1,11 @@
 import { notFound, redirect } from 'next/navigation';
 import { getUserId } from '@/lib/session';
-import { loadCompetition, competitionRuns, standings, ageStandings, participants } from '@/lib/standings';
-import { fmtTime, fmtDate } from '@/lib/format';
+import { loadCompetitionFor, competitionRuns, standings, ageStandings, participants } from '@/lib/standings';
+import { fmtTime, fmtDate, fmtElevation } from '@/lib/format';
 import { fmtPct } from '@/lib/agegrade';
 import CompetitionHeader from '../header';
 import Avatar from '../../avatar';
+import SegmentedLinks from '../../segmented-links';
 
 const NOTICES = {
   creata: 'Gara creata.',
@@ -14,12 +15,12 @@ const NOTICES = {
 export default async function Classifica({ params, searchParams }) {
   const me = await getUserId();
   if (!me) redirect('/login');
-  const c = await loadCompetition((await params).id);
+  const c = await loadCompetitionFor((await params).id, me);
   if (!c) notFound();
   const sp = await searchParams;
-  const byAge = sp.vista === 'eta';
+  const byAge = c.age_grading && sp.vista === 'eta';
   const runs = await competitionRuns(c);
-  const people = await participants();
+  const people = await participants(c);
   const rows = byAge ? ageStandings(runs, people) : standings(runs, people);
   const notice = Object.keys(NOTICES).find((k) => sp[k]);
   const hasScore = (r) => (byAge ? r.pct != null : r.time_s != null);
@@ -27,14 +28,13 @@ export default async function Classifica({ params, searchParams }) {
 
   return (
     <main>
-      {sp.error === 'bloccata' && <div className="notice error">La gara è partita: non si può più modificare.</div>}
       {notice && <div className="notice">{NOTICES[notice]}</div>}
       <CompetitionHeader c={c} current="classifica" />
 
-      <nav className="segmented view-switch" aria-label="Tipo di classifica">
-        <a href={`/gare/${c.id}`} aria-current={!byAge ? 'page' : undefined}>Tempo</a>
-        <a href={`/gare/${c.id}?vista=eta`} aria-current={byAge ? 'page' : undefined}>Età e sesso</a>
-      </nav>
+      {c.age_grading && <SegmentedLinks className="segmented view-switch" label="Tipo di classifica" scroll={false} replace items={[
+        { href: `/gare/${c.id}`, label: 'Tempo', current: !byAge },
+        { href: `/gare/${c.id}?vista=eta`, label: 'Punteggio', current: byAge },
+      ]} />}
       {byAge && (
         <p className="legend">
           Punteggio USATF 2025: il tuo tempo confrontato con il migliore al mondo per la tua età e il tuo sesso.
@@ -42,7 +42,7 @@ export default async function Classifica({ params, searchParams }) {
         </p>
       )}
       {meMissing && (
-        <div className="notice">Per comparire qui inserisci sesso e data di nascita in <a href="/dashboard#profilo">Le mie corse</a>.</div>
+        <div className="notice">Per comparire qui inserisci sesso e data di nascita in <a href="/account#profilo">il tuo account</a>.</div>
       )}
 
       {rows.length === 0 ? (
@@ -62,7 +62,8 @@ export default async function Classifica({ params, searchParams }) {
                   <strong title={r.athlete_name || 'Atleta senza nome'}>{r.athlete_name || 'Atleta senza nome'}</strong>
                   <small>
                     {hasScore(r)
-                      ? (byAge ? `${fmtTime(r.time_s)}, ${fmtDate(r)}` : fmtDate(r))
+                      ? [byAge ? `${fmtTime(r.time_s)}, ${fmtDate(r)}` : fmtDate(r), fmtElevation(r.elev_m)]
+                          .filter(Boolean).join(' · ')
                       : (r.missing === 'dati' ? 'Mancano sesso o data di nascita' : 'Nessuna corsa in gara')}
                   </small>
                 </span>

@@ -1,6 +1,8 @@
 import './globals.css';
+import { sql } from '@/lib/db';
 import { getUserId } from '@/lib/session';
 import Nav from './nav';
+import Brand from './brand';
 
 export const metadata = {
   title: 'Cuginidicerignolacampagna',
@@ -16,21 +18,20 @@ export const viewport = {
 };
 
 export default async function RootLayout({ children }) {
-  const loggedIn = Boolean(await getUserId());
+  const userId = await getUserId();
+  const loggedIn = Boolean(userId);
+  const [me] = loggedIn
+    ? await sql`select c.athlete_name, c.avatar_url, u.email from users u
+                left join strava_connections c on c.user_id = u.id where u.id = ${userId}`
+    : [];
   return (
     <html lang="it">
       <body>
         <header className="site">
-          <span className="brand">Cuginidicerignolacampagna</span>
-          {loggedIn && (
-            <form method="post" action="/api/auth/logout">
-              <button className="quiet" type="submit">Esci</button>
-            </form>
-          )}
+          <Brand />
         </header>
-        {loggedIn && <Nav />}
+        {loggedIn && <Nav name={me?.athlete_name ?? me?.email} avatar={me?.avatar_url} />}
         {children}
-        <footer className="site-footer"><a href="/regolamento">Regolamento</a></footer>
       </body>
     </html>
   );

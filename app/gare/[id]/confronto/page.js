@@ -1,6 +1,6 @@
 import { notFound, redirect } from 'next/navigation';
 import { getUserId } from '@/lib/session';
-import { loadCompetition, competitionRuns } from '@/lib/standings';
+import { loadCompetitionFor, competitionRuns } from '@/lib/standings';
 import { buildSeries } from '@/lib/series';
 import { compWindow } from '@/lib/competition';
 import CompetitionHeader from '../../header';
@@ -9,7 +9,7 @@ import CompareChart from './compare-chart';
 export default async function Confronto({ params }) {
   const me = await getUserId();
   if (!me) redirect('/login');
-  const c = await loadCompetition((await params).id);
+  const c = await loadCompetitionFor((await params).id, me);
   if (!c) notFound();
   const series = buildSeries(await competitionRuns(c));
   const { start, end } = compWindow(c);

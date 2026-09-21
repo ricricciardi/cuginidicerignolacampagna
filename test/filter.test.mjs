@@ -19,7 +19,7 @@ test('solo traccia, senza coordinate di partenza: inclusa', () =>
 test('vecchie attività con solo "type"', () =>
   assert.ok(isEligibleRun({ type: 'Run', distance: 12000, start_latlng: [41, 15] })));
 
-import { firstKmSeconds, rank, markRecords, splitsFromDetail } from '../lib/efforts.js';
+import { firstKmSeconds, rank, markRecords, splitsFromDetail, netElevation } from '../lib/efforts.js';
 const km = (sec, m = 1000) => ({ m, s: sec, mv: sec });
 test('corsa di 11 km: tempo al decimo chilometro', () =>
   assert.equal(firstKmSeconds([...Array(10)].map(() => km(300)).concat(km(280), km(60, 150)), 10), 3000));
@@ -62,7 +62,21 @@ test('stessi parziali, gare diverse: primi 5 e primi 15 km', () => {
   assert.equal(firstKmSeconds(sp, 15), 4500);
 });
 test('parziali salvati dal dettaglio Strava', () =>
-  assert.deepEqual(splitsFromDetail({ splits_metric: [{ distance: 1000.2, elapsed_time: 310, moving_time: 300 }] }), [{ m: 1000.2, s: 310, mv: 300 }]));
+  assert.deepEqual(splitsFromDetail({ splits_metric: [{ distance: 1000.2, elapsed_time: 310, moving_time: 300, elevation_difference: -4.2 }] }),
+    [{ m: 1000.2, s: 310, mv: 300, e: -4.2 }]));
+test('parziali senza altitudine: dislivello null, non assente', () =>
+  assert.deepEqual(splitsFromDetail({ splits_metric: [{ distance: 1000, elapsed_time: 300, moving_time: 300 }] }),
+    [{ m: 1000, s: 300, mv: 300, e: null }]));
+test('dislivello netto sui primi N km, solo quelli', () => {
+  const sp = [-5, -4.6, 2, -3, 10].map((e) => ({ m: 1000, s: 300, e }));
+  assert.equal(netElevation(sp, 4), -11);
+  assert.equal(netElevation(sp, 5), -1);
+});
+test('dislivello: niente dato se manca un km o l\'altitudine', () => {
+  assert.equal(netElevation([{ m: 1000, s: 300, e: 1 }], 2), null);
+  assert.equal(netElevation([{ m: 1000, s: 300, e: 1 }, { m: 1000, s: 300 }], 2), null);
+  assert.equal(netElevation(undefined, 2), null);
+});
 
 import { romeMidnight, compWindow, phase, inWindow, validate, statusLine, remaining } from '../lib/competition.js';
 const gara = { km: 10, start_date: '2026-09-25', end_date: '2027-09-25' };
@@ -90,8 +104,14 @@ test('stato in una riga', () => {
   assert.equal(statusLine(gara, new Date('2026-09-20T12:00:00Z')), 'Parte tra 4 giorni');
   assert.equal(statusLine(gara, new Date('2027-09-26T12:00:00Z')), 'Conclusa');
 });
-test('modulo valido', () => assert.deepEqual(validate({ name: ' Prova ', km: '5', start_date: '2026-09-01', end_date: '2026-09-30' }).value,
-  { name: 'Prova', km: 5, start_date: '2026-09-01', end_date: '2026-09-30' }));
+test('modulo valido', () => assert.deepEqual(
+  validate({ name: ' Prova ', km: '5', start_date: '2026-09-01', end_date: '2026-09-30', participants: ['2', '1', '2'], age_grading: 'on' }).value,
+  { name: 'Prova', km: 5, start_date: '2026-09-01', end_date: '2026-09-30', participants: [2, 1], age_grading: true }));
+test('modulo: un solo partecipante arriva come stringa, coefficiente spento se non spuntato', () => assert.deepEqual(
+  validate({ name: 'x', km: '5', start_date: '2026-09-01', end_date: '2026-09-02', participants: '3' }).value,
+  { name: 'x', km: 5, start_date: '2026-09-01', end_date: '2026-09-02', participants: [3], age_grading: false }));
+test('modulo: senza partecipanti rifiutato', () =>
+  assert.ok(validate({ name: 'x', km: '5', start_date: '2026-09-01', end_date: '2026-09-02' }).errors.participants));
 test('modulo: km decimali, zero o troppi rifiutati', () => {
   for (const km of ['10.5', '0', '101', '', 'dieci']) assert.ok(validate({ name: 'x', km, start_date: '2026-09-01', end_date: '2026-09-02' }).errors.km, km);
 });
@@ -133,12 +153,6 @@ test('classifica senza nessun tempo: solo i nomi, in ordine alfabetico', () => {
   assert.deepEqual(r.map((x) => x.athlete_name), ['Franco', 'Nunzia']);
 });
 
-import { validateName } from '../lib/competition.js';
-test('nome: sempre modificabile, ma non vuoto né troppo lungo', () => {
-  assert.deepEqual(validateName({ name: '  Gara dei cugini ' }).value, { name: 'Gara dei cugini' });
-  assert.ok(validateName({ name: '   ' }).errors.name);
-  assert.ok(validateName({ name: 'x'.repeat(61) }).errors.name);
-});
 
 import { ageOn, standardSeconds, ageGradePct } from '../lib/agegrade.js';
 test('età compiuta il giorno della corsa', () => {

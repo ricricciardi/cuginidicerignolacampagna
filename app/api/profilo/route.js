@@ -14,7 +14,7 @@ export async function POST(req) {
   const valid = /^\d{4}-\d{2}-\d{2}$/.test(birth) &&
     new Date(birth + 'T00:00:00Z').toISOString().slice(0, 10) === birth &&
     birth >= '1920-01-01' && birth <= new Date().toISOString().slice(0, 10);
-  if (!['M', 'F'].includes(sex) || !valid) return go(req, '/dashboard?error=profilo#profilo');
+  if (!['M', 'F'].includes(sex) || !valid) return go(req, '/account?error=profilo#profilo');
   await sql`update users set sex = ${sex}, birth_date = ${birth} where id = ${userId}`;
-  return go(req, '/dashboard?profilo=1#profilo');
+  return go(req, '/account?profilo=1#profilo');
 }

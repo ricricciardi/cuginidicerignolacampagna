@@ -1,16 +1,19 @@
-import { redirect } from 'next/navigation';
-import { getUserId } from '@/lib/session';
+import { requireAdminPage, allPeople } from '@/lib/admin';
+import { queryToForm } from '@/lib/competition';
 import CompetitionForm from '../form';
 
 export default async function Nuova({ searchParams }) {
-  if (!(await getUserId())) redirect('/login');
+  await requireAdminPage();
   const sp = await searchParams;
+  const people = await allPeople();
   const errors = sp.err ? JSON.parse(sp.err) : {};
+  // Prima volta: tutti gli iscritti già spuntati e coefficiente acceso.
+  const values = sp.err ? queryToForm(sp) : { participants: people.map((p) => p.id), age_grading: true };
   return (
     <main>
       <p className="back"><a href="/gare/impostazioni">Torna alle impostazioni</a></p>
       <h1>Crea una gara</h1>
-      <CompetitionForm action="/api/gare" values={sp} errors={errors} submit="Crea gara" />
+      <CompetitionForm action="/api/gare" values={values} people={people} errors={errors} submit="Crea gara" />
     </main>
   );
 }

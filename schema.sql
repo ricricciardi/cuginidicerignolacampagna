@@ -4,6 +4,7 @@ create table if not exists users (
   password_hash text not null,
   sex           text check (sex in ('M', 'F')),                     -- per la classifica per età e sesso
   birth_date    text check (birth_date ~ '^\d{4}-\d{2}-\d{2}$'),  -- mai mostrata agli altri
+  is_admin      boolean not null default false,                   -- gestisce gare e utenti; si imposta solo dal database
   created_at    timestamptz not null default now()
 );
 
@@ -29,11 +30,20 @@ create table if not exists competitions (
   km          integer not null check (km between 1 and 100),
   start_date  text not null check (start_date ~ '^\d{4}-\d{2}-\d{2}$'),  -- ora italiana, dalle 00:00
   end_date    text not null check (end_date ~ '^\d{4}-\d{2}-\d{2}$'),    -- ora italiana, fino alle 24:00
+  age_grading boolean not null default true,  -- classifica a punteggio (coefficiente età e sesso)
   created_by  integer references users(id) on delete set null,
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now(),
   check (end_date >= start_date)
 );
+
+-- Chi partecipa a ogni gara: lo decide l'amministratore. Chi non partecipa non vede la gara.
+create table if not exists competition_participants (
+  competition_id  integer not null references competitions(id) on delete cascade,
+  user_id         integer not null references users(id) on delete cascade,
+  primary key (competition_id, user_id)
+);
+create index if not exists competition_participants_user_idx on competition_participants(user_id);
 
 -- Storico: una riga per corsa su strada con GPS, con i parziali al km.
 -- Il tempo di ogni gara (primi N km) si calcola dai parziali.

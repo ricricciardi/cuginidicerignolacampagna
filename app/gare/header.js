@@ -1,5 +1,6 @@
 import { compWindow, fmtDay } from '@/lib/competition';
 import Countdown from '../countdown';
+import SegmentedLinks from '../segmented-links';
 
 // Testata comune alle pagine di una gara: nome, regole, sezioni e conto alla rovescia.
 export default function CompetitionHeader({ c, current }) {
@@ -13,10 +14,10 @@ export default function CompetitionHeader({ c, current }) {
       </p>
       <Countdown serverNow={Date.now()} start={start.getTime()} end={end.getTime()}
                  startLabel={fmtDay(c.start_date)} endLabel={fmtDay(c.end_date)} />
-      <nav className="subtabs" aria-label="Sezioni della gara">
-        <a href={`/gare/${c.id}`} aria-current={current === 'classifica' ? 'page' : undefined}>Classifica</a>
-        <a href={`/gare/${c.id}/confronto`} aria-current={current === 'confronto' ? 'page' : undefined}>Confronto</a>
-      </nav>
+      <SegmentedLinks className="subtabs" label="Sezioni della gara" scroll={false} items={[
+        { href: `/gare/${c.id}`, label: 'Classifica', current: current === 'classifica' },
+        { href: `/gare/${c.id}/confronto`, label: 'Confronto', current: current === 'confronto' },
+      ]} />
     </>
   );
 }

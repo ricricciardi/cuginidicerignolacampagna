@@ -1,11 +1,11 @@
-import { notFound, redirect } from 'next/navigation';
-import { getUserId } from '@/lib/session';
+import { notFound } from 'next/navigation';
+import { requireAdminPage } from '@/lib/admin';
 import { loadCompetition } from '@/lib/standings';
 import { competitionRuns } from '@/lib/standings';
 import { fmtDay, statusLine } from '@/lib/competition';
 
 export default async function Elimina({ params }) {
-  if (!(await getUserId())) redirect('/login');
+  await requireAdminPage();
   const c = await loadCompetition((await params).id);
   if (!c) notFound();
   const runs = await competitionRuns(c);

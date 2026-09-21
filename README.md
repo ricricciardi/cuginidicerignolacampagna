@@ -37,9 +37,14 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
 - Ora italiana: si parte alle 00:00 del giorno di inizio e si chiude alle 24:00 del
   giorno di fine. Conta l'ora di partenza della corsa: una corsa fatta entro la
   chiusura vale anche se arriva dopo.
-- Qualsiasi iscritto crea, modifica ed elimina le gare da Impostazioni gare.
-- Il nome si cambia sempre; km e date solo finché la gara non è partita
-  (controllo lato server, non solo nel modulo).
+- Solo l'amministratore (`users.is_admin`, si imposta dal database) crea, modifica ed elimina
+  le gare da Impostazioni gare e gestisce gli utenti (Il mio account → Utenti).
+- Nome, km, date e partecipanti si cambiano anche a gara partita: classifiche e tempi
+  si ricalcolano dai parziali salvati.
+- Ogni gara ha i suoi partecipanti (`competition_participants`): chi non partecipa non la
+  vede (l'amministratore le vede tutte).
+- Per ogni gara si sceglie se applicare il coefficiente età e sesso (`age_grading`):
+  senza, c'è solo la classifica a tempo.
 - Le stesse corse valgono per tutte le gare: il tempo di ogni gara si calcola dai
   parziali salvati, senza richiamare Strava.
 

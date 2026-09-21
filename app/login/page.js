@@ -14,6 +14,7 @@ export default async function Login({ searchParams }) {
         <button type="submit">Accedi</button>
       </form>
       <p className="switch">Non hai un account? <a href="/register">Registrati</a></p>
+      <footer className="site-footer"><a href="/regolamento">Regolamento</a></footer>
     </main>
   );
 }
