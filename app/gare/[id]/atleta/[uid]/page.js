@@ -33,7 +33,7 @@ export default async function Atleta({ params }) {
     <main>
       <p className="back"><Link href={`/gare/${c.id}`}>Torna a {c.name}</Link></p>
       <div className="athlete-head">
-        <Avatar name={athlete.athlete_name} src={athlete.avatar_url} size="lg" />
+        <Avatar name={athlete.athlete_name} src={athlete.avatar_url} size="lg" me={uid === me} />
         <h1>{athlete.athlete_name || 'Atleta senza nome'}</h1>
       </div>
       {best != null ? (

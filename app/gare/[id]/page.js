@@ -59,7 +59,7 @@ export default async function Classifica({ params, searchParams }) {
             <li key={r.user_id} className={[r.user_id === me ? 'me' : '', !hasScore(r) ? 'senza-tempo' : '', i === 0 && hasScore(r) ? 'leader' : ''].filter(Boolean).join(' ') || undefined}>
               <Link href={`/gare/${c.id}/atleta/${r.user_id}`}>
                 <span className="pos">{hasScore(r) ? i + 1 : '—'}</span>
-                <Avatar name={r.athlete_name} src={r.avatar_url} />
+                <Avatar name={r.athlete_name} src={r.avatar_url} me={r.user_id === me} />
                 <span className="who">
                   <strong title={r.athlete_name || 'Atleta senza nome'}>{r.athlete_name || 'Atleta senza nome'}</strong>
                   <small>

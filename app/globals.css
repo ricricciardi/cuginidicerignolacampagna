@@ -107,16 +107,21 @@ small { font-size: var(--fs-xs); line-height: var(--lh-snug); letter-spacing: .0
 .brand .logo { flex: none; width: auto; height: 1.9em; margin-right: .08em; overflow: visible;
   filter: drop-shadow(0 0 8px rgba(215, 255, 31, .45)); }
 .logo .ring { fill: none; stroke-linecap: butt; transform-box: view-box; transform-origin: 256px 256px; }
-.logo .ring-lime { stroke: var(--lime); }
-.logo .ring-pink { stroke: #ff3cb4; }
-.logo .ring-cyan { stroke: var(--cyan); }
+.logo .ring-lime, .me-rings .ring-lime { stroke: var(--lime); }
+.logo .ring-pink, .me-rings .ring-pink { stroke: #ff3cb4; }
+.logo .ring-cyan, .me-rings .ring-cyan { stroke: var(--cyan); }
+/* Il tuo avatar: la foto con attorno gli anelli del logo */
+.avatar-me { position: relative; display: inline-block; flex: none; line-height: 0; }
+.me-rings { position: absolute; left: -20%; top: -20%; width: 140%; height: 140%; overflow: visible; pointer-events: none;
+  filter: drop-shadow(0 0 3px rgba(215, 255, 31, .45)); }
+.me-rings .ring { fill: none; stroke-linecap: butt; transform-box: view-box; transform-origin: 50px 50px; }
 /* Ogni 3 secondi gli anelli fanno un giro (circa 1,5 s di movimento e 1,5 s fermi): rosa in senso
    orario, azzurro al contrario, lime un dondolio; sfalsati e con un piccolo rimbalzo. */
 @media (prefers-reduced-motion: no-preference) {
-  .logo .ring { animation: 3s cubic-bezier(.45, 0, .2, 1) 1s infinite both; }
-  .logo .ring-pink { animation-name: ring-cw; }
-  .logo .ring-cyan { animation-name: ring-ccw; animation-delay: 1.12s; }
-  .logo .ring-lime { animation-name: ring-wobble; animation-delay: .95s; }
+  :is(.logo, .me-rings) .ring { animation: 3s cubic-bezier(.45, 0, .2, 1) 1s infinite both; }
+  :is(.logo, .me-rings) .ring-pink { animation-name: ring-cw; }
+  :is(.logo, .me-rings) .ring-cyan { animation-name: ring-ccw; animation-delay: 1.12s; }
+  :is(.logo, .me-rings) .ring-lime { animation-name: ring-wobble; animation-delay: .95s; }
 }
 @keyframes ring-cw   { 0% { rotate: 0deg; } 40% { rotate: 372deg; } 48% { rotate: 356deg; } 55%, 100% { rotate: 360deg; } }
 @keyframes ring-ccw  { 0% { rotate: 0deg; } 40% { rotate: -372deg; } 48% { rotate: -356deg; } 55%, 100% { rotate: -360deg; } }
@@ -143,7 +148,7 @@ small { font-size: var(--fs-xs); line-height: var(--lh-snug); letter-spacing: .0
 /* Tab dell'account: solo la foto, cerchiata di lime quando è la pagina aperta */
 .tabs a.tab-account { padding: 0 6px; }
 .tabs a.tab-account[aria-current="page"] { background: none; box-shadow: none; }
-.tabs a.tab-account[aria-current="page"] .avatar { box-shadow: 0 0 0 2px var(--lime), 0 0 14px rgba(215,255,31,.4); }
+.tabs a.tab-account[aria-current="page"] .avatar { box-shadow: 0 0 14px rgba(215,255,31,.5); }
 
 /* Moduli */
 form.stack { display: grid; gap: var(--s4); margin-top: var(--s5); }
