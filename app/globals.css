@@ -121,8 +121,18 @@ small { font-size: var(--fs-xs); line-height: var(--lh-snug); letter-spacing: .0
   :is(.logo, .me-rings) .ring { animation: 3s cubic-bezier(.45, 0, .2, 1) 1s infinite both; }
   :is(.logo, .me-rings) .ring-pink { animation-name: ring-cw; }
   :is(.logo, .me-rings) .ring-cyan { animation-name: ring-ccw; animation-delay: 1.12s; }
-  :is(.logo, .me-rings) .ring-lime { animation-name: ring-wobble; animation-delay: .95s; }
+  .logo .ring-lime { animation-name: ring-wobble; animation-delay: .95s; }
+  /* Il tuo avatar: il cerchio lime si apre nella C e dondola; rosa e azzurro compaiono, girano, spariscono */
+  .me-rings .ring-lime { animation-name: me-open, ring-wobble; animation-delay: .95s; }
+  .me-rings .ring-pink { animation-name: ring-cw, me-show; }
+  .me-rings .ring-cyan { animation-name: ring-ccw, me-show; }
 }
+/* Da fermo (e con «Riduci movimento»): solo il cerchio lime chiuso */
+.me-rings .ring-lime { stroke-dasharray: 100 0; }
+.me-rings .ring-pink, .me-rings .ring-cyan { opacity: 0; }
+@keyframes me-open { 0%, 3% { stroke-dasharray: 100 0; stroke-dashoffset: 0; }
+  12%, 46% { stroke-dasharray: 75 25; stroke-dashoffset: -12.5; } 58%, 100% { stroke-dasharray: 100 0; stroke-dashoffset: 0; } }
+@keyframes me-show { 0%, 4% { opacity: 0; } 12%, 44% { opacity: 1; } 56%, 100% { opacity: 0; } }
 @keyframes ring-cw   { 0% { rotate: 0deg; } 40% { rotate: 372deg; } 48% { rotate: 356deg; } 55%, 100% { rotate: 360deg; } }
 @keyframes ring-ccw  { 0% { rotate: 0deg; } 40% { rotate: -372deg; } 48% { rotate: -356deg; } 55%, 100% { rotate: -360deg; } }
 @keyframes ring-wobble { 0% { rotate: 0deg; } 13% { rotate: -14deg; } 30% { rotate: 9deg; } 43% { rotate: -4deg; } 53%, 100% { rotate: 0deg; } }
