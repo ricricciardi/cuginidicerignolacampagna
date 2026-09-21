@@ -37,12 +37,6 @@ export default async function Classifica({ params, searchParams }) {
         { href: `/gare/${c.id}?vista=eta`, label: 'Punteggio', current: byAge },
       ]} />}
       <div className="nav-content" data-nav="Tipo di classifica">
-      {byAge && (
-        <p className="legend">
-          Punteggio USATF 2025: il tuo tempo confrontato con il migliore al mondo per la tua età e il tuo sesso.
-          Più alto è meglio. <Link href="/regolamento#eta">Come si calcola</Link>
-        </p>
-      )}
       {meMissing && (
         <div className="notice">Per comparire qui inserisci sesso e data di nascita in <Link href="/account#profilo">il tuo account</Link>.</div>
       )}
@@ -78,6 +72,12 @@ export default async function Classifica({ params, searchParams }) {
           ))}
         </ol>
         </>
+      )}
+      {byAge && (
+        <p className="legend legend-after">
+          Punteggio USATF 2025: il tuo tempo confrontato con il migliore al mondo per la tua età e il tuo sesso.
+          Più alto è meglio. <Link href="/regolamento#eta">Come si calcola</Link>
+        </p>
       )}
       </div>
       </div>

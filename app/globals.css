@@ -334,6 +334,7 @@ button[data-state="saving"] { opacity: .75; }
 .summary { margin: var(--s2) 0 0; padding: var(--s4); }
 .summary .km dd { color: var(--pink); text-shadow: 0 0 14px rgba(255,47,178,.6); }
 .legend { font-size: var(--fs-s); line-height: var(--lh-snug); margin: 0 0 var(--s3); }
+.legend-after { margin: var(--s4) 0 0; color: var(--muted); }
 .chart-wrap { padding: var(--s3) var(--s2) var(--s1); }
 .chart { width: 100%; height: auto; display: block; }
 .chart .grid { stroke: var(--line); }
