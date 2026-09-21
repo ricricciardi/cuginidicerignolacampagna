@@ -415,6 +415,7 @@ button[data-state="saving"] { opacity: .75; }
 
 /* Confronto: chi si allena di più, chi è migliorato, come corre (gare/[id]/confronto) */
 .cmp .hint { margin: 0 0 var(--s4); }
+.cmp { margin-top: var(--s2); }
 .cmp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); }
 .cmp-list li { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: var(--s1) var(--s3);
   padding: var(--s2) var(--s3); border-radius: 14px; background: rgba(255,255,255,.04); border: 1px solid var(--line); }
@@ -430,7 +431,15 @@ button[data-state="saving"] { opacity: .75; }
 /* Striscia dei giorni: un quadratino per giorno del periodo, acceso se ha corso */
 .days { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 2px; max-width: calc(var(--n) * 14px); }
 .days i { display: block; height: 10px; border-radius: 2px; background: rgba(255,255,255,.08); }
-.days i.on { background: var(--lime); box-shadow: 0 0 6px rgba(215,255,31,.5); }
+.days i.l1 { background: rgba(215,255,31,.35); }
+.days i.l2 { background: rgba(215,255,31,.65); }
+.days i.l3 { background: var(--lime); box-shadow: 0 0 6px rgba(215,255,31,.5); }
+/* Progressi: tempi nel periodo di gara (più in alto = più veloce) */
+.trend { grid-column: 1 / -1; order: 1; display: block; width: 100%; height: auto; overflow: visible; }
+.trend-base { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.trend-line { fill: none; stroke: var(--lime); stroke-width: 2; stroke-linejoin: round; vector-effect: non-scaling-stroke; opacity: .8; }
+.trend-dot { fill: var(--lime); stroke: var(--night-2); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.trend-dot.best { fill: var(--pink); }
 .pill.pace-spinta { color: #140a24; background: var(--lime); border-color: transparent; }
 .pill.pace-metronomo { color: #140a24; background: var(--cyan); border-color: transparent; }
 .pill.pace-cala { color: var(--ink); }

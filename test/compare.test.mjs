@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { raceDays, effort, improvement, pacing } from '../lib/compare.js';
+import { raceDays, dayCells, effort, improvement, pacing } from '../lib/compare.js';
 
 const people = [{ user_id: 1, athlete_name: 'Anna' }, { user_id: 2, athlete_name: 'Bruno' }, { user_id: 3, athlete_name: 'Carla' }];
 
@@ -42,4 +42,14 @@ test('come corre: prima e seconda metà', () => {
   assert.equal(pacing({ marks: marks(300, 309) }, 2000).kind, 'cala');
   assert.deepEqual(pacing({ marks: marks(280, 320) }, 2000), { pace1: 280, pace2: 320, kind: 'razzo' });
   assert.equal(pacing({ marks: [] }, 2000), null);
+});
+
+test('striscia: a giorni fino a 6 settimane, poi a settimane', () => {
+  const days = raceDays({ start_date: '2026-01-01', end_date: '2026-12-31' }, '2026-01-14');
+  assert.equal(dayCells(days, new Set(['2026-01-02'])).length, 14);
+  const year = raceDays({ start_date: '2026-01-01', end_date: '2026-12-31' }, '2027-01-01');
+  const ran = new Set(['2026-01-01', '2026-01-03', '2026-01-05', '2026-01-06', '2026-01-09']);
+  const cells = dayCells(year, ran);
+  assert.equal(cells.length, 53);
+  assert.deepEqual(cells.slice(0, 3).map((x) => [x.n, x.level]), [[4, 3], [1, 1], [0, 0]]);
 });

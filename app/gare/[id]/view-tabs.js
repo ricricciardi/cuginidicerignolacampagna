@@ -2,14 +2,14 @@
 import { useState } from 'react';
 import SegmentedLinks from '../../segmented-links';
 
-// Tempo, Miglior parziale e Punteggio arrivano già tutte dal server: si passa dall'una all'altra
+// Le viste (Punteggio, Tempo, Miglior parziale; o quelle del Confronto) arrivano già tutte dal server: si passa dall'una all'altra
 // nel browser. Prima si navigava, e mentre arrivava la vista nuova la schermata di caricamento
 // accorciava la pagina e faceva tornare in cima.
-export default function ViewTabs({ items, panels, initial, ariaLabel }) {
+export default function ViewTabs({ items, panels, initial, ariaLabel, label = 'Tipo di classifica' }) {
   const [active, setActive] = useState(initial);
   return (
     <>
-      <SegmentedLinks className="segmented view-switch" label="Tipo di classifica" ariaLabel={ariaLabel}
+      <SegmentedLinks className="segmented view-switch" label={label} ariaLabel={ariaLabel}
         items={items.map((it, i) => ({ ...it, current: i === active }))}
         onSelect={(i) => {
           setActive(i);
