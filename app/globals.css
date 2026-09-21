@@ -86,8 +86,12 @@ small { font-size: var(--fs-xs); line-height: var(--lh-snug); letter-spacing: .0
    zona della barra di stato (safe area) così il contenuto non ci scorre dietro scoperto. */
 .site {
   position: sticky; top: 0; z-index: 10;
-  margin-top: calc(-1 * env(safe-area-inset-top, 0px));
-  padding: calc(env(safe-area-inset-top, 0px) + var(--s2)) 1.25rem var(--s2);
+  /* Esce dal margine di sicurezza del body (notch in alto e, in orizzontale, ai lati) per coprire
+     tutta la larghezza; il logo resta nella zona sicura grazie al padding. */
+  margin: calc(-1 * env(safe-area-inset-top, 0px)) calc(-1 * env(safe-area-inset-right, 0px)) 0
+          calc(-1 * env(safe-area-inset-left, 0px));
+  padding: calc(env(safe-area-inset-top, 0px) + var(--s2)) calc(env(safe-area-inset-right, 0px) + 1.25rem)
+           var(--s2) calc(env(safe-area-inset-left, 0px) + 1.25rem);
   display: flex; justify-content: center; align-items: center; min-height: var(--tap);
   /* Vetro in stile Apple: poco coprente, molto sfocato e con i colori ravvivati */
   background: rgba(18, 10, 36, .5); border-bottom: .5px solid rgba(255, 255, 255, .16);
@@ -643,6 +647,18 @@ button.photo-button:active { transform: scale(.96); transition-duration: .05s; }
 .users-list .user-main { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s3); }
 .users-list .user-main strong { display: block; overflow-wrap: anywhere; }
 .users-list .user-main small { color: var(--muted); overflow-wrap: anywhere; }
+.users-list li[id] { scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 4.75rem); }
+.users-list li.focus { border-color: var(--lime); box-shadow: 0 0 0 1px var(--lime), 0 0 22px rgba(215,255,31,.25); }
+/* Gare dell'utente: aggiungi / togli */
+.user-races { display: grid; gap: var(--s2); padding-top: var(--s3); border-top: 1px solid var(--line); }
+.user-races > strong { font-size: var(--fs-xs); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.user-races ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); }
+.user-races li { display: flex; justify-content: space-between; align-items: center; gap: var(--s3); min-height: 44px; }
+.user-races li > span { display: grid; font-size: var(--fs-s); font-weight: 700; min-width: 0; overflow-wrap: anywhere; }
+.user-races li small { font-weight: 400; color: var(--muted); }
+.user-races form { display: flex; align-items: center; gap: var(--s2); flex: none; margin: 0; }
+.user-races .in-race { font-size: var(--fs-xs); font-weight: 700; color: var(--lime); }
+.button.small, button.small { min-height: 36px; padding: 0 var(--s4); font-size: var(--fs-s); }
 .strava-status form { margin: 0; }
 .reconnect { display: grid; gap: var(--s3); }
 .strava-status .button, .strava-status button { width: 100%; }

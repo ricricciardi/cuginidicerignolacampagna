@@ -21,7 +21,7 @@ export async function POST(req) {
     // Avviso agli amministratori: c'è un nuovo iscritto da aggiungere alle gare.
     const admins = (await sql`select id from users where is_admin`).map((r) => r.id);
     await sendToUsers(admins, { title: 'Nuovo iscritto', body: `${email} si è registrato. Aggiungilo alle gare.`,
-      url: '/account/utenti', tag: 'nuovo-iscritto' }).catch((e) => console.error('push nuovo iscritto', e));
+      url: `/account/utenti?nuovo=${user.id}#u${user.id}`, tag: 'nuovo-iscritto' }).catch((e) => console.error('push nuovo iscritto', e));
   } catch (e) {
     if (e.code === '23505') return go(req, '/register?error=exists');
     throw e;
