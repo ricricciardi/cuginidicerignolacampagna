@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { requireStravaUser } from '@/lib/admin';
 import { sql } from '@/lib/db';
 import { fmtTime, fmtPace, fmtDate, fmtKm } from '@/lib/format';
@@ -18,10 +19,13 @@ export default async function Dashboard({ searchParams }) {
   const userId = await requireStravaUser();
   const sp = await searchParams;
 
-  const [conn] = await sql`select athlete_name, avatar_url, last_synced_at from strava_connections where user_id = ${userId}`;
-  const runs = await sql`select * from activities where user_id = ${userId} order by start_date desc`;
+  const [[conn], runs, scope] = await Promise.all([
+    sql`select athlete_name, avatar_url, last_synced_at from strava_connections where user_id = ${userId}`,
+    sql`select * from activities where user_id = ${userId} order by start_date desc`,
+    syncScope(),
+  ]);
   const pending = Number(sp.pending ?? 0);
-  const anyStarted = Boolean(await syncScope());
+  const anyStarted = Boolean(scope);
 
   return (
     <main>
@@ -52,7 +56,7 @@ export default async function Dashboard({ searchParams }) {
           )}
         </div>
       ) : (
-        <div className="notice">Per vedere le tue corse <a href="/collega-strava">collega Strava</a>.</div>
+        <div className="notice">Per vedere le tue corse <Link href="/collega-strava">collega Strava</Link>.</div>
       )}
 
       {runs.length > 0 ? (

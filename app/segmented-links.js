@@ -25,8 +25,8 @@ export default function SegmentedLinks({ items, label, className, scroll = true,
     const el = thumbEl.current;
     if (!el?.animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     el.animate(
-      [{ scale: '1' }, { scale: '1.12', offset: 0.3 }, { scale: '0.95', offset: 0.6 }, { scale: '1.03', offset: 0.8 }, { scale: '1' }],
-      { duration: 520, easing: 'ease-out' },
+      [{ scale: '1' }, { scale: '1.06', offset: 0.3 }, { scale: '0.98', offset: 0.65 }, { scale: '1' }],
+      { duration: 420, easing: 'ease-out' },
     );
   };
   const [thumb, setThumb] = useState(null); // { x, w, show, animate }

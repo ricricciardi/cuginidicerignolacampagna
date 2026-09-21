@@ -1,3 +1,4 @@
+import Link from 'next/link';
 export const metadata = { title: 'Regolamento — Cuginidicerignolacampagna' };
 
 // Regolamento: descrive le regole così come il sito le applica.
@@ -85,7 +86,7 @@ const SECTIONS = [
             Sotto il miglio (1,6&nbsp;km) le tabelle non valgono, e per quelle gare il punteggio non c&apos;è.
           </li>
           <li>
-            Servono sesso e data di nascita, da inserire nel <a href="/account#profilo">tuo account</a>.
+            Servono sesso e data di nascita, da inserire nel <Link href="/account#profilo">tuo account</Link>.
             La data di nascita non viene mai mostrata: gli altri vedono solo il punteggio.
           </li>
         </ul>

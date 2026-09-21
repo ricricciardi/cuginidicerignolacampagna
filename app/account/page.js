@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { sql } from '@/lib/db';
 import { getUserId } from '@/lib/session';
@@ -28,11 +29,12 @@ export default async function Account({ searchParams }) {
   if (!userId) redirect('/login');
   const sp = await searchParams;
 
-  const [me] = await sql`select email, sex, birth_date, photo_v from users where id = ${userId}`;
-  const [conn] = await sql`select athlete_name, avatar_url, scope, connected_at, last_synced_at, last_sync_error
-                           from strava_connections where user_id = ${userId}`;
-
-  const admin = await isAdmin(userId);
+  const [[me], [conn], admin] = await Promise.all([
+    sql`select email, sex, birth_date, photo_v from users where id = ${userId}`,
+    sql`select athlete_name, avatar_url, scope, connected_at, last_synced_at, last_sync_error
+        from strava_connections where user_id = ${userId}`,
+    isAdmin(userId),
+  ]);
   const revoked = conn?.last_sync_error === 'revoked';
   const readAll = conn?.scope.includes('activity:read_all');
 
@@ -58,7 +60,7 @@ export default async function Account({ searchParams }) {
         </div>
         <p className="hint">
           Servono per confrontare i tempi di età e sesso diversi con le tabelle USATF 2025.
-          La data di nascita non viene mai mostrata agli altri: vedono solo il punteggio. <a href="/regolamento#eta">Come funziona</a>
+          La data di nascita non viene mai mostrata agli altri: vedono solo il punteggio. <Link href="/regolamento#eta">Come funziona</Link>
         </p>
         <ProfileForm sex={me?.sex} birthDate={me?.birth_date} today={new Date().toISOString().slice(0, 10)} />
       </section>
@@ -72,7 +74,7 @@ export default async function Account({ searchParams }) {
             : <span className="pill ok">Collegato</span>}
         </div>
         {sp.error && sp.error !== 'profilo' && <div className="notice error">{ERRORS[sp.error] ?? 'Qualcosa non ha funzionato.'}</div>}
-        {sp.connected && <div className="notice">Strava collegato. Ora aggiorna le corse da <a href="/dashboard">Le mie corse</a>.</div>}
+        {sp.connected && <div className="notice">Strava collegato. Ora aggiorna le corse da <Link href="/dashboard">Le mie corse</Link>.</div>}
         {sp.disconnected && <div className="notice">Strava scollegato. Le tue corse salvate sono state cancellate.</div>}
         {conn ? (
           <div className="strava-status">
@@ -124,14 +126,14 @@ export default async function Account({ searchParams }) {
             <span className="pill ok">Admin</span>
           </div>
           <ul className="admin-links">
-            <li><a href="/gare/impostazioni">Impostazioni gare<small>Crea, modifica ed elimina le gare</small></a></li>
-            <li><a href="/account/utenti">Utenti<small>Chi è iscritto, stato di Strava, elimina</small></a></li>
+            <li><Link href="/gare/impostazioni">Impostazioni gare<small>Crea, modifica ed elimina le gare</small></Link></li>
+            <li><Link href="/account/utenti">Utenti<small>Chi è iscritto, stato di Strava, elimina</small></Link></li>
           </ul>
         </section>
       )}
 
       <section className="logout">
-        <a className="rules-link" href="/regolamento">Regolamento</a>
+        <Link className="rules-link" href="/regolamento">Regolamento</Link>
         <form method="post" action="/api/auth/logout">
           <button className="quiet" type="submit">Esci dall'account</button>
         </form>

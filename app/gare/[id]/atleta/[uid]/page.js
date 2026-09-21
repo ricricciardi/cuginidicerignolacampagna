@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { requireStravaUser } from '@/lib/admin';
 import { sql } from '@/lib/db';
@@ -30,7 +31,7 @@ export default async function Atleta({ params }) {
 
   return (
     <main>
-      <p className="back"><a href={`/gare/${c.id}`}>Torna a {c.name}</a></p>
+      <p className="back"><Link href={`/gare/${c.id}`}>Torna a {c.name}</Link></p>
       <div className="athlete-head">
         <Avatar name={athlete.athlete_name} src={athlete.avatar_url} size="lg" />
         <h1>{athlete.athlete_name || 'Atleta senza nome'}</h1>

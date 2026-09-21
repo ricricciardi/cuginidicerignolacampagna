@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { requireAdminPage } from '@/lib/admin';
 import { loadCompetition } from '@/lib/standings';
@@ -13,7 +14,7 @@ export default async function Elimina({ params }) {
 
   return (
     <main>
-      <p className="back"><a href="/gare/impostazioni">Torna alle impostazioni</a></p>
+      <p className="back"><Link href="/gare/impostazioni">Torna alle impostazioni</Link></p>
       <h1>Eliminare questa gara?</h1>
       <div className="notice error">
         <strong>{c.name}</strong><br />
@@ -28,7 +29,7 @@ export default async function Elimina({ params }) {
       <form className="stack" method="post" action={`/api/gare/${c.id}/elimina`}>
         <button className="danger" type="submit">Elimina la gara</button>
       </form>
-      <p className="switch"><a href="/gare/impostazioni">Annulla</a></p>
+      <p className="switch"><Link href="/gare/impostazioni">Annulla</Link></p>
     </main>
   );
 }

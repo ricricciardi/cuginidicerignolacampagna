@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import PasswordField from '../password-field';
 const ERRORS = { credentials: 'Email o password non corrette.' };
 
@@ -20,7 +21,7 @@ export default async function Login({ searchParams }) {
       {/* Chi arriva la prima volta deve trovare subito la registrazione: pulsante, non link. */}
       <div className="signup">
         <p>Prima volta qui? Non hai ancora un account?</p>
-        <a className="button secondary" href="/register">Registrati</a>
+        <Link className="button secondary" href="/register">Registrati</Link>
       </div>
     </main>
   );

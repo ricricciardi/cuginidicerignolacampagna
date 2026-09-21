@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { sql } from '@/lib/db';
 import { requireAdminPage } from '@/lib/admin';
 import Avatar from '../../avatar';
@@ -22,7 +23,7 @@ export default async function Utenti({ searchParams }) {
 
   return (
     <main>
-      <p className="back"><a href="/account">Torna al tuo account</a></p>
+      <p className="back"><Link href="/account">Torna al tuo account</Link></p>
       <h1>Utenti</h1>
       <p>{users.length} iscritti. Eliminare un utente cancella il suo account, il collegamento a Strava e le sue corse salvate.</p>
       {notice && <div className="notice">{NOTICES[notice]}</div>}

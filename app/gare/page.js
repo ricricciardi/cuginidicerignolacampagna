@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { sql } from '@/lib/db';
 import { isAdmin, requireStravaUser } from '@/lib/admin';
@@ -22,22 +23,22 @@ export default async function Gare() {
   return (
     <main>
       <h1>Gare</h1>
-      <p>Ogni gara ha i suoi km e le sue date. Le stesse corse Strava valgono per tutte. <a href="/regolamento">Leggi il regolamento</a></p>
+      <p>Ogni gara ha i suoi km e le sue date. Le stesse corse Strava valgono per tutte. <Link href="/regolamento">Leggi il regolamento</Link></p>
 
       {comps.length === 0 ? (
-        <p>{admin ? <>Ancora nessuna gara. Creala da <a href="/gare/impostazioni">Impostazioni gare</a>.</> : 'Non partecipi ancora a nessuna gara: ti aggiunge l\'amministratore.'}</p>
+        <p>{admin ? <>Ancora nessuna gara. Creala da <Link href="/gare/impostazioni">Impostazioni gare</Link>.</> : 'Non partecipi ancora a nessuna gara: ti aggiunge l\'amministratore.'}</p>
       ) : (
         <ul className="comps">
           {comps.map((c) => (
             <li key={c.id} className={c.phase}>
-              <a href={`/gare/${c.id}`}>
+              <Link href={`/gare/${c.id}`}>
                 <span className="comp-km">{c.km}<small>km</small></span>
                 <span className="comp-main">
                   <strong>{c.name}</strong>
                   <small>{fmtDay(c.start_date)} – {fmtDay(c.end_date)}</small>
                   <span className="comp-status">{statusLine(c, now)}</span>
                 </span>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

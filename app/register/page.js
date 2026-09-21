@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import PasswordField from '../password-field';
 const ERRORS = {
   invalid: 'Serve un indirizzo email valido e una password di almeno 8 caratteri.',
@@ -16,7 +17,7 @@ export default async function Register({ searchParams }) {
         <PasswordField label="Password" autoComplete="new-password" minLength={8} hint="Almeno 8 caratteri." />
         <button type="submit">Crea account</button>
       </form>
-      <p className="switch">Hai già un account? <a href="/login">Accedi</a></p>
+      <p className="switch">Hai già un account? <Link href="/login">Accedi</Link></p>
     </main>
   );
 }

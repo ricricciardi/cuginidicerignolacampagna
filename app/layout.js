@@ -1,5 +1,5 @@
 import './globals.css';
-import { sql } from '@/lib/db';
+import { loadMe } from '@/lib/admin';
 import { getUserId } from '@/lib/session';
 import Nav from './nav';
 import Brand from './brand';
@@ -21,10 +21,7 @@ export const viewport = {
 export default async function RootLayout({ children }) {
   const userId = await getUserId();
   const loggedIn = Boolean(userId);
-  const [me] = loggedIn
-    ? await sql`select c.athlete_name, coalesce('/api/foto/' || u.id || '?v=' || u.photo_v, c.avatar_url) as avatar_url, u.email from users u
-                left join strava_connections c on c.user_id = u.id where u.id = ${userId}`
-    : [];
+  const me = loggedIn ? await loadMe(userId) : null;
   return (
     <html lang="it">
       <body>

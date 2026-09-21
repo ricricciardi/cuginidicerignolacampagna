@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { sql } from '@/lib/db';
 import { requireAdminPage } from '@/lib/admin';
 import { phase, statusLine, fmtDay } from '@/lib/competition';
@@ -20,11 +21,11 @@ export default async function Impostazioni({ searchParams }) {
 
   return (
     <main>
-      <p className="back"><a href="/gare">Torna alle gare</a></p>
+      <p className="back"><Link href="/gare">Torna alle gare</Link></p>
       <h1>Impostazioni gare</h1>
       {notice && <div className="notice">{NOTICES[notice]}</div>}
       <p>Qui si creano, si modificano e si eliminano le gare e si sceglie chi partecipa. Tutto resta modificabile anche a gara partita.</p>
-      <p><a className="button" href="/gare/nuova">Crea una gara</a></p>
+      <p><Link className="button" href="/gare/nuova">Crea una gara</Link></p>
 
       {comps.length === 0 ? (
         <p>Ancora nessuna gara.</p>
@@ -42,8 +43,8 @@ export default async function Impostazioni({ searchParams }) {
                 <span className="comp-status">{statusLine(c, now)}</span>
               </div>
               <div className="row-actions">
-                <a href={`/gare/${c.id}/modifica`}>Modifica</a>
-                <a className="danger" href={`/gare/${c.id}/elimina`}>Elimina</a>
+                <Link href={`/gare/${c.id}/modifica`}>Modifica</Link>
+                <Link className="danger" href={`/gare/${c.id}/elimina`}>Elimina</Link>
               </div>
             </li>
           ))}
