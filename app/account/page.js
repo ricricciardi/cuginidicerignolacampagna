@@ -133,14 +133,14 @@ export default async function Account({ searchParams }) {
         </section>
       )}
 
+      <InstallCard />
+
       <section className="logout">
         <Link className="rules-link" href="/regolamento">Regolamento</Link>
         <form method="post" action="/api/auth/logout">
           <button className="quiet" type="submit">Esci dall'account</button>
         </form>
       </section>
-
-      <InstallCard />
     </main>
   );
 }
