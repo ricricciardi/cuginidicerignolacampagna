@@ -139,3 +139,50 @@ test('nome: sempre modificabile, ma non vuoto né troppo lungo', () => {
   assert.ok(validateName({ name: '   ' }).errors.name);
   assert.ok(validateName({ name: 'x'.repeat(61) }).errors.name);
 });
+
+import { ageOn, standardSeconds, ageGradePct } from '../lib/agegrade.js';
+test('età compiuta il giorno della corsa', () => {
+  assert.equal(ageOn('1986-09-18', '2026-09-17T08:00:00Z'), 39);
+  assert.equal(ageOn('1986-09-18', '2026-09-18T08:00:00Z'), 40);
+});
+test('standard assoluto 10 km pubblicati: 26:24 uomini (30 anni), 28:46 donne (25 anni)', () => {
+  assert.equal(Math.round(standardSeconds('M', 30, 10)), 1584);
+  assert.equal(Math.round(standardSeconds('F', 25, 10)), 1726);
+});
+test('esempio pubblicato: uomo di 50 anni, 10 km in 49:31 = 60%', () => {
+  const p = ageGradePct({ sex: 'M', birthDate: '1976-01-01', runDate: '2026-06-01', km: 10, timeS: 49 * 60 + 31 });
+  assert.ok(Math.abs(p - 60) < 0.05, p);
+});
+test('interpolazione ufficiale: 7 km sta tra 4 miglia e 8 km', () => {
+  const s7 = standardSeconds('M', 40, 7);
+  assert.ok(s7 > standardSeconds('M', 40, 6.437376) && s7 < standardSeconds('M', 40, 8));
+});
+test('stesso tempo: la donna o il più anziano ottengono un punteggio più alto', () => {
+  const base = { birthDate: '1986-01-01', runDate: '2026-06-01', km: 10, timeS: 3000 };
+  assert.ok(ageGradePct({ ...base, sex: 'F' }) > ageGradePct({ ...base, sex: 'M' }));
+  assert.ok(ageGradePct({ ...base, sex: 'M', birthDate: '1966-01-01' }) > ageGradePct({ ...base, sex: 'M' }));
+});
+test('casi non coperti: 1 km, età fuori tabella, dati mancanti', () => {
+  assert.equal(standardSeconds('M', 40, 1), null);
+  assert.equal(ageGradePct({ sex: 'M', birthDate: '2023-01-01', runDate: '2026-06-01', km: 10, timeS: 3000 }), null);
+  assert.equal(ageGradePct({ sex: null, birthDate: '1986-01-01', runDate: '2026-06-01', km: 10, timeS: 3000 }), null);
+});
+
+import { ageStandings } from '../lib/standings.js';
+test('classifica per età e sesso: punteggio più alto in testa, chi non ha dati in fondo', () => {
+  const runs = [
+    { user_id: 1, athlete_name: 'Riccardo', time_s: 3000, pct: 55.0, start_date: '2026-10-01' },
+    { user_id: 1, athlete_name: 'Riccardo', time_s: 2900, pct: 57.0, start_date: '2026-10-03' },
+    { user_id: 2, athlete_name: 'Nunzia', time_s: 3300, pct: 58.5, start_date: '2026-10-02' },
+    { user_id: 3, athlete_name: 'Mimmo', time_s: 2800, pct: null, start_date: '2026-10-02' },
+  ];
+  const people = [
+    { user_id: 1, athlete_name: 'Riccardo', sex: 'M', birth_date: '1986-09-18' },
+    { user_id: 2, athlete_name: 'Nunzia', sex: 'F', birth_date: '1960-01-01' },
+    { user_id: 3, athlete_name: 'Mimmo', sex: null, birth_date: null },
+    { user_id: 4, athlete_name: 'Alfredo', sex: 'M', birth_date: '1990-01-01' },
+  ];
+  const r = ageStandings(runs, people);
+  assert.deepEqual(r.map((x) => [x.athlete_name, x.pct, x.reached, x.missing ?? null]),
+    [['Nunzia', 58.5, 1, null], ['Riccardo', 57.0, 2, null], ['Alfredo', null, 0, 'corse'], ['Mimmo', null, 1, 'dati']]);
+});

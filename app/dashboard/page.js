@@ -19,6 +19,7 @@ const ERRORS = {
   rate: 'Strava ha raggiunto il limite di richieste. Riprova tra 15 minuti: le corse già lette restano salvate.',
   revoked: 'Strava non riconosce più il collegamento. Ricollega il tuo account.',
   no_race: 'Nessuna gara è ancora partita: non ci sono corse da leggere.',
+  profilo: 'Controlla sesso e data di nascita: la data deve essere reale e non futura.',
 };
 
 export default async function Dashboard({ searchParams }) {
@@ -29,6 +30,7 @@ export default async function Dashboard({ searchParams }) {
   const [conn] = await sql`select athlete_name, avatar_url, last_synced_at from strava_connections where user_id = ${userId}`;
   const runs = await sql`select * from activities where user_id = ${userId} order by start_date desc`;
   const pending = Number(sp.pending ?? 0);
+  const [me] = await sql`select sex, birth_date from users where id = ${userId}`;
   const anyStarted = Boolean(await syncScope());
 
   return (
@@ -38,6 +40,7 @@ export default async function Dashboard({ searchParams }) {
 
       {sp.error && <div className="notice error">{ERRORS[sp.error] ?? 'Qualcosa non ha funzionato.'}</div>}
       {sp.connected && <div className="notice">Strava collegato. Ora aggiorna le attività.</div>}
+      {sp.profilo && <div className="notice">Dati salvati.</div>}
       {sp.synced !== undefined && (
         <div className="notice">
           {sp.synced} corse nuove salvate.
@@ -66,12 +69,35 @@ export default async function Dashboard({ searchParams }) {
             <span>
               Acconsento che il mio nome Strava, la mia foto Strava, le date e i tempi delle mie corse, comprese
               quelle impostate come «Solo io», siano visibili agli altri iscritti al sito
-              nelle classifiche e nei confronti delle gare e nella mia pagina dei progressi.
+              nelle classifiche, compresa quella per età e sesso, nei confronti delle gare e nella mia pagina dei progressi.
             </span>
           </label>
           <button className="button strava" type="submit">Collega con Strava</button>
         </form>
       )}
+
+      <section className="profile" id="profilo">
+        <h2>Classifica per età e sesso</h2>
+        <p className="hint">
+          Servono per confrontare i tempi di età e sesso diversi con le tabelle USATF 2025.
+          La data di nascita non viene mai mostrata agli altri: vedono solo il punteggio. <a href="/regolamento#eta">Come funziona</a>
+        </p>
+        <form className="stack" method="post" action="/api/profilo">
+          <div className="dates">
+            <label>Sesso
+              <select name="sex" required defaultValue={me?.sex ?? ''}>
+                <option value="" disabled>Scegli</option>
+                <option value="M">Uomo</option>
+                <option value="F">Donna</option>
+              </select>
+            </label>
+            <label>Data di nascita
+              <input type="date" name="birth_date" required defaultValue={me?.birth_date ?? ''} max={new Date().toISOString().slice(0, 10)} />
+            </label>
+          </div>
+          <button type="submit">Salva</button>
+        </form>
+      </section>
 
       {runs.length > 0 ? (
         <>

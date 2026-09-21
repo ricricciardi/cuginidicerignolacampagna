@@ -269,6 +269,9 @@ form.stack button { margin-top: var(--s2); }
   border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.06); }
 .segmented button { min-height: var(--tap); padding: 0 var(--s4); font-size: var(--fs-s); font-weight: 700;
   background: none; box-shadow: none; color: var(--muted); }
+.segmented a { display: flex; align-items: center; justify-content: center; min-height: var(--tap);
+  padding: 0 var(--s4); border-radius: 999px; font-size: var(--fs-s); font-weight: 700; color: var(--muted); text-decoration: none; }
+.segmented a[aria-current="page"],
 .segmented button[aria-pressed="true"] {
   color: #140a24;
   background: linear-gradient(180deg, rgba(255,255,255,.65) 0%, rgba(255,255,255,.1) 50%, rgba(255,255,255,0) 51%), var(--lime);
@@ -392,3 +395,25 @@ input:disabled { opacity: .5; }
 .athlete-head { display: flex; align-items: center; gap: var(--s4); margin-bottom: var(--s3); }
 .athlete-head h1 { margin: 0; }
 .connected { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
+
+/* Profilo per l'age grading */
+.profile { margin: var(--s6) 0; }
+.profile h2 { margin-top: 0; }
+select { font-family: inherit; font-size: 16px; min-height: 48px; width: 100%; padding: var(--s3) var(--s4);
+  border-radius: 12px; color: var(--ink); border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.07); }
+select:focus { border-color: var(--lime); box-shadow: 0 0 0 3px rgba(215,255,31,.25); outline: none; }
+option { color: #140a24; }
+
+/* Classifica: scelta tra tempo e punteggio per età e sesso */
+.view-switch { margin: 0 0 var(--s4); }
+.board .pct { text-align: right; font-size: var(--fs-l); line-height: 1; font-weight: 900; font-style: italic;
+  font-variant-numeric: tabular-nums; color: var(--lime); text-shadow: 0 0 14px rgba(215,255,31,.45); }
+.board .senza-tempo .pct { color: var(--muted); text-shadow: none; }
+
+/* Regolamento */
+.rules h2 { margin-top: var(--s6); }
+.rules p, .rules li { color: var(--ink); opacity: .9; }
+.rules ul { padding-left: 1.2rem; margin: 0 0 var(--s4); line-height: var(--lh-body); }
+.rules li { margin-bottom: var(--s2); }
+.site-footer { max-width: 40rem; margin: 0 auto; padding: 0 1.25rem var(--s6); text-align: center; }
+.site-footer a { display: inline-flex; align-items: center; min-height: var(--tap); font-size: var(--fs-s); color: var(--muted); font-weight: 600; }

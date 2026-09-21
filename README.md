@@ -55,6 +55,17 @@ In locale: copia `.env.example` in `.env.local`, compila i valori, poi
   La colonna "Volte" conta le corse della gara con il tempo al passaggio calcolato.
 - Grafici: asse verticale invertito, più in alto è più veloce.
 
+## Classifica per età e sesso (lib/agegrade.js)
+
+- Tabelle USATF MLDR Road Age Standards 2025 (Alan Jones), approvate il 10/1/2025.
+  Fonte: https://github.com/AlanLyttonJones/Age-Grade-Tables, cartella "2025 Files".
+- `lib/agegrade-data.js` è generato da `scripts/build-agegrade.py` (serve `openpyxl`):
+  per aggiornare le tabelle si rilancia lo script sulla cartella scaricata.
+- Punteggio = standard per età, sesso e distanza / tempo, in percentuale. Età compiuta
+  il giorno della corsa. Distanze intermedie con l'interpolazione ufficiale 2025.
+- Sesso e data di nascita si inseriscono in Le mie corse; la data non viene mostrata.
+- Il regolamento completo per i partecipanti è la pagina /regolamento.
+
 ## Aggiornamento dei dati (lib/sync.js)
 
 - Ogni notte Vercel Cron chiama `/api/cron/sync` (vercel.json, `0 2 * * *` in UTC:

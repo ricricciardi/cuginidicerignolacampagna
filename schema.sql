@@ -2,6 +2,8 @@ create table if not exists users (
   id            serial primary key,
   email         text not null unique,
   password_hash text not null,
+  sex           text check (sex in ('M', 'F')),                     -- per la classifica per età e sesso
+  birth_date    text check (birth_date ~ '^\d{4}-\d{2}-\d{2}$'),  -- mai mostrata agli altri
   created_at    timestamptz not null default now()
 );
 

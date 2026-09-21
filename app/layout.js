@@ -30,6 +30,7 @@ export default async function RootLayout({ children }) {
         </header>
         {loggedIn && <Nav />}
         {children}
+        <footer className="site-footer"><a href="/regolamento">Regolamento</a></footer>
       </body>
     </html>
   );
