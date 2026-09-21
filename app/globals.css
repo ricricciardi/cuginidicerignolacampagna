@@ -122,17 +122,22 @@ small { font-size: var(--fs-xs); line-height: var(--lh-snug); letter-spacing: .0
   :is(.logo, .me-rings) .ring-pink { animation-name: ring-cw; }
   :is(.logo, .me-rings) .ring-cyan { animation-name: ring-ccw; animation-delay: 1.12s; }
   .logo .ring-lime { animation-name: ring-wobble; animation-delay: .95s; }
-  /* Il tuo avatar: il cerchio lime si apre nella C e dondola; rosa e azzurro compaiono, girano, spariscono */
-  .me-rings .ring-lime { animation-name: me-open, ring-wobble; animation-delay: .95s; }
-  .me-rings .ring-pink { animation-name: ring-cw, me-show; }
-  .me-rings .ring-cyan { animation-name: ring-ccw, me-show; }
+  /* Il tuo avatar, ogni 10 secondi: il cerchio lime si apre nella C e dondola; rosa e azzurro
+     compaiono, girano, spariscono (stesso movimento del logo, circa 1,7 s) */
+  .me-rings .ring { animation-duration: 10s; }
+  .me-rings .ring-lime { animation-name: me-open, me-wobble; animation-delay: .95s; }
+  .me-rings .ring-pink { animation-name: me-cw, me-show; }
+  .me-rings .ring-cyan { animation-name: me-ccw, me-show; }
 }
 /* Da fermo (e con «Riduci movimento»): solo il cerchio lime chiuso */
 .me-rings .ring-lime { stroke-dasharray: 100 0; }
 .me-rings .ring-pink, .me-rings .ring-cyan { opacity: 0; }
-@keyframes me-open { 0%, 3% { stroke-dasharray: 100 0; stroke-dashoffset: 0; }
-  12%, 46% { stroke-dasharray: 75 25; stroke-dashoffset: -12.5; } 58%, 100% { stroke-dasharray: 100 0; stroke-dashoffset: 0; } }
-@keyframes me-show { 0%, 4% { opacity: 0; } 12%, 44% { opacity: 1; } 56%, 100% { opacity: 0; } }
+@keyframes me-open { 0%, 0.9% { stroke-dasharray: 100 0; stroke-dashoffset: 0; }
+  3.6%, 13.8% { stroke-dasharray: 75 25; stroke-dashoffset: -12.5; } 17.4%, 100% { stroke-dasharray: 100 0; stroke-dashoffset: 0; } }
+@keyframes me-show { 0%, 1.2% { opacity: 0; } 3.6%, 13.2% { opacity: 1; } 16.8%, 100% { opacity: 0; } }
+@keyframes me-cw  { 0% { rotate: 0deg; } 12% { rotate: 372deg; } 14.4% { rotate: 356deg; } 16.5%, 100% { rotate: 360deg; } }
+@keyframes me-ccw { 0% { rotate: 0deg; } 12% { rotate: -372deg; } 14.4% { rotate: -356deg; } 16.5%, 100% { rotate: -360deg; } }
+@keyframes me-wobble { 0% { rotate: 0deg; } 3.9% { rotate: -14deg; } 9% { rotate: 9deg; } 12.9% { rotate: -4deg; } 15.9%, 100% { rotate: 0deg; } }
 @keyframes ring-cw   { 0% { rotate: 0deg; } 40% { rotate: 372deg; } 48% { rotate: 356deg; } 55%, 100% { rotate: 360deg; } }
 @keyframes ring-ccw  { 0% { rotate: 0deg; } 40% { rotate: -372deg; } 48% { rotate: -356deg; } 55%, 100% { rotate: -360deg; } }
 @keyframes ring-wobble { 0% { rotate: 0deg; } 13% { rotate: -14deg; } 30% { rotate: 9deg; } 43% { rotate: -4deg; } 53%, 100% { rotate: 0deg; } }
@@ -158,7 +163,10 @@ small { font-size: var(--fs-xs); line-height: var(--lh-snug); letter-spacing: .0
 /* Tab dell'account: solo la foto, cerchiata di lime quando è la pagina aperta */
 .tabs a.tab-account { padding: 0 6px; }
 .tabs a.tab-account[aria-current="page"] { background: none; box-shadow: none; }
-.tabs a.tab-account[aria-current="page"] .avatar { box-shadow: 0 0 14px rgba(215,255,31,.5); }
+/* Sul cursore lime l'anello del tuo avatar diventa scuro, come il testo dei tab attivi */
+.tabs a.tab-account[aria-current="page"] .me-rings { filter: none; }
+.tabs a.tab-account[aria-current="page"] .me-rings .ring-lime { stroke: #140a24; }
+.tabs a.tab-account[aria-current="page"] .avatar.initials { color: #140a24; background: transparent; border-color: transparent; }
 
 /* Moduli */
 form.stack { display: grid; gap: var(--s4); margin-top: var(--s5); }
