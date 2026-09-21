@@ -1,4 +1,5 @@
 'use client';
+import { useT } from '../lang-provider';
 import { useRouter } from 'next/navigation';
 import { useCallback, useRef, useState } from 'react';
 import Avatar from '../avatar';
@@ -11,7 +12,8 @@ export default function PhotoPicker({ name, src, custom, strava }) {
   const input = useRef(null);
   const [state, setState] = useState('idle'); // idle | saving | error
   const [preview, setPreview] = useState(null);
-  const [editing, setEditing] = useState(null); // file scelto, aperto nell'editor
+  const [editing, setEditing] = useState(null);
+  const t = useT(); // file scelto, aperto nell'editor
 
   const send = async (init) => {
     setState('saving');
@@ -47,7 +49,7 @@ export default function PhotoPicker({ name, src, custom, strava }) {
   return (
     <div className="photo-picker">
       <button type="button" className="photo-button" onClick={() => input.current?.click()}
-              aria-label="Cambia foto" disabled={state === 'saving'}>
+              aria-label={t('Cambia foto')} disabled={state === 'saving'}>
         <Avatar name={name} src={preview ?? src} size="lg" me />
         <span className="photo-badge" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4H9Zm3 4.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Zm0 2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Z"/></svg>
@@ -56,11 +58,11 @@ export default function PhotoPicker({ name, src, custom, strava }) {
       <input ref={input} type="file" accept="image/*" hidden onChange={onFile} />
       {editing && <PhotoCropper file={editing} onCancel={onCancelCrop} onDone={onCropped} />}
       <div className="photo-actions">
-        {state === 'saving' && <span className="hint">Salvataggio…</span>}
-        {state === 'error' && <span className="field-error" role="status">Foto non caricata. Riprova con un&apos;altra immagine.</span>}
+        {state === 'saving' && <span className="hint">{t('Salvataggio…')}</span>}
+        {state === 'error' && <span className="field-error" role="status">{t('Foto non caricata. Riprova con un\'altra immagine.')}</span>}
         {custom && state !== 'saving' && (
           <button type="button" className="quiet" onClick={() => { setPreview(null); send({ method: 'DELETE' }); }}>
-            {strava ? 'Usa la foto di Strava' : 'Togli la foto'}
+            {strava ? t('Usa la foto di Strava') : t('Togli la foto')}
           </button>
         )}
       </div>

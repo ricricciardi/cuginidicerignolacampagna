@@ -1,5 +1,6 @@
 'use client';
 import { useEffect } from 'react';
+import { useT } from './lang-provider';
 
 // Errori nel caricamento di una pagina. Il caso tipico, subito dopo un rilascio: il telefono ha
 // ancora aperta la versione vecchia e cerca file che non esistono più. Lì si ricarica da solo
@@ -8,6 +9,7 @@ const isStale = (e) => /ChunkLoadError|Loading chunk|Failed to fetch dynamically
   .test(`${e?.name} ${e?.message}`);
 
 export default function Error({ error, reset }) {
+  const t = useT();
   useEffect(() => {
     console.error(error);
     if (!isStale(error)) return;
@@ -20,12 +22,12 @@ export default function Error({ error, reset }) {
 
   return (
     <main>
-      <h1>Ops</h1>
-      <p>Qualcosa non ha funzionato nel caricare la pagina. Di solito basta ricaricarla.</p>
+      <h1>{t('Ops')}</h1>
+      <p>{t('Qualcosa non ha funzionato nel caricare la pagina. Di solito basta ricaricarla.')}</p>
       <button type="button" onClick={() => { try { sessionStorage.removeItem('ricaricato'); } catch {} window.location.reload(); }}>
-        Ricarica
+        {t('Ricarica')}
       </button>
-      <p><button type="button" className="quiet" onClick={() => reset()}>Riprova senza ricaricare</button></p>
+      <p><button type="button" className="quiet" onClick={() => reset()}>{t('Riprova senza ricaricare')}</button></p>
     </main>
   );
 }

@@ -9,6 +9,7 @@ import { fmtTime, fmtDate, fmtKm, fmtElevation } from '@/lib/format';
 import Avatar from '../../../../avatar';
 import Splits from '../../../splits';
 import RunDetails from '../../../run-details';
+import { getT } from '@/lib/lingua';
 
 export default async function Atleta({ params }) {
   const me = await requireStravaUser();
@@ -24,33 +25,34 @@ export default async function Atleta({ params }) {
                               where c.user_id = ${uid} and c.consent_at is not null`;
   if (!athlete) notFound();
 
-  const runs = markRecords(await competitionRuns(c, uid));
+  const [runsRaw, t] = await Promise.all([competitionRuns(c, uid), getT()]);
+  const runs = markRecords(runsRaw);
   const timed = runs.filter((r) => r.time_s != null);
   const best = timed.length ? Math.min(...timed.map((r) => r.time_s)) : null;
   const first = timed[0]?.time_s;
 
   return (
     <main>
-      <p className="back"><Link href={`/gare/${c.id}`}>Torna a {c.name}</Link></p>
+      <p className="back"><Link href={`/gare/${c.id}`}>{t('Torna a {nome}', { nome: c.name })}</Link></p>
       <div className="athlete-head">
         <Avatar name={athlete.athlete_name} src={athlete.avatar_url} size="lg" me={uid === me} />
-        <h1>{athlete.athlete_name || 'Atleta senza nome'}</h1>
+        <h1>{athlete.athlete_name || t('Atleta senza nome')}</h1>
       </div>
       {best != null ? (
         <>
           <dl className="stats summary">
-            <div className="km"><dt>Record {c.km} km</dt><dd>{fmtTime(best)}</dd></div>
-            <div><dt>Corse</dt><dd>{runs.length}</dd></div>
-            <div><dt>Dalla prima</dt><dd>{first - best > 0 ? `−${fmtTime(first - best)}` : '0:00'}</dd></div>
+            <div className="km"><dt>{t('Record {km} km', { km: c.km })}</dt><dd>{fmtTime(best)}</dd></div>
+            <div><dt>{t('Corse')}</dt><dd>{runs.length}</dd></div>
+            <div><dt>{t('Dalla prima')}</dt><dd>{first - best > 0 ? `−${fmtTime(first - best)}` : '0:00'}</dd></div>
           </dl>
-          <h2>Primi {c.km}&nbsp;km di ogni corsa</h2>
-          <p className="legend">Più in alto è più veloce. I punti pieni sono i nuovi record.</p>
-          <div className="chart-wrap"><ProgressChart runs={runs} km={c.km} /></div>
+          <h2>{t('Primi {km} km di ogni corsa', { km: c.km })}</h2>
+          <p className="legend">{t('Più in alto è più veloce. I punti pieni sono i nuovi record.')}</p>
+          <div className="chart-wrap"><ProgressChart runs={runs} km={c.km} t={t} /></div>
         </>
       ) : (
-        <p>Nessun tempo sui primi {c.km} km in questa gara.</p>
+        <p>{t('Nessun tempo sui primi {km} km in questa gara.', { km: c.km })}</p>
       )}
-      {timed.length > 0 && <p className="legend">Tocca una corsa per vedere i parziali dei primi {c.km}&nbsp;km.</p>}
+      {timed.length > 0 && <p className="legend">{t('Tocca una corsa per vedere i parziali dei primi {km} km.', { km: c.km })}</p>}
       <ul className="history">
         {[...runs].reverse().map((r) => {
           const head = (
@@ -60,8 +62,8 @@ export default async function Atleta({ params }) {
                 <small>{[`${fmtKm(r.distance_m)} km`, fmtElevation(r.elev_m)].filter(Boolean).join(' · ')}</small>
               </span>
               <span className="time">
-                {r.time_s != null ? fmtTime(r.time_s) : 'n.d.'}
-                {r.isRecord && <em>record</em>}
+                {r.time_s != null ? fmtTime(r.time_s) : t('n.d.')}
+                {r.isRecord && <em>{t('record')}</em>}
               </span>
             </>
           );

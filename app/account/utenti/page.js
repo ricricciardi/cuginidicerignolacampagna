@@ -3,6 +3,7 @@ import { sql } from '@/lib/db';
 import { requireAdminPage } from '@/lib/admin';
 import Avatar from '../../avatar';
 import { phase } from '@/lib/competition';
+import { getT } from '@/lib/lingua';
 
 const fmtDay = (d) => new Date(d).toLocaleDateString('it-IT', {
   timeZone: 'Europe/Rome', day: 'numeric', month: 'short', year: 'numeric',
@@ -14,6 +15,7 @@ const NOTICES = { eliminato: 'Utente eliminato.', aggiunto: 'Aggiunto alla gara.
 export default async function Utenti({ searchParams }) {
   const me = await requireAdminPage();
   const sp = await searchParams;
+  const t = await getT();
   const users = await sql`
     select u.id, u.email, u.is_admin, u.created_at, u.sex is not null and u.birth_date is not null as profilo,
            c.user_id is not null as strava, c.athlete_name, coalesce('/api/foto/' || u.id || '?v=' || u.photo_v, c.avatar_url) as avatar_url, c.last_sync_error,
@@ -33,11 +35,11 @@ export default async function Utenti({ searchParams }) {
 
   return (
     <main>
-      <p className="back"><Link href="/account">Torna al tuo account</Link></p>
-      <h1>Utenti</h1>
-      <p>{users.length} iscritti. Eliminare un utente cancella il suo account, il collegamento a Strava e le sue corse salvate.</p>
-      {notice && <div className="notice">{NOTICES[notice]}</div>}
-      {sp.error === 'self' && <div className="notice error">Non puoi eliminare il tuo account da qui.</div>}
+      <p className="back"><Link href="/account">{t('Torna al tuo account')}</Link></p>
+      <h1>{t('Utenti')}</h1>
+      <p>{t('{n} iscritti. Eliminare un utente cancella il suo account, il collegamento a Strava e le sue corse salvate.', { n: users.length })}</p>
+      {notice && <div className="notice">{t(NOTICES[notice])}</div>}
+      {sp.error === 'self' && <div className="notice error">{t('Non puoi eliminare il tuo account da qui.')}</div>}
 
       <ul className="settings-list users-list">
         {users.map((u) => (
@@ -48,19 +50,19 @@ export default async function Utenti({ searchParams }) {
                 <strong>{u.athlete_name || u.email}</strong>
                 <small>{u.email}</small>
               </div>
-              {u.is_admin && <span className="pill ok">Admin</span>}
+              {u.is_admin && <span className="pill ok">{t('Admin')}</span>}
             </div>
             <dl className="status-list">
-              <div><dt>Iscritto dal</dt><dd>{fmtDay(u.created_at)}</dd></div>
-              <div><dt>Strava</dt><dd>
-                {!u.strava ? 'non collegato' : u.last_sync_error === 'revoked' ? 'da ricollegare' : 'collegato'}
+              <div><dt>{t('Iscritto dal')}</dt><dd>{fmtDay(u.created_at)}</dd></div>
+              <div><dt>{t('Strava')}</dt><dd>
+                {!u.strava ? t('non collegato') : u.last_sync_error === 'revoked' ? t('da ricollegare') : t('collegato')}
               </dd></div>
-              <div><dt>Corse salvate</dt><dd>{u.corse}</dd></div>
-              <div><dt>Sesso e data di nascita</dt><dd>{u.profilo ? 'inseriti' : 'mancano'}</dd></div>
+              <div><dt>{t('Corse salvate')}</dt><dd>{u.corse}</dd></div>
+              <div><dt>{t('Sesso e data di nascita')}</dt><dd>{u.profilo ? t('inseriti') : t('mancano')}</dd></div>
             </dl>
             {open.length > 0 && (
               <div className="user-races">
-                <strong>Gare</strong>
+                <strong>{t('Gare')}</strong>
                 <ul>
                   {open.map((c) => {
                     const inside = inRace.has(`${c.id}:${u.id}`);
@@ -68,17 +70,17 @@ export default async function Utenti({ searchParams }) {
                       <li key={c.id}>
                         <span>
                           {c.name}
-                          <small>{c.km} km · {phase(c, now) === 'running' ? 'in corso' : 'da iniziare'}</small>
+                          <small>{c.km} km · {phase(c, now) === 'running' ? t('in corso') : t('da iniziare')}</small>
                         </span>
                         <form method="post" action={`/api/utenti/${u.id}/gare`}>
                           <input type="hidden" name="competition_id" value={c.id} />
                           {inside ? (
                             <>
-                              <span className="in-race">In gara ✓</span>
-                              <button className="quiet" type="submit" name="azione" value="togli">Togli</button>
+                              <span className="in-race">{t('In gara ✓')}</span>
+                              <button className="quiet" type="submit" name="azione" value="togli">{t('Togli')}</button>
                             </>
                           ) : (
-                            <button className="button small" type="submit" name="azione" value="aggiungi">Aggiungi</button>
+                            <button className="button small" type="submit" name="azione" value="aggiungi">{t('Aggiungi')}</button>
                           )}
                         </form>
                       </li>
@@ -89,13 +91,12 @@ export default async function Utenti({ searchParams }) {
             )}
             {u.id !== me && (
               <details className="disconnect">
-                <summary>Elimina utente</summary>
+                <summary>{t('Elimina utente')}</summary>
                 <p className="hint">
-                  Cancelliamo account, collegamento a Strava e corse salvate di {u.athlete_name || u.email}:
-                  sparisce da tutte le classifiche. Non si può annullare.
+                  {t('Cancelliamo account, collegamento a Strava e corse salvate di {nome}: sparisce da tutte le classifiche. Non si può annullare.', { nome: u.athlete_name || u.email })}
                 </p>
                 <form method="post" action={`/api/utenti/${u.id}/elimina`}>
-                  <button className="danger" type="submit">Sì, elimina</button>
+                  <button className="danger" type="submit">{t('Sì, elimina')}</button>
                 </form>
               </details>
             )}

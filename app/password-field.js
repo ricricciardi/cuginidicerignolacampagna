@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useT } from './lang-provider';
 
 const Eye = ({ off }) => (
   <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
@@ -13,6 +14,7 @@ const Eye = ({ off }) => (
 // Campo password con l'occhio per mostrarla o nasconderla.
 export default function PasswordField({ label, autoComplete, minLength, hint }) {
   const [visible, setVisible] = useState(false);
+  const t = useT();
   return (
     <label>
       {label}
@@ -22,7 +24,7 @@ export default function PasswordField({ label, autoComplete, minLength, hint }) 
                autoCorrect="off" spellCheck={false} />
         <button type="button" className="reveal" onClick={() => setVisible(!visible)}
                 aria-pressed={visible}
-                aria-label={visible ? 'Nascondi la password' : 'Mostra la password'}>
+                aria-label={visible ? t('Nascondi la password') : t('Mostra la password')}>
           <Eye off={visible} />
         </button>
       </span>

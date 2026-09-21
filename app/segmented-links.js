@@ -10,7 +10,8 @@ const lastThumb = new Map();
 // subito sotto la voce toccata, mentre la nuova vista arriva dal server.
 // items: [{ href, label, current, className?, ariaLabel?, title?, thumb? }]; thumb: false = voce
 // senza cursore (il tab dell'account ha già il suo anello attorno alla foto).
-export default function SegmentedLinks({ items, label, className, scroll = true, replace = false }) {
+// label: identificativo interno (usato anche da .nav-content[data-nav]); ariaLabel: il nome letto, tradotto.
+export default function SegmentedLinks({ items, label, ariaLabel, className, scroll = true, replace = false }) {
   const current = items.findIndex((it) => it.current);
   const [active, setActive] = useState(current);
   useEffect(() => setActive(current), [current]);
@@ -68,7 +69,7 @@ export default function SegmentedLinks({ items, label, className, scroll = true,
 
   const style = thumb ? { '--x': `${thumb.x ?? 0}px`, '--w': `${thumb.w ?? 0}px` } : undefined;
   return (
-    <nav ref={nav} className={`${className} sliding`} aria-label={label} style={style}
+    <nav ref={nav} className={`${className} sliding`} aria-label={ariaLabel ?? label} style={style}
          data-ready={thumb ? '' : undefined} data-animate={thumb?.animate ? '' : undefined}>
       <span ref={thumbEl} className="slide-thumb" aria-hidden="true" data-hidden={thumb && !thumb.show ? '' : undefined} />
       {items.map((it, i) => (

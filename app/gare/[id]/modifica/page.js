@@ -3,10 +3,12 @@ import { notFound } from 'next/navigation';
 import { requireAdminPage, allPeople } from '@/lib/admin';
 import { loadCompetition, participantIds } from '@/lib/standings';
 import { queryToForm } from '@/lib/competition';
+import { getT } from '@/lib/lingua';
 import CompetitionForm from '../../form';
 
 export default async function Modifica({ params, searchParams }) {
   await requireAdminPage();
+  const t = await getT();
   const c = await loadCompetition((await params).id);
   if (!c) notFound();
   const sp = await searchParams;
@@ -14,10 +16,10 @@ export default async function Modifica({ params, searchParams }) {
   const values = sp.err ? queryToForm(sp) : { ...c, participants: await participantIds(c.id) };
   return (
     <main>
-      <p className="back"><Link href="/gare/impostazioni">Torna alle impostazioni</Link></p>
-      <h1>Modifica gara</h1>
+      <p className="back"><Link href="/gare/impostazioni">{t('Torna alle impostazioni')}</Link></p>
+      <h1>{t('Modifica gara')}</h1>
       <CompetitionForm action={`/api/gare/${c.id}`} values={values} people={await allPeople()} errors={errors}
-                       submit="Salva modifiche" />
+                       submit={t('Salva modifiche')} />
     </main>
   );
 }

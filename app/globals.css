@@ -334,7 +334,7 @@ button[data-state="saving"] { opacity: .75; }
 .board .leader a { border-color: rgba(255,47,178,.7); box-shadow: 0 0 26px rgba(255,47,178,.35), inset 0 1px 0 rgba(255,255,255,.3); }
 .board .leader .pos { color: var(--pink); text-shadow: 0 0 12px rgba(255,47,178,.7); }
 .board li.me a { border-color: rgba(46,242,255,.6); }
-.board li.me .who::after { content: "Tu"; font-size: var(--fs-xs); line-height: var(--lh-snug); font-weight: 800; color: var(--cyan); }
+.board li.me .who::after { content: attr(data-tu); font-size: var(--fs-xs); line-height: var(--lh-snug); font-weight: 800; color: var(--cyan); }
 
 /* Progressi */
 .summary { margin: var(--s2) 0 0; padding: var(--s4); }
@@ -814,4 +814,16 @@ button.rules-link { color: var(--cyan); }
 .sk-card { height: 7.5rem; border-radius: 18px; }
 .sk-card.small { height: 4.5rem; }
 @media (prefers-reduced-motion: reduce) { .sk::after { animation: none; } }
+
+/* Switch della lingua (lang-switch.js) */
+.lang-switch { display: inline-grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin-top: var(--s3);
+  border-radius: 999px; border: 1px solid var(--line); background: rgba(255,255,255,.06); }
+.lang-switch form { margin: 0; }
+.lang-switch button { width: 100%; min-height: var(--tap); padding: 0 var(--s4); font-size: var(--fs-s); font-weight: 700;
+  color: var(--muted); background: none; box-shadow: none; }
+.lang-switch button.on { color: #140a24;
+  background: linear-gradient(180deg, rgba(255,255,255,.65) 0%, rgba(255,255,255,.1) 50%, rgba(255,255,255,0) 51%), var(--lime);
+  box-shadow: 0 0 14px rgba(215,255,31,.4); }
+.lang-switch.compact { display: flex; width: max-content; margin: 0 0 var(--s4) auto; }
+.lang-switch.compact button { min-height: 36px; padding: 0 var(--s3); font-size: var(--fs-xs); }
 

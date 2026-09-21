@@ -7,6 +7,8 @@ import ProfileForm from './profile-form';
 import PhotoPicker from './photo-picker';
 import StravaLogo from '../strava-logo';
 import StravaConsent from '../strava-consent';
+import { getT } from '@/lib/lingua';
+import LangSwitch from '../lang-switch';
 import PushToggle from './push-toggle';
 import { ReopenTour } from '../tour';
 import { InstallCard } from '../install-app';
@@ -30,6 +32,7 @@ export default async function Account({ searchParams }) {
   const userId = await getUserId();
   if (!userId) redirect('/login');
   const sp = await searchParams;
+  const t = await getT();
 
   const [[me], [conn], admin] = await Promise.all([
     sql`select email, sex, birth_date, photo_v from users where id = ${userId}`,
@@ -47,22 +50,22 @@ export default async function Account({ searchParams }) {
                      src={me?.photo_v ? `/api/foto/${userId}?v=${me.photo_v}` : conn?.avatar_url}
                      custom={Boolean(me?.photo_v)} strava={Boolean(conn?.avatar_url)} />
         <div>
-          <h1>{conn?.athlete_name || 'Il mio account'}</h1>
+          <h1>{conn?.athlete_name || t('Il mio account')}</h1>
           <p className="hint">{me?.email}</p>
         </div>
       </div>
 
-      {sp.error === 'profilo' && <div className="notice error">{ERRORS.profilo}</div>}
-      {sp.profilo && <div className="notice">Dati salvati.</div>}
+      {sp.error === 'profilo' && <div className="notice error">{t(ERRORS.profilo)}</div>}
+      {sp.profilo && <div className="notice">{t('Dati salvati.')}</div>}
 
       <section className="card" id="profilo" aria-labelledby="profilo-title">
         <div className="card-head">
-          <h2 id="profilo-title">Dati per il punteggio</h2>
-          {me?.sex && me?.birth_date ? <span className="pill ok">Completo</span> : <span className="pill">Da compilare</span>}
+          <h2 id="profilo-title">{t('Dati per il punteggio')}</h2>
+          {me?.sex && me?.birth_date ? <span className="pill ok">{t('Completo')}</span> : <span className="pill">{t('Da compilare')}</span>}
         </div>
         <p className="hint">
-          Servono per confrontare i tempi di età e sesso diversi con le tabelle USATF 2025.
-          La data di nascita non viene mai mostrata agli altri: vedono solo il punteggio. <Link href="/regolamento#eta">Come funziona</Link>
+          {t('Servono per confrontare i tempi di età e sesso diversi con le tabelle USATF 2025. La data di nascita non viene mai mostrata agli altri: vedono solo il punteggio.')}
+          {' '}<Link href="/regolamento#eta">{t('Come funziona')}</Link>
         </p>
         <ProfileForm sex={me?.sex} birthDate={me?.birth_date} today={new Date().toISOString().slice(0, 10)} />
       </section>
@@ -70,25 +73,25 @@ export default async function Account({ searchParams }) {
       {/* #strava: ci portano i link «collega Strava» e i ritorni da Strava; i loro messaggi stanno qui. */}
       <section className="card strava-card" id="strava" aria-labelledby="strava-title">
         <div className="card-head">
-          <h2 id="strava-title">Strava</h2>
-          {!conn ? <span className="pill">Non collegato</span>
-            : revoked ? <span className="pill warn">Da ricollegare</span>
-            : <span className="pill ok">Collegato</span>}
+          <h2 id="strava-title">{t('Strava')}</h2>
+          {!conn ? <span className="pill">{t('Non collegato')}</span>
+            : revoked ? <span className="pill warn">{t('Da ricollegare')}</span>
+            : <span className="pill ok">{t('Collegato')}</span>}
         </div>
-        {sp.error && sp.error !== 'profilo' && <div className="notice error">{ERRORS[sp.error] ?? 'Qualcosa non ha funzionato.'}</div>}
-        {sp.connected && <div className="notice">Strava collegato. Ora aggiorna le corse da <Link href="/dashboard">Le mie corse</Link>.</div>}
-        {sp.disconnected && <div className="notice">Strava scollegato. Le tue corse salvate sono state cancellate.</div>}
+        {sp.error && sp.error !== 'profilo' && <div className="notice error">{t(ERRORS[sp.error] ?? 'Qualcosa non ha funzionato.')}</div>}
+        {sp.connected && <div className="notice">{t('Strava collegato. Ora aggiorna le corse da')} <Link href="/dashboard">{t('Le mie corse')}</Link>.</div>}
+        {sp.disconnected && <div className="notice">{t('Strava scollegato. Le tue corse salvate sono state cancellate.')}</div>}
         {conn ? (
           <div className="strava-status">
             {revoked ? (
-              <div className="notice error">Strava non riconosce più il collegamento: ricollegalo per aggiornare le corse.</div>
+              <div className="notice error">{t('Strava non riconosce più il collegamento: ricollegalo per aggiornare le corse.')}</div>
             ) : (
-              <p className="status-ok">Account <strong>{conn.athlete_name || 'atleta Strava'}</strong></p>
+              <p className="status-ok">{t('Account')} <strong>{conn.athlete_name || t('atleta Strava')}</strong></p>
             )}
             <dl className="status-list">
-              <div><dt>Collegato dal</dt><dd>{fmtStamp(conn.connected_at)}</dd></div>
-              <div><dt>Ultimo aggiornamento</dt><dd>{conn.last_synced_at ? fmtStamp(conn.last_synced_at) : 'mai'}</dd></div>
-              <div><dt>Attività «Solo io»</dt><dd>{readAll ? 'incluse' : 'escluse'}</dd></div>
+              <div><dt>{t('Collegato dal')}</dt><dd>{fmtStamp(conn.connected_at)}</dd></div>
+              <div><dt>{t('Ultimo aggiornamento')}</dt><dd>{conn.last_synced_at ? fmtStamp(conn.last_synced_at) : t('mai')}</dd></div>
+              <div><dt>{t('Attività «Solo io»')}</dt><dd>{readAll ? t('incluse') : t('escluse')}</dd></div>
             </dl>
             {/* Ricollegare serve solo con l'accesso revocato o senza le attività «Solo io».
                 Il consenso è già stato dato. */}
@@ -96,21 +99,20 @@ export default async function Account({ searchParams }) {
               <form className="reconnect" method="get" action="/api/strava/connect">
                 <p className="hint">
                   {revoked
-                    ? 'Ricollega per riprendere ad aggiornare le corse.'
-                    : 'Ricollega e lascia attivo il permesso sulle attività private per contare anche le corse «Solo io».'}
+                    ? t('Ricollega per riprendere ad aggiornare le corse.')
+                    : t('Ricollega e lascia attivo il permesso sulle attività private per contare anche le corse «Solo io».')}
                 </p>
                 <input type="hidden" name="consenso" value="1" />
-                <button className="button strava" type="submit"><StravaLogo />Ricollega Strava</button>
+                <button className="button strava" type="submit"><StravaLogo />{t('Ricollega Strava')}</button>
               </form>
             )}
             <details className="disconnect">
-              <summary>Scollega Strava</summary>
+              <summary>{t('Scollega Strava')}</summary>
               <p className="hint">
-                Revochiamo l'accesso su Strava e cancelliamo le tue corse salvate: sparisci dalle classifiche
-                finché non ricolleghi. Le corse su Strava non vengono toccate.
+                {t('Revochiamo l\'accesso su Strava e cancelliamo le tue corse salvate: sparisci dalle classifiche finché non ricolleghi. Le corse su Strava non vengono toccate.')}
               </p>
               <form method="post" action="/api/strava/disconnect">
-                <button className="danger" type="submit">Sì, scollega e cancella</button>
+                <button className="danger" type="submit">{t('Sì, scollega e cancella')}</button>
               </form>
             </details>
           </div>
@@ -124,23 +126,31 @@ export default async function Account({ searchParams }) {
       {admin && (
         <section className="card" aria-labelledby="admin-title">
           <div className="card-head">
-            <h2 id="admin-title">Amministrazione</h2>
-            <span className="pill ok">Admin</span>
+            <h2 id="admin-title">{t('Amministrazione')}</h2>
+            <span className="pill ok">{t('Admin')}</span>
           </div>
           <ul className="admin-links">
-            <li><Link href="/gare/impostazioni">Impostazioni gare<small>Crea, modifica ed elimina le gare</small></Link></li>
-            <li><Link href="/account/utenti">Utenti<small>Chi è iscritto, stato di Strava, elimina</small></Link></li>
+            <li><Link href="/gare/impostazioni">{t('Impostazioni gare')}<small>{t('Crea, modifica ed elimina le gare')}</small></Link></li>
+            <li><Link href="/account/utenti">{t('Utenti')}<small>{t('Chi è iscritto, stato di Strava, elimina')}</small></Link></li>
           </ul>
         </section>
       )}
 
+      <section className="card" id="lingua" aria-labelledby="lingua-title">
+        <div className="card-head">
+          <h2 id="lingua-title">{t('Lingua')}</h2>
+        </div>
+        <p className="hint">{t('Scegli come vuoi leggere il sito. Il cerignolano è una prima versione: se trovi una parola sbagliata, dillo all\'amministratore.')}</p>
+        <LangSwitch back="/account#lingua" />
+      </section>
+
       <InstallCard />
 
       <section className="logout">
-        <Link className="rules-link" href="/regolamento">Regolamento</Link>
+        <Link className="rules-link" href="/regolamento">{t('Regolamento')}</Link>
         <ReopenTour />
         <form method="post" action="/api/auth/logout">
-          <button className="quiet" type="submit">Esci dall'account</button>
+          <button className="quiet" type="submit">{t('Esci dall\'account')}</button>
         </form>
       </section>
     </main>

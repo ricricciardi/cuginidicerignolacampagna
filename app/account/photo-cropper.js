@@ -1,4 +1,5 @@
 'use client';
+import { useT } from '../lang-provider';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 const OUT = 256;     // lato della foto salvata, in pixel
@@ -11,6 +12,7 @@ const MAX_ZOOM = 4;  // ingrandimento massimo rispetto alla foto che riempie il 
 export default function PhotoCropper({ file, onCancel, onDone }) {
   const dialog = useRef(null);
   const stage = useRef(null);
+  const t = useT();
   const [img, setImg] = useState(null); // { el, url, w, h }
   const [side, setSide] = useState(0);  // lato del riquadro, in pixel
   const [view, setView] = useState({ z: 1, x: 0, y: 0 });
@@ -125,9 +127,9 @@ export default function PhotoCropper({ file, onCancel, onDone }) {
   return (
     <dialog ref={dialog} className="cropper" aria-labelledby="cropper-title"
             onCancel={(e) => { e.preventDefault(); onCancel(); }}>
-      <h2 id="cropper-title">Sistema la foto</h2>
-      <p className="hint">Trascina per spostarla, allarga due dita per ingrandirla.</p>
-      <div ref={stage} className="crop-stage" tabIndex={0} aria-label="Anteprima: frecce per spostare, + e − per ingrandire"
+      <h2 id="cropper-title">{t('Sistema la foto')}</h2>
+      <p className="hint">{t('Trascina per spostarla, allarga due dita per ingrandirla.')}</p>
+      <div ref={stage} className="crop-stage" tabIndex={0} aria-label={t('Anteprima: frecce per spostare, + e − per ingrandire')}
            onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp}
            onPointerCancel={onPointerUp} onKeyDown={onKeyDown}>
         {img && side > 0 && (
@@ -138,13 +140,13 @@ export default function PhotoCropper({ file, onCancel, onDone }) {
       </div>
       <label className="crop-zoom">
         <span aria-hidden="true">−</span>
-        <input type="range" min={1} max={MAX_ZOOM} step={0.01} value={view.z} aria-label="Ingrandimento"
+        <input type="range" min={1} max={MAX_ZOOM} step={0.01} value={view.z} aria-label={t('Ingrandimento')}
                onChange={(e) => setView((v) => zoomAt(v, Number(e.target.value), side / 2, side / 2))} />
         <span aria-hidden="true">+</span>
       </label>
       <div className="crop-actions">
-        <button type="button" className="quiet" onClick={() => onCancel()}>Annulla</button>
-        <button type="button" onClick={done} disabled={!img}>Usa foto</button>
+        <button type="button" className="quiet" onClick={() => onCancel()}>{t('Annulla')}</button>
+        <button type="button" onClick={done} disabled={!img}>{t('Usa foto')}</button>
       </div>
     </dialog>
   );

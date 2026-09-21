@@ -3,12 +3,13 @@ import { redirect } from 'next/navigation';
 import { sql } from '@/lib/db';
 import { isAdmin, requireStravaUser } from '@/lib/admin';
 import { phase, statusLine, fmtDay } from '@/lib/competition';
+import { getT } from '@/lib/lingua';
 
 const ORDER = { running: 0, before: 1, over: 2 };
 
 export default async function Gare() {
   const userId = await requireStravaUser();
-  const admin = await isAdmin(userId);
+  const [admin, t] = await Promise.all([isAdmin(userId), getT()]);
   const now = new Date();
   const comps = (admin
     ? await sql`select id, name, km, start_date, end_date from competitions order by start_date desc, id desc`
@@ -22,11 +23,11 @@ export default async function Gare() {
 
   return (
     <main>
-      <h1>Gare</h1>
-      <p>Ogni gara ha i suoi km e le sue date. Le stesse corse Strava valgono per tutte. <Link href="/regolamento">Leggi il regolamento</Link></p>
+      <h1>{t('Gare')}</h1>
+      <p>{t('Ogni gara ha i suoi km e le sue date. Le stesse corse Strava valgono per tutte.')} <Link href="/regolamento">{t('Leggi il regolamento')}</Link></p>
 
       {comps.length === 0 ? (
-        <p>{admin ? <>Ancora nessuna gara. Creala da <Link href="/gare/impostazioni">Impostazioni gare</Link>.</> : 'Non partecipi ancora a nessuna gara: ti aggiunge l\'amministratore.'}</p>
+        <p>{admin ? <>{t('Ancora nessuna gara. Creala da')} <Link href="/gare/impostazioni">{t('Impostazioni gare')}</Link>.</> : t('Non partecipi ancora a nessuna gara: ti aggiunge l\'amministratore.')}</p>
       ) : (
         <ul className="comps">
           {comps.map((c) => (
@@ -36,7 +37,7 @@ export default async function Gare() {
                 <span className="comp-main">
                   <strong>{c.name}</strong>
                   <small>{fmtDay(c.start_date)} – {fmtDay(c.end_date)}</small>
-                  <span className="comp-status">{statusLine(c, now)}</span>
+                  <span className="comp-status">{statusLine(c, now, t)}</span>
                 </span>
               </Link>
             </li>

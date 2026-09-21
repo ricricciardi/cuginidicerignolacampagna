@@ -6,8 +6,8 @@ import { sendToUsers } from '@/lib/push';
 export async function POST() {
   const userId = await getUserId();
   if (!userId) return NextResponse.json({ ok: false }, { status: 401 });
-  const sent = await sendToUsers([userId], {
-    title: 'Notifiche attive 🎉', body: 'Ti avviseremo di sorpassi, record e gare. #andràtuttobene', url: '/gare', tag: 'prova',
-  });
+  const sent = await sendToUsers([userId], (t) => ({
+    title: t('Notifiche attive 🎉'), body: t('Ti avviseremo di sorpassi, record e gare. #andràtuttobene'), url: '/gare', tag: 'prova',
+  }));
   return NextResponse.json({ ok: sent > 0, sent });
 }

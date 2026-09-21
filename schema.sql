@@ -6,7 +6,8 @@ create table if not exists users (
   birth_date    text check (birth_date ~ '^\d{4}-\d{2}-\d{2}$'),  -- mai mostrata agli altri
   is_admin      boolean not null default false,
   photo         text,    -- foto caricata nel sito: JPEG 256x256 in base64; ha la precedenza su quella di Strava
-  photo_v       bigint,  -- versione della foto (per la cache del browser); null = foto di Strava                   -- gestisce gare e utenti; si imposta solo dal database
+  photo_v       bigint,
+  lingua        text not null default 'it',  -- 'it' o 'cer' (cerignolano): anche per le notifiche push  -- versione della foto (per la cache del browser); null = foto di Strava                   -- gestisce gare e utenti; si imposta solo dal database
   created_at    timestamptz not null default now()
 );
 

@@ -1,6 +1,7 @@
 'use client';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import { useT } from './lang-provider';
 
 // Guida di benvenuto: poche schermate che spiegano l'app, la prima volta che si entra con Strava
 // collegato. Una volta chiusa non ricompare (ricordo sul dispositivo). «Rivedi la guida»
@@ -32,6 +33,7 @@ export default function Tour({ enabled }) {
   const dialog = useRef(null);
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
+  const t = useT();
   const [dir, setDir] = useState(1); // 1 avanti, -1 indietro: da che lato entra la schermata
   const swipe = useRef(null);
 
@@ -77,22 +79,22 @@ export default function Tour({ enabled }) {
             onCancel={(e) => { e.preventDefault(); close(); }}>
       {open && (
         <>
-          <button type="button" className="quiet tour-skip" onClick={close}>Salta</button>
+          <button type="button" className="quiet tour-skip" onClick={close}>{t('Salta')}</button>
           <div className="tour-step" key={step} data-dir={dir < 0 ? 'back' : undefined}
                onPointerDown={onPointerDown} onPointerUp={onPointerUp} onPointerCancel={() => { swipe.current = null; }}>
             <div className="tour-icon" aria-hidden="true">{s.icon}</div>
-            <h2 id="tour-title">{s.title}</h2>
-            <p>{s.text}</p>
+            <h2 id="tour-title">{t(s.title)}</h2>
+            <p>{t(s.text)}</p>
           </div>
-          <div className="tour-dots" aria-label={`Passo ${step + 1} di ${STEPS.length}`}>
+          <div className="tour-dots" aria-label={t('Passo {n} di {tot}', { n: step + 1, tot: STEPS.length })}>
             {STEPS.map((_, i) => <span key={i} className={i === step ? 'on' : undefined} />)}
           </div>
           <div className="tour-actions">
             {step > 0
-              ? <button type="button" className="quiet" onClick={() => go(-1)}>Indietro</button>
+              ? <button type="button" className="quiet" onClick={() => go(-1)}>{t('Indietro')}</button>
               : <span />}
             <button type="button" onClick={() => go(1)}>
-              {last ? 'Iniziamo' : 'Avanti'}
+              {last ? t('Iniziamo') : t('Avanti')}
             </button>
           </div>
         </>
@@ -103,9 +105,10 @@ export default function Tour({ enabled }) {
 
 // Pulsante «Rivedi la guida» (account).
 export function ReopenTour() {
+  const t = useT();
   return (
     <button type="button" className="quiet rules-link" onClick={() => window.dispatchEvent(new Event('apri-guida'))}>
-      Rivedi la guida
+      {t('Rivedi la guida')}
     </button>
   );
 }

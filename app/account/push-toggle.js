@@ -1,4 +1,5 @@
 'use client';
+import { useT } from '../lang-provider';
 import { useEffect, useState } from 'react';
 
 // Chiave pubblica VAPID (base64 url) nel formato che vuole il browser.
@@ -18,6 +19,7 @@ export default function PushToggle({ publicKey }) {
   // loading | unsupported | ios | off | on | denied | busy
   const [state, setState] = useState('loading');
   const [msg, setMsg] = useState(null);
+  const t = useT();
 
   useEffect(() => {
     const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
@@ -42,7 +44,7 @@ export default function PushToggle({ publicKey }) {
       if (!res.ok) throw new Error();
       setState('on');
     } catch {
-      setState('off'); setMsg('Non sono riuscito ad attivarle. Riprova.');
+      setState('off'); setMsg(t('Non sono riuscito ad attivarle. Riprova.'));
     }
   };
 
@@ -56,48 +58,48 @@ export default function PushToggle({ publicKey }) {
       }
       setState('off');
     } catch {
-      setState('on'); setMsg('Non sono riuscito a disattivarle. Riprova.');
+      setState('on'); setMsg(t('Non sono riuscito a disattivarle. Riprova.'));
     }
   };
 
   const test = async () => {
-    setMsg('Invio…');
+    setMsg(t('Invio…'));
     const res = await fetch('/api/push/prova', { method: 'POST' }).catch(() => null);
-    setMsg(res?.ok ? 'Mandata: dovrebbe arrivarti tra un attimo.' : 'Non è partita: prova a disattivare e riattivare.');
+    setMsg(res?.ok ? t('Mandata: dovrebbe arrivarti tra un attimo.') : t('Non è partita: prova a disattivare e riattivare.'));
   };
 
-  const pill = state === 'on' ? <span className="pill ok">Attive</span> : <span className="pill">Spente</span>;
+  const pill = state === 'on' ? <span className="pill ok">{t('Attive')}</span> : <span className="pill">{t('Spente')}</span>;
   return (
     <section className="card" id="notifiche" aria-labelledby="notifiche-title">
       <div className="card-head">
-        <h2 id="notifiche-title">Notifiche</h2>
+        <h2 id="notifiche-title">{t('Notifiche')}</h2>
         {state !== 'loading' && pill}
       </div>
-      <p className="hint">Sorpassi e nuovi record nelle tue gare, gare che partono o finiscono, quando ti aggiungono a una gara e gli auguri di compleanno.</p>
+      <p className="hint">{t('Sorpassi e nuovi record nelle tue gare, gare che partono o finiscono, quando ti aggiungono a una gara e gli auguri di compleanno.')}</p>
 
       {!publicKey ? (
-        <p className="hint">Le notifiche non sono ancora attive sul sito.</p>
+        <p className="hint">{t('Le notifiche non sono ancora attive sul sito.')}</p>
       ) : state === 'ios' ? (
         <div className="notice">
-          Su iPhone le notifiche arrivano solo dall&apos;app: aggiungila alla schermata Home
-          seguendo i passi nella scheda <a href="#installa">App</a> qui sotto.
+          {t('Su iPhone le notifiche arrivano solo dall\'app: aggiungila alla schermata Home seguendo i passi nella scheda')}
+          {' '}<a href="#installa">{t('App')}</a> {t('qui sotto.')}
         </div>
       ) : state === 'unsupported' ? (
-        <p className="hint">Questo browser non supporta le notifiche.</p>
+        <p className="hint">{t('Questo browser non supporta le notifiche.')}</p>
       ) : state === 'denied' ? (
         <div className="notice error">
-          Le notifiche sono bloccate per questo sito. Riattivale dalle impostazioni del browser (o del telefono) e ricarica la pagina.
+          {t('Le notifiche sono bloccate per questo sito. Riattivale dalle impostazioni del browser (o del telefono) e ricarica la pagina.')}
         </div>
       ) : (
         <div className="push-actions">
           {state === 'on' ? (
             <>
-              <button type="button" className="button secondary" onClick={test}>Mandami una prova</button>
-              <button type="button" className="quiet" onClick={disable}>Disattiva su questo dispositivo</button>
+              <button type="button" className="button secondary" onClick={test}>{t('Mandami una prova')}</button>
+              <button type="button" className="quiet" onClick={disable}>{t('Disattiva su questo dispositivo')}</button>
             </>
           ) : (
             <button type="button" onClick={enable} disabled={state === 'busy' || state === 'loading'}>
-              {state === 'busy' ? 'Attivazione…' : 'Attiva le notifiche'}
+              {state === 'busy' ? t('Attivazione…') : t('Attiva le notifiche')}
             </button>
           )}
         </div>

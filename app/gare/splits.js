@@ -1,11 +1,13 @@
 import { fmtTime } from '@/lib/format';
+import { getT } from '@/lib/lingua';
 
 const fmtUpDown = (e) => (typeof e !== 'number' ? '' : Math.round(e) === 0 ? '0' : `${e < 0 ? '−' : '+'}${Math.abs(Math.round(e))}`);
 
 // Parziali dei primi `km` km di una corsa: tempo del km (con barra: più lunga = più veloce),
 // tempo progressivo e dislivello. La barra va dal 100% (km più veloce) al 40% (più lento),
 // così anche differenze di pochi secondi si vedono. Il km più veloce è in lime, il più lento in rosa.
-export default function Splits({ splits, km }) {
+export default async function Splits({ splits, km }) {
+  const t = await getT();
   const rows = (splits ?? []).slice(0, km);
   if (rows.length < km) return null;
   const times = rows.map((x) => x.s);
@@ -16,8 +18,8 @@ export default function Splits({ splits, km }) {
     <table className="splits">
       <thead>
         <tr>
-          <th scope="col">Km</th><th scope="col" className="split">Parziale</th>
-          <th scope="col">Totale</th>{hasElev && <th scope="col">Disl. m</th>}
+          <th scope="col">{t('Km')}</th><th scope="col" className="split">{t('Parziale')}</th>
+          <th scope="col">{t('Totale')}</th>{hasElev && <th scope="col">{t('Disl. m')}</th>}
         </tr>
       </thead>
       <tbody>

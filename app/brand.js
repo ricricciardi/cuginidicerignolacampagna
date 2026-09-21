@@ -1,4 +1,5 @@
 'use client';
+import { useT } from './lang-provider';
 
 // Logo dell'intestazione: la «C» a tre anelli (lime, rosa, azzurro), disegnata in SVG così ogni
 // anello si anima per conto suo (vedi .logo in globals.css: ogni 10 secondi fanno un giro).
@@ -14,13 +15,14 @@ function Logo() {
 }
 
 export default function Brand() {
+  const t = useT();
   const toTop = (e) => {
     e.preventDefault();
     const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({ top: 0, behavior: smooth ? 'smooth' : 'auto' });
   };
   return (
-    <a className="brand" href="#" onClick={toTop} aria-label="Cuginidicerignolacampagna, torna in cima">
+    <a className="brand" href="#" onClick={toTop} aria-label={t('Cuginidicerignolacampagna, torna in cima')}>
       <Logo />
       <span aria-hidden="true">uginidicerignolacampagna</span>
     </a>

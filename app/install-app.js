@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useT } from './lang-provider';
 
 // Aggiungere il sito alla schermata Home.
 // - Android/computer (Chrome, Edge): il browser segnala che si può installare con l'evento
@@ -48,28 +49,29 @@ const ShareIcon = () => (
 );
 
 function Guide({ state, onInstall, hideIntro = false }) {
+  const t = useT();
   if (state === 'prompt') {
     return (
       <>
-        {!hideIntro && <p>Installa Cugini come app: si apre dalla sua icona, come le altre app, e ricevi le notifiche.</p>}
-        <button type="button" onClick={onInstall}>Installa l&apos;app</button>
+        {!hideIntro && <p>{t('Installa Cugini come app: si apre dalla sua icona, come le altre app, e ricevi le notifiche.')}</p>}
+        <button type="button" onClick={onInstall}>{t('Installa l\'app')}</button>
       </>
     );
   }
   if (state === 'ios-safari') {
     return (
       <>
-        {!hideIntro && <p>Aggiungi Cugini alla schermata Home: si apre come un&apos;app e puoi ricevere le notifiche.</p>}
+        {!hideIntro && <p>{t('Aggiungi Cugini alla schermata Home: si apre come un\'app e puoi ricevere le notifiche.')}</p>}
         <ol className="install-steps">
-          <li>Tocca <ShareIcon /> <strong>Condividi</strong> nella barra di Safari.</li>
-          <li>Scorri e tocca <strong>Aggiungi alla schermata Home</strong>.</li>
-          <li>Tocca <strong>Aggiungi</strong>, poi apri Cugini dall&apos;icona.</li>
+          <li>{t('Tocca')} <ShareIcon /> <strong>{t('Condividi')}</strong> {t('nella barra di Safari.')}</li>
+          <li>{t('Scorri e tocca')} <strong>{t('Aggiungi alla schermata Home')}</strong>.</li>
+          <li>{t('Tocca')} <strong>{t('Aggiungi')}</strong>{t(', poi apri Cugini dall\'icona.')}</li>
         </ol>
       </>
     );
   }
   if (state === 'ios-other') {
-    return <p>Per aggiungere Cugini alla schermata Home apri questo sito in <strong>Safari</strong>: dagli altri browser su iPhone non si può.</p>;
+    return <p>{t('Per aggiungere Cugini alla schermata Home apri questo sito in')} <strong>Safari</strong>{t(': dagli altri browser su iPhone non si può.')}</p>;
   }
   return null;
 }
@@ -86,6 +88,7 @@ async function install() {
 // Avviso chiudibile (Le mie corse): una volta per dispositivo, finché non lo chiudi o installi.
 export function InstallBanner() {
   const state = useInstallState();
+  const t = useT();
   const [hidden, setHidden] = useState(true);
   useEffect(() => {
     try { setHidden(Boolean(localStorage.getItem('install-hint'))); } catch { setHidden(false); }
@@ -93,8 +96,8 @@ export function InstallBanner() {
   if (hidden || !state || state === 'installed' || state === 'none') return null;
   const close = () => { try { localStorage.setItem('install-hint', 'closed'); } catch {} setHidden(true); };
   return (
-    <aside className="install-banner" aria-label="Aggiungi alla schermata Home">
-      <button type="button" className="quiet install-close" onClick={close} aria-label="Chiudi">✕</button>
+    <aside className="install-banner" aria-label={t('Aggiungi alla schermata Home')}>
+      <button type="button" className="quiet install-close" onClick={close} aria-label={t('Chiudi')}>✕</button>
       <Guide state={state} onInstall={install} />
     </aside>
   );
@@ -103,19 +106,20 @@ export function InstallBanner() {
 // Scheda «App», sempre visibile in fondo all'account: cosa fare su questo dispositivo.
 export function InstallCard() {
   const state = useInstallState();
+  const t = useT();
   return (
     <section className="card" id="installa" aria-labelledby="installa-title">
       <div className="card-head">
-        <h2 id="installa-title">App</h2>
-        {state === 'installed' && <span className="pill ok">Installata</span>}
+        <h2 id="installa-title">{t('App')}</h2>
+        {state === 'installed' && <span className="pill ok">{t('Installata')}</span>}
       </div>
-      <p>Installa Cugini come app: si apre dalla sua icona, come le altre app, e ricevi le notifiche.</p>
+      <p>{t('Installa Cugini come app: si apre dalla sua icona, come le altre app, e ricevi le notifiche.')}</p>
       {state === 'installed' ? (
-        <p className="hint">Stai già usando l&apos;app ✓</p>
+        <p className="hint">{t('Stai già usando l\'app ✓')}</p>
       ) : state === 'none' ? (
         <p className="hint">
-          Questo browser non la propone da solo: cerca nel suo menu <strong>Installa app</strong> o
-          <strong> Aggiungi alla schermata Home</strong>. Sul telefono funziona con Chrome su Android e con Safari su iPhone.
+          {t('Questo browser non la propone da solo: cerca nel suo menu')} <strong>{t('Installa app')}</strong> {t('o')}
+          <strong> {t('Aggiungi alla schermata Home')}</strong>. {t('Sul telefono funziona con Chrome su Android e con Safari su iPhone.')}
         </p>
       ) : state ? (
         <div className="install-guide"><Guide state={state} onInstall={install} hideIntro /></div>

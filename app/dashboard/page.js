@@ -4,6 +4,7 @@ import { sql } from '@/lib/db';
 import { fmtTime, fmtPace, fmtDate, fmtKm } from '@/lib/format';
 import { syncScope } from '@/lib/sync';
 import SyncButton from './sync-button';
+import { getT } from '@/lib/lingua';
 import { InstallBanner } from '../install-app';
 
 const fmtStamp = (d) => new Date(d).toLocaleString('it-IT', {
@@ -19,6 +20,7 @@ const ERRORS = {
 export default async function Dashboard({ searchParams }) {
   const userId = await requireStravaUser();
   const sp = await searchParams;
+  const t = await getT();
 
   const [[conn], runs, scope] = await Promise.all([
     sql`select athlete_name, avatar_url, last_synced_at from strava_connections where user_id = ${userId}`,
@@ -31,34 +33,35 @@ export default async function Dashboard({ searchParams }) {
   return (
     <main>
       <InstallBanner />
-      <h1>Le mie corse</h1>
-      <p>Corse su strada con GPS nei periodi delle gare. I tempi per ogni gara sono nelle pagine delle gare.</p>
+      <h1>{t('Le mie corse')}</h1>
+      <p>{t('Corse su strada con GPS nei periodi delle gare. I tempi per ogni gara sono nelle pagine delle gare.')}</p>
 
       {sp.connected && (
-        <div className="notice">Strava collegato, sei dentro! Premi Aggiorna adesso da Strava per leggere le tue corse.</div>
+        <div className="notice">{t('Strava collegato, sei dentro! Premi Aggiorna adesso da Strava per leggere le tue corse.')}</div>
       )}
-      {sp.error && <div className="notice error">{ERRORS[sp.error] ?? 'Qualcosa non ha funzionato.'}</div>}
+      {sp.error && <div className="notice error">{t(ERRORS[sp.error] ?? 'Qualcosa non ha funzionato.')}</div>}
       {sp.synced !== undefined && (
         <div className="notice">
-          {sp.synced} corse nuove salvate.
-          {pending > 0 && ` Ne restano ${pending}: premi di nuovo Aggiorna adesso da Strava o aspetta l\'aggiornamento di stanotte.`}
+          {t('{n} corse nuove salvate.', { n: sp.synced })}
+          {pending > 0 && ' ' + t('Ne restano {n}: premi di nuovo Aggiorna adesso da Strava o aspetta l\'aggiornamento di domattina.', { n: pending })}
         </div>
       )}
 
       {conn ? (
         <div className="bar">
           <span className="connected">
-            Le corse si aggiornano da sole ogni notte
-            {conn.last_synced_at ? `; ultimo aggiornamento ${fmtStamp(conn.last_synced_at)}.` : '.'}
+            {conn.last_synced_at
+              ? t('Le corse si aggiornano da sole ogni mattina; ultimo aggiornamento {quando}.', { quando: fmtStamp(conn.last_synced_at) })
+              : t('Le corse si aggiornano da sole ogni mattina.')}
           </span>
           {!anyStarted ? (
-            <div className="notice">Sei pronto. Le corse si leggono da quando parte la prima gara.</div>
+            <div className="notice">{t('Sei pronto. Le corse si leggono da quando parte la prima gara.')}</div>
           ) : (
             <SyncButton />
           )}
         </div>
       ) : (
-        <div className="notice">Per vedere le tue corse <Link href="/collega-strava">collega Strava</Link>.</div>
+        <div className="notice">{t('Per vedere le tue corse')} <Link href="/collega-strava">{t('collega Strava')}</Link>.</div>
       )}
 
       {runs.length > 0 ? (
@@ -71,20 +74,20 @@ export default async function Dashboard({ searchParams }) {
                   <time>{fmtDate(r)}</time>
                 </div>
                 <dl className="stats">
-                  <div className="km"><dt>Km</dt><dd>{fmtKm(r.distance_m)}</dd></div>
-                  <div><dt>Tempo</dt><dd>{fmtTime(r.elapsed_time_s)}</dd></div>
-                  <div><dt>Passo /km</dt><dd>{fmtPace(r.moving_time_s, r.distance_m)}</dd></div>
+                  <div className="km"><dt>{t('Km')}</dt><dd>{fmtKm(r.distance_m)}</dd></div>
+                  <div><dt>{t('Tempo')}</dt><dd>{fmtTime(r.elapsed_time_s)}</dd></div>
+                  <div><dt>{t('Passo /km')}</dt><dd>{fmtPace(r.moving_time_s, r.distance_m)}</dd></div>
                 </dl>
                 <div className="run-foot">
-                  <span>In movimento {fmtTime(r.moving_time_s)}</span>
-                  <a href={`https://www.strava.com/activities/${r.id}`} target="_blank" rel="noopener">Vedi su Strava</a>
+                  <span>{t('In movimento')} {fmtTime(r.moving_time_s)}</span>
+                  <a href={`https://www.strava.com/activities/${r.id}`} target="_blank" rel="noopener">{t('Vedi su Strava')}</a>
                 </div>
               </li>
             ))}
           </ul>
         </>
       ) : conn ? (
-        <p>Nessuna corsa salvata. Si aggiornano ogni notte, oppure premi Aggiorna adesso da Strava.</p>
+        <p>{t('Nessuna corsa salvata. Si aggiornano ogni mattina, oppure premi Aggiorna adesso da Strava.')}</p>
       ) : null}
     </main>
   );

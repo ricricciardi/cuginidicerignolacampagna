@@ -1,4 +1,5 @@
 'use client';
+import { useT } from '../lang-provider';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -7,6 +8,7 @@ import { useState } from 'react';
 export default function ProfileForm({ sex, birthDate, today }) {
   const router = useRouter();
   const [state, setState] = useState('idle'); // idle | saving | saved | error
+  const t = useT();
 
   const submit = async (e) => {
     e.preventDefault();
@@ -26,22 +28,22 @@ export default function ProfileForm({ sex, birthDate, today }) {
     <form className="stack" method="post" action="/api/profilo" onSubmit={submit}
           onChange={() => state !== 'saving' && setState('idle')}>
       <div className="dates">
-        <label>Sesso
+        <label>{t('Sesso')}
           <select name="sex" required defaultValue={sex ?? ''}>
-            <option value="" disabled>Scegli</option>
-            <option value="M">Uomo</option>
-            <option value="F">Donna</option>
+            <option value="" disabled>{t('Scegli')}</option>
+            <option value="M">{t('Uomo')}</option>
+            <option value="F">{t('Donna')}</option>
           </select>
         </label>
-        <label>Data di nascita
+        <label>{t('Data di nascita')}
           <input type="date" name="birth_date" required defaultValue={birthDate ?? ''} max={today} />
         </label>
       </div>
       <button type="submit" disabled={state === 'saving'} data-state={state}>
-        {state === 'saving' ? 'Salvataggio…' : state === 'saved' ? 'Salvato ✓' : 'Salva'}
+        {state === 'saving' ? t('Salvataggio…') : state === 'saved' ? t('Salvato ✓') : t('Salva')}
       </button>
       <p className="field-error" role="status" aria-live="polite" hidden={state !== 'error'}>
-        Controlla sesso e data di nascita: la data deve essere reale e non futura.
+        {t('Controlla sesso e data di nascita: la data deve essere reale e non futura.')}
       </p>
     </form>
   );

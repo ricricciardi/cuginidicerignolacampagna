@@ -1,5 +1,7 @@
 import './globals.css';
 import { loadMe } from '@/lib/admin';
+import { getLang } from '@/lib/lingua';
+import { LangProvider } from './lang-provider';
 import { getUserId } from '@/lib/session';
 import Nav from './nav';
 import Brand from './brand';
@@ -22,10 +24,11 @@ export const viewport = {
 export default async function RootLayout({ children }) {
   const userId = await getUserId();
   const loggedIn = Boolean(userId);
-  const me = loggedIn ? await loadMe(userId) : null;
+  const [me, lang] = await Promise.all([loggedIn ? loadMe(userId) : null, getLang()]);
   return (
-    <html lang="it">
+    <html lang="it" data-lingua={lang}>
       <body>
+        <LangProvider lang={lang}>
         <header className="site">
           <Brand />
         </header>
@@ -33,6 +36,7 @@ export default async function RootLayout({ children }) {
         {children}
         <PressFx />
         {loggedIn && <Tour enabled={Boolean(me?.strava)} />}
+        </LangProvider>
       </body>
     </html>
   );
