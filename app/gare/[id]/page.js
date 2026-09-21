@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { loadCompetitionFor, competitionRuns, standings, ageStandings, participants, visibleCompetitionCount } from '@/lib/standings';
-import { fmtTime, fmtDate, fmtElevation } from '@/lib/format';
-import { fmtPct } from '@/lib/agegrade';
+import { fmtTime, fmtDate, fmtElevation, fmtDist } from '@/lib/format';
+import { fmtPct, MIN_GRADE_M } from '@/lib/agegrade';
 import CompetitionHeader from '../header';
 import Avatar from '../../avatar';
 import SegmentedLinks from '../../segmented-links';
@@ -19,7 +19,9 @@ export default async function Classifica({ params, searchParams }) {
   const c = await loadCompetitionFor((await params).id, me);
   if (!c) notFound();
   const sp = await searchParams;
-  const byAge = c.age_grading && sp.vista === 'eta';
+  // Punteggio solo se la gara lo prevede e dal miglio in su (sotto non ci sono tabelle).
+  const graded = c.age_grading && c.distance_m >= MIN_GRADE_M;
+  const byAge = graded && sp.vista === 'eta';
   // In parallelo: sono indipendenti, così si aspetta la più lenta invece della somma.
   const [runs, people, count, t] = await Promise.all([competitionRuns(c), participants(c), visibleCompetitionCount(me), getT()]);
   const rows = byAge ? ageStandings(runs, people) : standings(runs, people);
@@ -33,7 +35,7 @@ export default async function Classifica({ params, searchParams }) {
       <CompetitionHeader c={c} current="classifica" many={count > 1} />
 
       <div className="nav-content" data-nav="Sezioni della gara">
-      {c.age_grading && <SegmentedLinks className="segmented view-switch" label="Tipo di classifica" ariaLabel={t('Tipo di classifica')} scroll={false} replace items={[
+      {graded && <SegmentedLinks className="segmented view-switch" label="Tipo di classifica" ariaLabel={t('Tipo di classifica')} scroll={false} replace items={[
         { href: `/gare/${c.id}`, label: t('Tempo'), current: !byAge },
         { href: `/gare/${c.id}?vista=eta`, label: t('Punteggio'), current: byAge },
       ]} />}
@@ -64,7 +66,7 @@ export default async function Classifica({ params, searchParams }) {
                       : (r.missing === 'dati' ? t('Mancano sesso o data di nascita') : t('Nessuna corsa in gara'))}
                   </small>
                 </span>
-                <span className="count" aria-label={t(r.reached === 1 ? '{n} volta oltre i {km} km' : '{n} volte oltre i {km} km', { n: r.reached, km: c.km })}>{r.reached}</span>
+                <span className="count" aria-label={t(r.reached === 1 ? '{n} volta oltre i {dist}' : '{n} volte oltre i {dist}', { n: r.reached, dist: fmtDist(c.distance_m) })}>{r.reached}</span>
                 {byAge
                   ? <span className="pct">{fmtPct(r.pct)}</span>
                   : <span className="time">{r.time_s != null ? fmtTime(r.time_s) : '—'}</span>}

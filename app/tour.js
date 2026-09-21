@@ -10,7 +10,7 @@ const STEPS = [
   { icon: '👋', title: 'Benvenuto nella sfida!',
     text: 'Tu corri come sempre con il tuo orologio o il telefono: Strava registra la corsa e questo sito fa la classifica tra cugini. Niente da inserire a mano.' },
   { icon: '🏁', title: 'Le gare',
-    text: 'In «Gare» trovi le gare a cui partecipi. Ogni gara ha i suoi km e le sue date: conta il tempo che ci metti a fare quei km, all\'aperto, su strada.' },
+    text: 'In «Gare» trovi le gare a cui partecipi. Ogni gara ha la sua distanza e le sue date: conta il tempo che ci metti a percorrerla, all\'aperto, su strada.' },
   { icon: '🏆', title: 'La classifica',
     text: '«Tempo» mette in fila i tempi migliori. «Punteggio» tiene conto di età e sesso, così giovani e meno giovani si sfidano alla pari. Tocca un nome per vedere i suoi km uno per uno.' },
   { icon: '🏃', title: 'Le tue corse',

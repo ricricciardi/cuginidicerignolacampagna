@@ -5,7 +5,7 @@ import { sql } from '@/lib/db';
 import { loadCompetitionFor, competitionRuns } from '@/lib/standings';
 import { markRecords } from '@/lib/efforts';
 import { ProgressChart } from '@/lib/chart';
-import { fmtTime, fmtDate, fmtKm, fmtElevation } from '@/lib/format';
+import { fmtTime, fmtDate, fmtKm, fmtElevation, fmtDist } from '@/lib/format';
 import Avatar from '../../../../avatar';
 import Splits from '../../../splits';
 import RunDetails from '../../../run-details';
@@ -41,18 +41,18 @@ export default async function Atleta({ params }) {
       {best != null ? (
         <>
           <dl className="stats summary">
-            <div className="km"><dt>{t('Record {km} km', { km: c.km })}</dt><dd>{fmtTime(best)}</dd></div>
+            <div className="km"><dt>{t('Record {dist}', { dist: fmtDist(c.distance_m) })}</dt><dd>{fmtTime(best)}</dd></div>
             <div><dt>{t('Corse')}</dt><dd>{runs.length}</dd></div>
             <div><dt>{t('Dalla prima')}</dt><dd>{first - best > 0 ? `−${fmtTime(first - best)}` : '0:00'}</dd></div>
           </dl>
-          <h2>{t('Primi {km} km di ogni corsa', { km: c.km })}</h2>
+          <h2>{t('Primi {dist} di ogni corsa', { dist: fmtDist(c.distance_m) })}</h2>
           <p className="legend">{t('Più in alto è più veloce. I punti pieni sono i nuovi record.')}</p>
-          <div className="chart-wrap"><ProgressChart runs={runs} km={c.km} t={t} /></div>
+          <div className="chart-wrap"><ProgressChart runs={runs} dist={fmtDist(c.distance_m)} t={t} /></div>
         </>
       ) : (
-        <p>{t('Nessun tempo sui primi {km} km in questa gara.', { km: c.km })}</p>
+        <p>{t('Nessun tempo sui primi {dist} in questa gara.', { dist: fmtDist(c.distance_m) })}</p>
       )}
-      {timed.length > 0 && <p className="legend">{t('Tocca una corsa per vedere i parziali dei primi {km} km.', { km: c.km })}</p>}
+      {timed.length > 0 && c.distance_m >= 1000 && <p className="legend">{t('Tocca una corsa per vedere i parziali al km.', { dist: fmtDist(c.distance_m) })}</p>}
       <ul className="history">
         {[...runs].reverse().map((r) => {
           const head = (
@@ -70,9 +70,9 @@ export default async function Atleta({ params }) {
           // Senza tempo non ci sono parziali da mostrare. La corsa del record è già aperta.
           return (
             <li key={r.id}>
-              {r.time_s == null ? <div className="run-row">{head}</div> : (
+              {r.time_s == null || c.distance_m < 1000 ? <div className="run-row">{head}</div> : (
                 <RunDetails open={r.time_s === best} head={head}>
-                  <Splits splits={r.splits} km={c.km} />
+                  <Splits splits={r.splits} km={Math.floor(c.distance_m / 1000)} />
                 </RunDetails>
               )}
             </li>

@@ -105,23 +105,24 @@ test('stato in una riga', () => {
   assert.equal(statusLine(gara, new Date('2027-09-26T12:00:00Z')), 'Conclusa');
 });
 test('modulo valido', () => assert.deepEqual(
-  validate({ name: ' Prova ', km: '5', start_date: '2026-09-01', end_date: '2026-09-30', participants: ['2', '1', '2'], age_grading: 'on' }).value,
-  { name: 'Prova', km: 5, start_date: '2026-09-01', end_date: '2026-09-30', participants: [2, 1], age_grading: true }));
+  validate({ name: ' Prova ', distance_m: '5000', start_date: '2026-09-01', end_date: '2026-09-30', participants: ['2', '1', '2'], age_grading: 'on' }).value,
+  { name: 'Prova', distance_m: 5000, start_date: '2026-09-01', end_date: '2026-09-30', participants: [2, 1], age_grading: true }));
 test('modulo: un solo partecipante arriva come stringa, coefficiente spento se non spuntato', () => assert.deepEqual(
-  validate({ name: 'x', km: '5', start_date: '2026-09-01', end_date: '2026-09-02', participants: '3' }).value,
-  { name: 'x', km: 5, start_date: '2026-09-01', end_date: '2026-09-02', participants: [3], age_grading: false }));
+  validate({ name: 'x', distance_m: '500', start_date: '2026-09-01', end_date: '2026-09-02', participants: '3' }).value,
+  { name: 'x', distance_m: 500, start_date: '2026-09-01', end_date: '2026-09-02', participants: [3], age_grading: false }));
 test('modulo: senza partecipanti rifiutato', () =>
-  assert.ok(validate({ name: 'x', km: '5', start_date: '2026-09-01', end_date: '2026-09-02' }).errors.participants));
-test('modulo: km decimali, zero o troppi rifiutati', () => {
-  for (const km of ['10.5', '0', '101', '', 'dieci']) assert.ok(validate({ name: 'x', km, start_date: '2026-09-01', end_date: '2026-09-02' }).errors.km, km);
+  assert.ok(validate({ name: 'x', distance_m: '5000', start_date: '2026-09-01', end_date: '2026-09-02' }).errors.participants));
+test('modulo: distanza in metri a passi di 100, da 100 a 100.000', () => {
+  for (const d of ['550', '50', '0', '100100', '', 'cinque', '5000.5']) assert.ok(validate({ name: 'x', distance_m: d, start_date: '2026-09-01', end_date: '2026-09-02' }).errors.distance_m, d);
+  for (const d of ['100', '500', '21100', '100000']) assert.equal(validate({ name: 'x', distance_m: d, start_date: '2026-09-01', end_date: '2026-09-02' }).errors?.distance_m, undefined, d);
 });
 test('modulo: fine prima dell\'inizio e date impossibili rifiutate', () => {
-  assert.ok(validate({ name: 'x', km: '10', start_date: '2026-09-10', end_date: '2026-09-01' }).errors.end_date);
-  assert.ok(validate({ name: 'x', km: '10', start_date: '2026-02-30', end_date: '2026-03-01' }).errors.start_date);
+  assert.ok(validate({ name: 'x', distance_m: '10000', start_date: '2026-09-10', end_date: '2026-09-01' }).errors.end_date);
+  assert.ok(validate({ name: 'x', distance_m: '10000', start_date: '2026-02-30', end_date: '2026-03-01' }).errors.start_date);
 });
 test('modulo: nome vuoto o troppo lungo rifiutato', () => {
-  assert.ok(validate({ name: '  ', km: '10', start_date: '2026-09-01', end_date: '2026-09-02' }).errors.name);
-  assert.ok(validate({ name: 'x'.repeat(61), km: '10', start_date: '2026-09-01', end_date: '2026-09-02' }).errors.name);
+  assert.ok(validate({ name: '  ', distance_m: '10000', start_date: '2026-09-01', end_date: '2026-09-02' }).errors.name);
+  assert.ok(validate({ name: 'x'.repeat(61), distance_m: '10000', start_date: '2026-09-01', end_date: '2026-09-02' }).errors.name);
 });
 
 import { standings } from '../lib/standings.js';
@@ -202,7 +203,7 @@ test('classifica per età e sesso: punteggio più alto in testa, chi non ha dati
 });
 
 import { standingsChanges } from '../lib/standings-diff.js';
-const gara15 = { name: 'Quindici', km: 15 };
+const gara15 = { name: 'Quindici', distance_m: 15000 };
 const snap = (...rows) => new Map(rows.map(([uid, time_s, name], i) => [uid, { pos: i + 1, time_s, name }]));
 test('notifiche: nuovo record a chi migliora, sorpasso a chi viene superato', () => {
   const before = snap([1, 4000, 'Anna'], [2, 4100, 'Bruno'], [3, 4200, 'Carlo']);
@@ -236,4 +237,21 @@ test('profilo: sesso e data di nascita validi', () => {
   assert.equal(validProfile('M', '2027-01-01', oggi), null);
   assert.equal(validProfile('M', '1986-02-30', oggi), null);
   assert.equal(validProfile('M', '9999-99-99', oggi), null);
+});
+
+import { marksFromStreams, timeAtDistance } from '../lib/efforts.js';
+test('tempi ogni 100 m dagli stream: interpolati tra i punti', () => {
+  // 0 m a 0 s, 150 m a 30 s, 250 m a 50 s, 420 m a 90 s
+  assert.deepEqual(marksFromStreams([0, 30, 50, 90], [0, 150, 250, 420]), [20, 40, 61.8, 85.3]);
+});
+test('stream vuoti o sbagliati: nessun tempo', () => {
+  assert.equal(marksFromStreams([], []), null);
+  assert.equal(marksFromStreams([0, 1], [0]), null);
+});
+test('tempo alla distanza di gara: dai 100 m se ci sono, se no dai parziali al km', () => {
+  const run = { marks: [20, 40, 60.4, 80, 100.6], splits: [{ m: 1000, s: 250 }, { m: 1000, s: 260 }] };
+  assert.equal(timeAtDistance(run, 500), 101);
+  assert.equal(timeAtDistance(run, 600), null);                 // i 100 m non arrivano a 600
+  assert.equal(timeAtDistance({ splits: run.splits }, 2000), 510); // senza stream, km interi
+  assert.equal(timeAtDistance({ splits: run.splits }, 1500), null); // senza stream, sotto il km intero no
 });

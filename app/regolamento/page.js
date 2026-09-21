@@ -26,7 +26,7 @@ const sections = (t) => [
         <li>{t('Solo attività Strava di tipo corsa su strada, registrate con il GPS.')}</li>
         <li>{t('Non valgono il tapis roulant, il trail, le corse virtuali e le attività inserite a mano o senza traccia GPS.')}</li>
         <li>{t('Valgono anche le attività impostate su Strava come visibili «Solo io».')}</li>
-        <li>{t('La corsa deve superare i km della gara. Non serve fermarsi: si può correre di più.')}</li>
+        <li>{t('La corsa deve superare la distanza della gara. Non serve fermarsi: si può correre di più.')}</li>
       </ul>
     ),
   },
@@ -34,11 +34,11 @@ const sections = (t) => [
     id: 'tempo', title: t('Il tempo'),
     body: (
       <ul>
-        <li>{t('Conta il tempo al passaggio dei primi km della gara, dalla partenza: per una gara da 10 km, il tempo al decimo chilometro.')}</li>
-        <li>{t('Si calcola sommando i parziali al chilometro registrati da Strava. La precisione è di un paio di secondi.')}</li>
+        <li>{t('Conta il tempo al passaggio della distanza della gara, dalla partenza: per una gara da 10 km il tempo al decimo chilometro, per una da 500 m il tempo ai 500 metri.')}</li>
+        <li>{t('Si calcola dalla traccia di Strava, con i tempi di passaggio ogni 100 metri; per le corse lette prima di questa novità, dai parziali al chilometro. La precisione è di un paio di secondi.')}</li>
         <li>{t('È il tempo trascorso, come il cronometro di una gara: le soste e le pause dell\'orologio sono comprese.')}</li>
-        <li>{t('Se Strava non fornisce i parziali al chilometro, la corsa non ha un tempo e non conta.')}</li>
-        <li>{t('Accanto a ogni tempo c\'è il dislivello netto sui km della gara: la differenza di quota tra la partenza e il passaggio all\'ultimo km (↓ discesa, ↑ salita). È solo un\'informazione, non cambia la classifica.')}</li>
+        <li>{t('Se Strava non fornisce né la traccia né i parziali, la corsa non ha un tempo e non conta.')}</li>
+        <li>{t('Nelle gare a km interi, accanto a ogni tempo c\'è il dislivello netto: la differenza di quota tra la partenza e il passaggio all\'ultimo km (↓ discesa, ↑ salita). È solo un\'informazione, non cambia la classifica.')}</li>
       </ul>
     ),
   },
@@ -57,7 +57,7 @@ const sections = (t) => [
       <ul>
         <li>{t('Per ognuno conta il miglior tempo tra tutte le sue corse valide. Vince il tempo più basso.')}</li>
         <li>{t('A parità di tempo è davanti chi l\'ha fatto per primo.')}</li>
-        <li>{t('«Volte» è il numero di corse valide, cioè quante volte si sono superati i km della gara.')}</li>
+        <li>{t('«Volte» è il numero di corse valide, cioè quante volte si è superata la distanza della gara.')}</li>
         <li>{t('Chi non ha ancora un tempo compare in fondo, in ordine alfabetico.')}</li>
         <li>{t('Accanto a ogni tempo c\'è il dislivello netto: solo un\'informazione, non sposta nessuno in classifica.')}</li>
       </ul>
@@ -110,8 +110,8 @@ const sections = (t) => [
     body: (
       <ul>
         <li>{t('Le gare le crea, modifica ed elimina l\'amministratore del sito.')}</li>
-        <li>{t('Ogni gara ha un nome, i km (interi, da 1 a 100), una data di inizio, una di fine e i suoi partecipanti.')}</li>
-        <li>{t('Nome, km, date e partecipanti si possono cambiare anche a gara partita: classifiche e tempi si ricalcolano.')}</li>
+        <li>{t('Ogni gara ha un nome, una distanza (in metri, a passi di 100, da 100 m a 100 km), una data di inizio, una di fine e i suoi partecipanti.')}</li>
+        <li>{t('Nome, distanza, date e partecipanti si possono cambiare anche a gara partita: classifiche e tempi si ricalcolano.')}</li>
         <li>{t('Per ogni gara l\'amministratore decide se applicare il coefficiente età e sesso: se non lo applica, c\'è solo la classifica a tempo.')}</li>
         <li>{t('Eliminare una gara toglie la sua classifica, ma non le corse: restano valide per le altre gare.')}</li>
       </ul>

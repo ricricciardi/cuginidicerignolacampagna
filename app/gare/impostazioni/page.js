@@ -3,6 +3,7 @@ import { sql } from '@/lib/db';
 import { requireAdminPage } from '@/lib/admin';
 import { phase, statusLine, fmtDay } from '@/lib/competition';
 import { getT } from '@/lib/lingua';
+import { fmtDist } from '@/lib/format';
 
 const NOTICES = {
   eliminata: 'Gara eliminata.',
@@ -15,7 +16,7 @@ export default async function Impostazioni({ searchParams }) {
   const sp = await searchParams;
   const t = await getT();
   const now = new Date();
-  const comps = (await sql`select c.id, c.name, c.km, c.start_date, c.end_date, c.age_grading,
+  const comps = (await sql`select c.id, c.name, c.distance_m, c.start_date, c.end_date, c.age_grading,
                                   (select count(*) from competition_participants p where p.competition_id = c.id)::int as people
                            from competitions c order by c.start_date desc, c.id desc`)
     .map((c) => ({ ...c, phase: phase(c, now) }));
@@ -37,7 +38,7 @@ export default async function Impostazioni({ searchParams }) {
             <li key={c.id}>
               <div className="comp-main">
                 <strong>{c.name}</strong>
-                <small>{t('{km} km, dal {dal} al {al}', { km: c.km, dal: fmtDay(c.start_date), al: fmtDay(c.end_date) })}</small>
+                <small>{t('{dist}, dal {dal} al {al}', { dist: fmtDist(c.distance_m), dal: fmtDay(c.start_date), al: fmtDay(c.end_date) })}</small>
                 <small>
                   {t(c.people === 1 ? '{n} partecipante' : '{n} partecipanti', { n: c.people })}
                   {' · '}{c.age_grading ? t('con coefficiente età e sesso') : t('solo tempo')}

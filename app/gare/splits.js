@@ -8,6 +8,7 @@ const fmtUpDown = (e) => (typeof e !== 'number' ? '' : Math.round(e) === 0 ? '0'
 // così anche differenze di pochi secondi si vedono. Il km più veloce è in lime, il più lento in rosa.
 export default async function Splits({ splits, km }) {
   const t = await getT();
+  if (!km) return null; // gara sotto il km: niente parziali al km
   const rows = (splits ?? []).slice(0, km);
   if (rows.length < km) return null;
   const times = rows.map((x) => x.s);

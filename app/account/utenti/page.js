@@ -4,6 +4,7 @@ import { requireAdminPage } from '@/lib/admin';
 import Avatar from '../../avatar';
 import { phase } from '@/lib/competition';
 import { getT } from '@/lib/lingua';
+import { fmtDist } from '@/lib/format';
 
 const fmtDay = (d) => new Date(d).toLocaleDateString('it-IT', {
   timeZone: 'Europe/Rome', day: 'numeric', month: 'short', year: 'numeric',
@@ -25,7 +26,7 @@ export default async function Utenti({ searchParams }) {
   // Gare in cui ha senso aggiungere qualcuno: in corso o che devono ancora partire.
   const now = new Date();
   const [comps, parts] = await Promise.all([
-    sql`select id, name, km, start_date, end_date from competitions order by start_date asc, id asc`,
+    sql`select id, name, distance_m, start_date, end_date from competitions order by start_date asc, id asc`,
     sql`select competition_id, user_id from competition_participants`,
   ]);
   const open = comps.filter((c) => phase(c, now) !== 'over');
@@ -70,7 +71,7 @@ export default async function Utenti({ searchParams }) {
                       <li key={c.id}>
                         <span>
                           {c.name}
-                          <small>{c.km} km · {phase(c, now) === 'running' ? t('in corso') : t('da iniziare')}</small>
+                          <small>{fmtDist(c.distance_m)} · {phase(c, now) === 'running' ? t('in corso') : t('da iniziare')}</small>
                         </span>
                         <form method="post" action={`/api/utenti/${u.id}/gare`}>
                           <input type="hidden" name="competition_id" value={c.id} />

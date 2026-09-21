@@ -7,7 +7,7 @@ import { useT } from '../../../lang-provider';
 const COLORS = ['#d7ff1f', '#ff2fb2', '#2ef2ff', '#ff9f1c', '#b388ff', '#39ff88', '#ff5e5e', '#ffe14d'];
 const MONTHS = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
 
-export default function CompareChart({ series, me, km, start, end }) {
+export default function CompareChart({ series, me, dist, start, end }) {
   const [mode, setMode] = useState('record');   // 'record' | 'tutte'
   const t = useT();
   const [focus, setFocus] = useState(null);     // userId in evidenza
@@ -56,7 +56,7 @@ export default function CompareChart({ series, me, km, start, end }) {
 
       <div className="chart-wrap">
         <svg className="chart" viewBox={`0 0 ${W} ${H}`} role="img"
-             aria-label={t('Primi {km} km, confronto di {n} cugini. In testa {nome} con {tempo}.', { km, n: series.length, nome: leader.name || t('un atleta'), tempo: fmtTime(leader.best) })}>
+             aria-label={t('Primi {dist}, confronto di {n} cugini. In testa {nome} con {tempo}.', { dist, n: series.length, nome: leader.name || t('un atleta'), tempo: fmtTime(leader.best) })}>
           <line x1={L} x2={W - R} y1={y(lo)} y2={y(lo)} className="grid" />
           <line x1={L} x2={W - R} y1={y(hi)} y2={y(hi)} className="grid" />
           <text x={L - 6} y={y(lo) + 4} textAnchor="end" className="axis">{fmtTime(Math.round(lo))}</text>

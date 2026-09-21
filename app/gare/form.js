@@ -1,4 +1,4 @@
-import { KM_MIN, KM_MAX, NAME_MAX } from '@/lib/competition';
+import { DIST_MIN, DIST_MAX, DIST_STEP, NAME_MAX } from '@/lib/competition';
 import Avatar from '../avatar';
 import { getT } from '@/lib/lingua';
 
@@ -14,11 +14,11 @@ export default async function CompetitionForm({ action, values, people, errors =
         <input name="name" required maxLength={NAME_MAX} defaultValue={values.name ?? ''} placeholder={t('Es. Gara dei cugini 2026')} />
         {err('name')}
       </label>
-      <label>{t('Km')}
-        <input name="km" type="number" inputMode="numeric" required min={KM_MIN} max={KM_MAX} step={1}
-               defaultValue={values.km ?? ''} />
-        <span className="hint">{t('Conta il tempo al passaggio di questo chilometro, anche se la corsa è più lunga.')}</span>
-        {err('km')}
+      <label>{t('Distanza in metri')}
+        <input name="distance_m" type="number" inputMode="numeric" required min={DIST_MIN} max={DIST_MAX} step={DIST_STEP}
+               defaultValue={values.distance_m ?? ''} placeholder="5000" />
+        <span className="hint">{t('A passi di 100 m: 500 per mezzo chilometro, 5000 per 5 km, 21100 per la mezza maratona. Conta il tempo al passaggio di questa distanza, anche se la corsa è più lunga.')}</span>
+        {err('distance_m')}
       </label>
       <div className="dates">
         <label>{t('Inizio')}
@@ -38,7 +38,7 @@ export default async function CompetitionForm({ action, values, people, errors =
         <input type="checkbox" name="age_grading" defaultChecked={values.age_grading ?? true} />
         <span>
           <strong>{t('Applica il coefficiente età e sesso')}</strong>
-          {t('Aggiunge la classifica a punteggio accanto a quella a tempo.')}
+          {t('Aggiunge la classifica a punteggio accanto a quella a tempo. Vale dal miglio (1.609 m) in su: per le gare più corte c\'è solo il tempo.')}
         </span>
       </label>
 

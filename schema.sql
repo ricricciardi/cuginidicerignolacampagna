@@ -30,7 +30,8 @@ create table if not exists strava_connections (
 create table if not exists competitions (
   id          serial primary key,
   name        text not null check (length(name) between 1 and 60),
-  km          integer not null check (km between 1 and 100),
+  km          integer check (km between 1 and 100),  -- vecchio: ora conta distance_m
+  distance_m  integer not null check (distance_m between 100 and 100000),  -- distanza della gara in metri
   start_date  text not null check (start_date ~ '^\d{4}-\d{2}-\d{2}$'),  -- ora italiana, dalle 00:00
   end_date    text not null check (end_date ~ '^\d{4}-\d{2}-\d{2}$'),    -- ora italiana, fino alle 24:00
   age_grading boolean not null default true,  -- classifica a punteggio (coefficiente età e sesso)
@@ -57,7 +58,8 @@ create table if not exists activities (
   distance_m       real not null,
   moving_time_s    integer not null,
   elapsed_time_s   integer not null,
-  splits           jsonb not null default '[]', -- [{ m: metri, s: trascorso, mv: in movimento }]
+  splits           jsonb not null default '[]', -- [{ m: metri, s: trascorso, mv: in movimento, e: dislivello }]
+  marks            jsonb,                       -- secondi al passaggio di ogni 100 m (stream Strava); null = da leggere
   start_date       timestamptz not null,
   start_date_local text,
   synced_at        timestamptz not null default now()

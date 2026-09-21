@@ -3,6 +3,7 @@ import { compWindow, fmtDay } from '@/lib/competition';
 import Countdown from '../countdown';
 import SegmentedLinks from '../segmented-links';
 import { getT } from '@/lib/lingua';
+import { fmtDist } from '@/lib/format';
 
 // Testata comune alle pagine di una gara: nome, regole, sezioni e conto alla rovescia.
 // «Tutte le gare» solo se l'utente ne vede più di una (many): con una sola l'elenco rimanda qui.
@@ -14,7 +15,7 @@ export default async function CompetitionHeader({ c, current, many }) {
       {many && <p className="back"><Link href="/gare">{t('Tutte le gare')}</Link></p>}
       <h1>{c.name}</h1>
       <p className="comp-rules">
-        {t('Primi {km} km dalla partenza, corse su strada con GPS dal {dal} al {al}.', { km: c.km, dal: fmtDay(c.start_date), al: fmtDay(c.end_date) })}
+        {t('Primi {dist} dalla partenza, corse su strada con GPS dal {dal} al {al}.', { dist: fmtDist(c.distance_m), dal: fmtDay(c.start_date), al: fmtDay(c.end_date) })}
       </p>
       <Countdown serverNow={Date.now()} start={start.getTime()} end={end.getTime()}
                  startLabel={fmtDay(c.start_date)} endLabel={fmtDay(c.end_date)} />

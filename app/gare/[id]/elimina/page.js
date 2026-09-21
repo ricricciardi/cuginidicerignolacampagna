@@ -5,6 +5,7 @@ import { loadCompetition } from '@/lib/standings';
 import { competitionRuns } from '@/lib/standings';
 import { fmtDay, statusLine } from '@/lib/competition';
 import { getT } from '@/lib/lingua';
+import { fmtDist } from '@/lib/format';
 
 export default async function Elimina({ params }) {
   await requireAdminPage();
@@ -20,7 +21,7 @@ export default async function Elimina({ params }) {
       <h1>{t('Eliminare questa gara?')}</h1>
       <div className="notice error">
         <strong>{c.name}</strong><br />
-        {t('{km} km, dal {dal} al {al}', { km: c.km, dal: fmtDay(c.start_date), al: fmtDay(c.end_date) })}. {statusLine(c, new Date(), t)}.
+        {t('{dist}, dal {dal} al {al}', { dist: fmtDist(c.distance_m), dal: fmtDay(c.start_date), al: fmtDay(c.end_date) })}. {statusLine(c, new Date(), t)}.
       </div>
       <p>
         {t('Spariscono la gara, la sua classifica e il suo confronto. Le corse restano salvate e continuano a valere per le altre gare.')}
