@@ -429,7 +429,7 @@ button[data-state="saving"] { opacity: .75; }
 .cmp-val.up { color: var(--lime); text-shadow: 0 0 12px rgba(215,255,31,.45); }
 .cmp-val.up small { display: block; color: var(--lime); }
 /* Striscia dei giorni: un quadratino per giorno del periodo, acceso se ha corso */
-.days { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 2px; max-width: calc(var(--n) * 14px); }
+.days { grid-column: 1 / -1; margin-top: var(--s1); display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 2px; max-width: calc(var(--n) * 14px); }
 .days i { display: block; height: 10px; border-radius: 2px; background: rgba(255,255,255,.08); }
 .days i.l1 { background: rgba(215,255,31,.35); }
 .days i.l2 { background: rgba(215,255,31,.65); }
@@ -709,9 +709,9 @@ button.photo-button:active { transform: scale(.96); transition-duration: .05s; }
 .rules-link { display: inline-flex; align-items: center; min-height: var(--tap); font-size: var(--fs-s); font-weight: 700; }
 @media (max-width: 24rem) { .board .avatar { width: 30px; height: 30px; } }
 /* Il tuo avatar in classifica: anelli dentro lo spazio della foto, senza toccare il nome */
-.board .avatar-me { width: 40px; height: 40px; }
-.board .avatar-me .avatar { width: 72%; height: 72%; margin: 14%; font-size: var(--fs-xs); }
-.board .avatar-me .me-rings { left: 0; top: 0; width: 100%; height: 100%; }
+:is(.board, .cmp-list) .avatar-me { width: 40px; height: 40px; }
+:is(.board, .cmp-list) .avatar-me .avatar { width: 72%; height: 72%; margin: 14%; font-size: var(--fs-xs); }
+:is(.board, .cmp-list) .avatar-me .me-rings { left: 0; top: 0; width: 100%; height: 100%; }
 @media (max-width: 24rem) { .board .avatar-me { width: 30px; height: 30px; } }
 .athlete-head { display: flex; align-items: center; gap: var(--s4); margin-bottom: var(--s3); }
 .athlete-head h1 { margin: 0; }
