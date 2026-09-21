@@ -6,7 +6,7 @@ import { fmtTime, fmtDate, fmtElevation, fmtDist } from '@/lib/format';
 import { fmtPct, MIN_GRADE_M } from '@/lib/agegrade';
 import CompetitionHeader from '../header';
 import Avatar from '../../avatar';
-import SegmentedLinks from '../../segmented-links';
+import ViewTabs from './view-tabs';
 import { getT } from '@/lib/lingua';
 import { requireStravaUser } from '@/lib/admin';
 
@@ -22,16 +22,22 @@ export default async function Classifica({ params, searchParams }) {
   const sp = await searchParams;
   // Punteggio solo se la gara lo prevede e dal miglio in su (sotto non ci sono tabelle).
   const graded = c.age_grading && c.distance_m >= MIN_GRADE_M;
-  const byAge = graded && sp.vista === 'eta';
-  // Miglior parziale: classifica in più sul km più veloce di ogni corsa (solo per curiosità).
-  const bySegment = sp.vista === 'tratto';
   // In parallelo: sono indipendenti, così si aspetta la più lenta invece della somma.
   const [runs, people, count, t] = await Promise.all([competitionRuns(c), participants(c), visibleCompetitionCount(me), getT()]);
-  if (bySegment) for (const r of runs) Object.assign(r, { time_s: bestKmSplit(r.splits), elev_m: null });
-  const rows = byAge ? ageStandings(runs, people) : standings(runs, people);
   const notice = Object.keys(NOTICES).find((k) => sp[k]);
-  const hasScore = (r) => (byAge ? r.pct != null : r.time_s != null);
-  const meMissing = byAge && rows.find((r) => r.user_id === me)?.missing === 'dati';
+
+  // Le classifiche si preparano tutte insieme e si cambiano nel browser (view-tabs.js).
+  // Miglior parziale: il km più veloce di ogni corsa, solo per curiosità.
+  const kmRuns = runs.map((r) => ({ ...r, time_s: bestKmSplit(r.splits), elev_m: null }));
+  const views = [
+    { key: 'tempo', href: `/gare/${c.id}`, label: t('Tempo'), rows: standings(runs, people) },
+    { key: 'tratto', href: `/gare/${c.id}?vista=tratto`, label: t('Miglior parziale'), rows: standings(kmRuns, people),
+      legend: t('Il chilometro più veloce di ogni corsa in gara, dai parziali di Strava. È solo per curiosità: non cambia la classifica della gara.') },
+    graded && { key: 'eta', href: `/gare/${c.id}?vista=eta`, label: t('Punteggio'), rows: ageStandings(runs, people), byAge: true,
+      legend: <>{t('Punteggio USATF 2025: il tuo tempo confrontato con il migliore al mondo per la tua età e il tuo sesso. Più alto è meglio.')}
+        {' '}<Link href="/regolamento#eta">{t('Come si calcola')}</Link></> },
+  ].filter(Boolean);
+  const initial = Math.max(0, views.findIndex((v) => v.key === sp.vista));
 
   return (
     <main>
@@ -39,12 +45,19 @@ export default async function Classifica({ params, searchParams }) {
       <CompetitionHeader c={c} current="classifica" many={count > 1} />
 
       <div className="nav-content" data-nav="Sezioni della gara">
-      <SegmentedLinks className="segmented view-switch" label="Tipo di classifica" ariaLabel={t('Tipo di classifica')} scroll={false} replace items={[
-        { href: `/gare/${c.id}`, label: t('Tempo'), current: !byAge && !bySegment },
-        { href: `/gare/${c.id}?vista=tratto`, label: t('Miglior parziale'), current: bySegment },
-        graded && { href: `/gare/${c.id}?vista=eta`, label: t('Punteggio'), current: byAge },
-      ].filter(Boolean)} />
-      <div className="nav-content" data-nav="Tipo di classifica">
+        <ViewTabs ariaLabel={t('Tipo di classifica')} initial={initial}
+          items={views.map(({ href, label }) => ({ href, label }))}
+          panels={views.map((v) => <Board key={v.key} view={v} c={c} me={me} t={t} />)} />
+      </div>
+    </main>
+  );
+}
+
+function Board({ view: { rows, byAge, legend }, c, me, t }) {
+  const hasScore = (r) => (byAge ? r.pct != null : r.time_s != null);
+  const meMissing = byAge && rows.find((r) => r.user_id === me)?.missing === 'dati';
+  return (
+    <>
       {meMissing && (
         <div className="notice">{t('Per comparire qui inserisci sesso e data di nascita in')} <Link href="/account#profilo">{t('il tuo account')}</Link>.</div>
       )}
@@ -81,19 +94,7 @@ export default async function Classifica({ params, searchParams }) {
         </ol>
         </>
       )}
-      {bySegment && (
-        <p className="legend legend-after">
-          {t('Il chilometro più veloce di ogni corsa in gara, dai parziali di Strava. È solo per curiosità: non cambia la classifica della gara.')}
-        </p>
-      )}
-      {byAge && (
-        <p className="legend legend-after">
-          {t('Punteggio USATF 2025: il tuo tempo confrontato con il migliore al mondo per la tua età e il tuo sesso. Più alto è meglio.')}
-          {' '}<Link href="/regolamento#eta">{t('Come si calcola')}</Link>
-        </p>
-      )}
-      </div>
-      </div>
-    </main>
+      {legend && <p className="legend legend-after">{legend}</p>}
+    </>
   );
 }

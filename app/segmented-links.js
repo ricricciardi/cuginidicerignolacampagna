@@ -11,7 +11,9 @@ const lastThumb = new Map();
 // items: [{ href, label, current, className?, ariaLabel?, title?, thumb? }]; thumb: false = voce
 // senza cursore (il tab dell'account ha già il suo anello attorno alla foto).
 // label: identificativo interno (usato anche da .nav-content[data-nav]); ariaLabel: il nome letto, tradotto.
-export default function SegmentedLinks({ items, label, ariaLabel, className, scroll = true, replace = false }) {
+// onSelect(i): la vista cambia nel browser senza navigare (le viste sono già tutte nella pagina):
+// niente skeleton né attesa del server, e lo scroll resta dov'è. Senza onSelect si naviga.
+export default function SegmentedLinks({ items, label, ariaLabel, className, scroll = true, replace = false, onSelect }) {
   const current = items.findIndex((it) => it.current);
   const [active, setActive] = useState(current);
   useEffect(() => setActive(current), [current]);
@@ -79,7 +81,10 @@ export default function SegmentedLinks({ items, label, ariaLabel, className, scr
               aria-current={i === active ? 'page' : undefined}
               onClick={(e) => {
                 if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-                if (i !== active) startPending();
+                if (onSelect) {
+                  e.preventDefault();
+                  onSelect(i);
+                } else if (i !== active) startPending();
                 setActive(i);
                 // Senza cursore (tab dell'account) pulsa la foto al suo posto.
                 pulse(items[i].thumb === false ? e.currentTarget.firstElementChild : undefined);
