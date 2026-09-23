@@ -13,6 +13,7 @@ import PushToggle from './push-toggle';
 import { ReopenTour } from '../tour';
 import { InstallCard } from '../install-app';
 import { pushPublicKey } from '@/lib/push';
+import ScrollTo from './scroll-to';
 
 const fmtStamp = (d) => new Date(d).toLocaleString('it-IT', {
   timeZone: 'Europe/Rome', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -129,6 +130,7 @@ export default async function Account({ searchParams }) {
             <h2 id="admin-title">{t('Amministrazione')}</h2>
             <span className="pill ok">{t('Admin')}</span>
           </div>
+          {(sp.tutti || sp.webhook) && <ScrollTo id="admin" />}
           <ul className="admin-links">
             <li><Link href="/gare/impostazioni">{t('Impostazioni gare')}<small>{t('Crea, modifica ed elimina le gare')}</small></Link></li>
             <li><Link href="/account/utenti">{t('Utenti')}<small>{t('Chi è iscritto, stato di Strava, elimina')}</small></Link></li>
