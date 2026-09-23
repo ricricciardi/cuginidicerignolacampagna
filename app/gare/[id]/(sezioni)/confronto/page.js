@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { loadCompetitionFor, competitionRuns, participants, periodActivities } from '@/lib/standings';
 import { raceDays, dayCells, effort, improvement, pacing, WEEKLY_AFTER_DAYS } from '@/lib/compare';
 import ViewTabs from '../view-tabs';
@@ -25,6 +25,7 @@ export default async function Confronto({ params, searchParams }) {
   const me = await requireStravaUser();
   const c = await loadCompetitionFor((await params).id, me);
   if (!c) notFound();
+  if (c.total_km) redirect(`/gare/${c.id}`);
   const [runs, people, acts, t] = await Promise.all([competitionRuns(c), participants(c), periodActivities(c), getT()]);
   const days = raceDays(c, romeToday());
   const train = effort(acts, people);

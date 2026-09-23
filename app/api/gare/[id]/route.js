@@ -23,9 +23,9 @@ export async function POST(req, { params }) {
   await sql`update competitions
             set name = ${value.name}, distance_m = ${value.distance_m}, km = null, start_date = ${value.start_date},
                 end_date = ${value.end_date}, age_grading = ${value.age_grading},
-                best_segment = ${value.best_segment}, updated_at = now()
+                best_segment = ${value.best_segment}, total_km = ${value.total_km}, updated_at = now()
             where id = ${c.id}`;
   const added = await setParticipants(c.id, value.participants);
-  await notifyAdded({ id: c.id, name: value.name, distance_m: value.distance_m }, added, userId);
+  await notifyAdded({ id: c.id, name: value.name, distance_m: value.distance_m, total_km: value.total_km }, added, userId);
   return go(req, '/gare/impostazioni?modificata=1');
 }

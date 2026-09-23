@@ -115,6 +115,7 @@ const sections = (t) => [
         <li>{t('Ogni gara ha un nome, una distanza (in metri, a passi di 100, da 100 m a 100 km), una data di inizio, una di fine e i suoi partecipanti.')}</li>
         <li>{t('Nome, distanza, date e partecipanti si possono cambiare anche a gara partita: classifiche e tempi si ricalcolano.')}</li>
         <li>{t('Per ogni gara l\'amministratore decide se applicare il coefficiente età e sesso: se non lo applica, c\'è solo la classifica a tempo.')}</li>
+        <li>{t('Alcune gare sono a km totali: non hanno una distanza e vince chi somma più km nel periodo della gara. Vale ogni corsa, di qualunque lunghezza.')}</li>
         <li>{t('Eliminare una gara toglie la sua classifica, ma non le corse: restano valide per le altre gare.')}</li>
       </ul>
     ),

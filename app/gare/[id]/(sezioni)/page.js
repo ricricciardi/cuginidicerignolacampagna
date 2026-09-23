@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { loadCompetitionFor, competitionRuns, standings, ageStandings, participants } from '@/lib/standings';
+import { loadCompetitionFor, competitionRuns, standings, ageStandings, kmStandings, participants, periodActivities } from '@/lib/standings';
 import { bestKmSplit } from '@/lib/efforts';
-import { fmtTime, fmtDate, fmtElevation, fmtDist } from '@/lib/format';
+import { fmtTime, fmtDate, fmtElevation, fmtDist, fmtPace } from '@/lib/format';
 import { fmtPct, MIN_GRADE_M } from '@/lib/agegrade';
 import Avatar from '../../../avatar';
 import ViewTabs from './view-tabs';
@@ -19,11 +19,20 @@ export default async function Classifica({ params, searchParams }) {
   const c = await loadCompetitionFor((await params).id, me);
   if (!c) notFound();
   const sp = await searchParams;
+  const notice = Object.keys(NOTICES).find((k) => sp[k]);
+  if (c.total_km) {
+    const [acts, people, t] = await Promise.all([periodActivities(c), participants(c), getT()]);
+    return (
+      <>
+        {notice && <div className="notice">{t(NOTICES[notice])}</div>}
+        <KmBoard rows={kmStandings(acts, people)} c={c} me={me} t={t} />
+      </>
+    );
+  }
   // Punteggio solo se la gara lo prevede e dal miglio in su (sotto non ci sono tabelle).
   const graded = c.age_grading && c.distance_m >= MIN_GRADE_M;
   // In parallelo: sono indipendenti, così si aspetta la più lenta invece della somma.
   const [runs, people, t] = await Promise.all([competitionRuns(c), participants(c), getT()]);
-  const notice = Object.keys(NOTICES).find((k) => sp[k]);
 
   // Le classifiche si preparano tutte insieme e si cambiano nel browser (view-tabs.js).
   // Miglior parziale: il km più veloce di ogni corsa, solo per curiosità.
@@ -96,6 +105,37 @@ function Board({ view: { rows, byAge, legend }, c, me, t }) {
         </>
       )}
       {legend && <p className="legend legend-after">{legend}</p>}
+    </>
+  );
+}
+
+// Classifica delle gare a km totali: chi ha corso di più in testa, con quante corse e il passo medio.
+const fmtKmTot = (m) => (m / 1000).toLocaleString('it-IT', { maximumFractionDigits: 1 });
+function KmBoard({ rows, c, me, t }) {
+  return rows.length === 0 ? (
+    <p>{t('Nessun cugino ha ancora collegato Strava. Chi lo collega compare qui.')}</p>
+  ) : (
+    <>
+      <div className="board-head" aria-hidden="true">
+        <span>{t('Pos.')}</span><span /><span>{t('Cugino')}</span><span>{t('Corse')}</span><span>{t('Km')}</span>
+      </div>
+      <ol className="board">
+        {rows.map((r, i) => (
+          <li key={r.user_id} className={[r.user_id === me ? 'me' : '', !r.meters ? 'senza-tempo' : '', i === 0 && r.meters ? 'leader' : ''].filter(Boolean).join(' ') || undefined}>
+            <Link href={`/gare/${c.id}/atleta/${r.user_id}`}>
+              <span className="pos">{r.meters ? i + 1 : '—'}</span>
+              <Avatar name={r.athlete_name} src={r.avatar_url} me={r.user_id === me} />
+              <span className="who" data-tu={t('Tu')}>
+                <strong title={r.athlete_name || t('Atleta senza nome')}>{r.athlete_name || t('Atleta senza nome')}</strong>
+                <small>{r.meters ? t('{p}/km di media', { p: fmtPace(r.seconds, r.meters) }) : t('Ancora nessuna corsa')}</small>
+              </span>
+              <span className="count" aria-label={t(r.reached === 1 ? '{n} corsa' : '{n} corse', { n: r.reached })}>{r.reached}</span>
+              <span className="time">{r.meters ? fmtKmTot(r.meters) : '—'}</span>
+            </Link>
+          </li>
+        ))}
+      </ol>
+      <p className="legend legend-after">{t('Conta la somma dei km di tutte le corse del periodo, di qualunque lunghezza.')}</p>
     </>
   );
 }

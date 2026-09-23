@@ -603,6 +603,7 @@ input:disabled { opacity: .5; }
 /* Modulo gara: opzione coefficiente e scelta dei partecipanti */
 .check.toggle { color: var(--muted); }
 .check.toggle strong { display: block; color: var(--ink); font-weight: 700; }
+form:has([name="total_km"]:checked) .per-distanza { display: none; }
 .people { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: var(--s2); }
 .people legend { padding: 0; margin-bottom: var(--s2); font-size: var(--fs-s); font-weight: 600; }
 .people ul { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 14px;

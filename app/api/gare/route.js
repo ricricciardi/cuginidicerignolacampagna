@@ -16,11 +16,11 @@ export async function POST(req) {
   const fd = await req.formData();
   const { value, errors } = validate({ ...Object.fromEntries(fd), participants: fd.getAll('participants') });
   if (errors) return go(req, `/gare/nuova?${formToQuery(fd, errors)}`);
-  const [c] = await sql`insert into competitions (name, distance_m, start_date, end_date, age_grading, best_segment, created_by)
+  const [c] = await sql`insert into competitions (name, distance_m, start_date, end_date, age_grading, best_segment, total_km, created_by)
                         values (${value.name}, ${value.distance_m}, ${value.start_date}, ${value.end_date},
-                                ${value.age_grading}, ${value.best_segment}, ${userId})
+                                ${value.age_grading}, ${value.best_segment}, ${value.total_km}, ${userId})
                         returning id`;
   const added = await setParticipants(c.id, value.participants);
-  await notifyAdded({ id: c.id, name: value.name, distance_m: value.distance_m }, added, userId);
+  await notifyAdded({ id: c.id, name: value.name, distance_m: value.distance_m, total_km: value.total_km }, added, userId);
   return go(req, '/gare/impostazioni?creata=1');
 }

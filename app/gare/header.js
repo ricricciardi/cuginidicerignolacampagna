@@ -15,11 +15,14 @@ export default async function CompetitionHeader({ c, many }) {
       {many && <p className="back"><Link href="/gare">{t('Tutte le gare')}</Link></p>}
       <h1>{c.name}</h1>
       <p className="comp-rules">
-        {t(c.best_segment ? 'Miglior parziale di {dist}, corse su strada con GPS dal {dal} al {al}.' : 'Primi {dist} dalla partenza, corse su strada con GPS dal {dal} al {al}.', { dist: fmtDist(c.distance_m), dal: fmtDay(c.start_date), al: fmtDay(c.end_date) })}
+        {t(c.total_km ? 'Somma dei km di tutte le corse su strada con GPS dal {dal} al {al}.'
+          : c.best_segment ? 'Miglior parziale di {dist}, corse su strada con GPS dal {dal} al {al}.'
+          : 'Primi {dist} dalla partenza, corse su strada con GPS dal {dal} al {al}.', { dist: fmtDist(c.distance_m), dal: fmtDay(c.start_date), al: fmtDay(c.end_date) })}
       </p>
       <Countdown serverNow={Date.now()} start={start.getTime()} end={end.getTime()}
                  startLabel={fmtDay(c.start_date)} endLabel={fmtDay(c.end_date)} />
-      <GaraTabs id={c.id} ariaLabel={t('Sezioni della gara')} labels={[t('Classifica'), t('Confronto')]} />
+      {/* Nelle gare a km totali il confronto (tempi, progressi, stile) non ha senso: solo la classifica. */}
+      {!c.total_km && <GaraTabs id={c.id} ariaLabel={t('Sezioni della gara')} labels={[t('Classifica'), t('Confronto')]} />}
     </>
   );
 }

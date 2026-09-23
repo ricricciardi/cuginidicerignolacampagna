@@ -14,8 +14,17 @@ export default async function CompetitionForm({ action, values, people, errors =
         <input name="name" required maxLength={NAME_MAX} defaultValue={values.name ?? ''} placeholder={t('Es. Gara dei cugini 2026')} />
         {err('name')}
       </label>
-      <label>{t('Distanza in metri')}
-        <input name="distance_m" type="number" inputMode="numeric" required min={DIST_MIN} max={DIST_MAX} step={DIST_STEP}
+      <label className="check toggle">
+        <input type="checkbox" name="total_km" defaultChecked={values.total_km ?? false} />
+        <span>
+          <strong>{t('Classifica a km totali')}</strong>
+          {t('Vince chi corre più km nel periodo della gara: si sommano tutte le corse, di qualunque lunghezza. Non serve la distanza.')}
+        </span>
+      </label>
+
+      {/* Con i km totali accesi distanza, punteggio e miglior parziale non servono e si nascondono (CSS). */}
+      <label className="per-distanza">{t('Distanza in metri')}
+        <input name="distance_m" type="number" inputMode="numeric" min={DIST_MIN} max={DIST_MAX} step={DIST_STEP}
                defaultValue={values.distance_m ?? ''} placeholder="5000" />
         <span className="hint">{t('A passi di 100 m: 500 per mezzo chilometro, 5000 per 5 km, 21100 per la mezza maratona. Se la corsa è più lunga, conta il tempo al passaggio di questa distanza (o il parziale migliore, vedi sotto).')}</span>
         {err('distance_m')}
@@ -34,7 +43,7 @@ export default async function CompetitionForm({ action, values, people, errors =
         {t('Ora italiana: si parte alle 00:00 del giorno di inizio e si chiude alle 24:00 del giorno di fine. Tutto resta modificabile anche a gara partita: classifiche e tempi si ricalcolano.')}
       </p>
 
-      <label className="check toggle">
+      <label className="check toggle per-distanza">
         <input type="checkbox" name="age_grading" defaultChecked={values.age_grading ?? true} />
         <span>
           <strong>{t('Applica il coefficiente età e sesso')}</strong>
@@ -42,7 +51,7 @@ export default async function CompetitionForm({ action, values, people, errors =
         </span>
       </label>
 
-      <label className="check toggle">
+      <label className="check toggle per-distanza">
         <input type="checkbox" name="best_segment" defaultChecked={values.best_segment ?? false} />
         <span>
           <strong>{t('Conta il miglior parziale della corsa')}</strong>

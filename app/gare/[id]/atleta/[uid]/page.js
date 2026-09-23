@@ -2,10 +2,10 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { requireStravaUser } from '@/lib/admin';
 import { sql } from '@/lib/db';
-import { loadCompetitionFor, competitionRuns } from '@/lib/standings';
+import { loadCompetitionFor, competitionRuns, periodActivities } from '@/lib/standings';
 import { markRecords } from '@/lib/efforts';
 import { ProgressChart } from '@/lib/chart';
-import { fmtTime, fmtDate, fmtKm, fmtElevation, fmtDist } from '@/lib/format';
+import { fmtTime, fmtDate, fmtKm, fmtElevation, fmtDist, fmtPace } from '@/lib/format';
 import Avatar from '../../../../avatar';
 import Splits from '../../../splits';
 import RunDetails from '../../../run-details';
@@ -24,6 +24,7 @@ export default async function Atleta({ params }) {
                               join competition_participants p on p.user_id = c.user_id and p.competition_id = ${c.id}
                               where c.user_id = ${uid} and c.consent_at is not null`;
   if (!athlete) notFound();
+  if (c.total_km) return <KmAthlete c={c} uid={uid} me={me} athlete={athlete} />;
 
   const [runsRaw, t] = await Promise.all([competitionRuns(c, uid), getT()]);
   const runs = markRecords(runsRaw);
@@ -81,6 +82,46 @@ export default async function Atleta({ params }) {
           );
         })}
       </ul>
+    </main>
+  );
+}
+
+// Gara a km totali: km sommati, corse e passo medio, poi l'elenco delle corse del periodo.
+async function KmAthlete({ c, uid, me, athlete }) {
+  const [runs, t] = await Promise.all([periodActivities(c, uid), getT()]);
+  const meters = runs.reduce((m, r) => m + r.distance_m, 0);
+  const seconds = runs.reduce((s, r) => s + r.moving_time_s, 0);
+  return (
+    <main>
+      <p className="back"><Link href={`/gare/${c.id}`}>{t('Torna a {nome}', { nome: c.name })}</Link></p>
+      <div className="athlete-head">
+        <Avatar name={athlete.athlete_name} src={athlete.avatar_url} size="lg" me={uid === me} />
+        <h1>{athlete.athlete_name || t('Atleta senza nome')}</h1>
+      </div>
+      {runs.length ? (
+        <>
+          <dl className="stats summary">
+            <div className="km"><dt>{t('Km totali')}</dt><dd>{fmtKm(meters)}</dd></div>
+            <div><dt>{t('Corse')}</dt><dd>{runs.length}</dd></div>
+            <div><dt>{t('Passo /km')}</dt><dd>{fmtPace(seconds, meters)}</dd></div>
+          </dl>
+          <ul className="history">
+            {[...runs].reverse().map((r) => (
+              <li key={r.id}>
+                <div className="run-row">
+                  <span>
+                    <strong>{fmtDate(r)}</strong>
+                    <small>{t('{p}/km', { p: fmtPace(r.moving_time_s, r.distance_m) })}</small>
+                  </span>
+                  <span className="time">{fmtKm(r.distance_m)} km</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <p>{t('Nessuna corsa in questa gara.')}</p>
+      )}
     </main>
   );
 }

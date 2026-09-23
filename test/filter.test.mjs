@@ -108,10 +108,10 @@ test('stato in una riga', () => {
 });
 test('modulo valido', () => assert.deepEqual(
   validate({ name: ' Prova ', distance_m: '5000', start_date: '2026-09-01', end_date: '2026-09-30', participants: ['2', '1', '2'], age_grading: 'on', best_segment: 'on' }).value,
-  { name: 'Prova', distance_m: 5000, start_date: '2026-09-01', end_date: '2026-09-30', participants: [2, 1], age_grading: true, best_segment: true }));
+  { name: 'Prova', distance_m: 5000, start_date: '2026-09-01', end_date: '2026-09-30', participants: [2, 1], age_grading: true, best_segment: true, total_km: false }));
 test('modulo: un solo partecipante arriva come stringa, coefficiente spento se non spuntato', () => assert.deepEqual(
   validate({ name: 'x', distance_m: '500', start_date: '2026-09-01', end_date: '2026-09-02', participants: '3' }).value,
-  { name: 'x', distance_m: 500, start_date: '2026-09-01', end_date: '2026-09-02', participants: [3], age_grading: false, best_segment: false }));
+  { name: 'x', distance_m: 500, start_date: '2026-09-01', end_date: '2026-09-02', participants: [3], age_grading: false, best_segment: false, total_km: false }));
 test('modulo: senza partecipanti rifiutato', () =>
   assert.ok(validate({ name: 'x', distance_m: '5000', start_date: '2026-09-01', end_date: '2026-09-02' }).errors.participants));
 test('modulo: distanza in metri a passi di 100, da 100 a 100.000', () => {
@@ -122,6 +122,12 @@ test('modulo: fine prima dell\'inizio e date impossibili rifiutate', () => {
   assert.ok(validate({ name: 'x', distance_m: '10000', start_date: '2026-09-10', end_date: '2026-09-01' }).errors.end_date);
   assert.ok(validate({ name: 'x', distance_m: '10000', start_date: '2026-02-30', end_date: '2026-03-01' }).errors.start_date);
 });
+test('modulo: gara a km totali senza distanza, niente punteggio né miglior parziale', () => {
+  assert.deepEqual(
+    validate({ name: 'Somma', distance_m: '', start_date: '2026-09-01', end_date: '2026-09-30', participants: ['1'], total_km: 'on', age_grading: 'on', best_segment: 'on' }).value,
+    { name: 'Somma', distance_m: null, start_date: '2026-09-01', end_date: '2026-09-30', participants: [1], age_grading: false, best_segment: false, total_km: true });
+});
+
 test('modulo: nome vuoto o troppo lungo rifiutato', () => {
   assert.ok(validate({ name: '  ', distance_m: '10000', start_date: '2026-09-01', end_date: '2026-09-02' }).errors.name);
   assert.ok(validate({ name: 'x'.repeat(61), distance_m: '10000', start_date: '2026-09-01', end_date: '2026-09-02' }).errors.name);
@@ -156,6 +162,19 @@ test('classifica senza nessun tempo: solo i nomi, in ordine alfabetico', () => {
   assert.deepEqual(r.map((x) => x.athlete_name), ['Franco', 'Nunzia']);
 });
 
+import { kmStandings } from '../lib/standings.js';
+test('classifica a km totali: somma di tutte le corse, chi non ha corso in fondo', () => {
+  const acts = [
+    { user_id: 1, distance_m: 5000, moving_time_s: 1500 },
+    { user_id: 1, distance_m: 3200, moving_time_s: 960 },
+    { user_id: 2, distance_m: 10000, moving_time_s: 3000 },
+    { user_id: 9, distance_m: 42000, moving_time_s: 12000 }, // non partecipa
+  ];
+  const people = [{ user_id: 1, athlete_name: 'Riccardo' }, { user_id: 2, athlete_name: 'Mimmo' },
+    { user_id: 3, athlete_name: 'Tonino' }, { user_id: 4, athlete_name: 'Alfredo' }];
+  assert.deepEqual(kmStandings(acts, people).map((x) => [x.athlete_name, x.meters, x.reached]),
+    [['Mimmo', 10000, 1], ['Riccardo', 8200, 2], ['Alfredo', 0, 0], ['Tonino', 0, 0]]);
+});
 
 import { ageOn, standardSeconds, ageGradePct } from '../lib/agegrade.js';
 test('età compiuta il giorno della corsa', () => {
