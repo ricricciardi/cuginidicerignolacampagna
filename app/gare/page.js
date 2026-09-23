@@ -40,7 +40,8 @@ export default async function Gare() {
           {comps.map((c, i) => (
             <li key={c.id} className={c.phase}>
               <Link href={`/gare/${c.id}`}>
-                {c.total_km ? <span className="comp-km">Σ<small>km</small></span> :
+                {/* Gara a km totali: al posto della distanza, i km di chi è in testa (0 finché nessuno corre). */}
+                {c.total_km ? <span className="comp-km">{fmtLeaderKm(leaders[i]?.meters ?? 0)}<small>km</small></span> :
                 <span className="comp-km">{c.distance_m < 1000 ? c.distance_m : (c.distance_m / 1000).toLocaleString('it-IT', { maximumFractionDigits: 1 })}<small>{c.distance_m < 1000 ? 'm' : 'km'}</small></span>}
                 <span className="comp-main">
                   <strong>{c.name}</strong>
@@ -62,6 +63,9 @@ export default async function Gare() {
     </main>
   );
 }
+
+// Km di chi è in testa, nel riquadro della distanza: un decimale sotto i 100 km, poi interi (più corti).
+const fmtLeaderKm = (m) => (m / 1000).toLocaleString('it-IT', { maximumFractionDigits: m < 100000 ? 1 : 0 });
 
 // Primo in classifica di una gara, o null se non ha ancora corso nessuno.
 async function leader(c) {
