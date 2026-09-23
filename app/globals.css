@@ -507,6 +507,9 @@ button[data-state="saving"] { opacity: .75; }
 }
 .comps .running a { border-color: rgba(215,255,31,.6); box-shadow: 0 0 24px rgba(215,255,31,.25), inset 0 1px 0 rgba(255,255,255,.3); }
 .comps .over a { opacity: .7; }
+/* Gare a km totali: bordo (e alone, se in corso) fucsia invece che lime, per distinguerle a colpo d'occhio. */
+.comps .totale a { border-color: rgba(255,47,178,.6); }
+.comps .running.totale a { box-shadow: 0 0 24px rgba(255,47,178,.25), inset 0 1px 0 rgba(255,255,255,.3); }
 .comp-km { display: grid; justify-items: center; font-size: var(--fs-xl); line-height: 1; font-weight: 900; font-style: italic;
   color: var(--lime); text-shadow: 0 0 14px rgba(215,255,31,.5); }
 .comp-km.totale { color: var(--pink); text-shadow: 0 0 14px rgba(255,47,178,.5); }  /* gare a km totali */
@@ -516,6 +519,7 @@ button[data-state="saving"] { opacity: .75; }
 .comp-main small { color: var(--muted); }
 .comp-status { font-size: var(--fs-s); line-height: var(--lh-snug); font-weight: 700; color: var(--cyan); margin-top: var(--s1); }
 .comps .running .comp-status { color: var(--lime); }
+.comps .running.totale .comp-status { color: var(--pink); }
 .comps .over .comp-status { color: var(--muted); }
 /* Chi è in testa: la sua foto con la corona, nello stesso rosa del primo posto in classifica.
    La terza colonna esiste solo quando c'è qualcuno in testa, altrimenti resterebbe uno spazio vuoto. */
