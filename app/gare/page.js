@@ -5,6 +5,7 @@ import { isAdmin, requireStravaUser } from '@/lib/admin';
 import { phase, statusLine, fmtDay, DIST_MAX } from '@/lib/competition';
 import { competitionRuns, participants, standings, ageStandings, kmStandings, periodActivities } from '@/lib/standings';
 import { MIN_GRADE_M } from '@/lib/agegrade';
+import { fmtDist } from '@/lib/format';
 import Avatar from '../avatar';
 import { getT } from '@/lib/lingua';
 
@@ -15,8 +16,8 @@ export default async function Gare() {
   const [admin, t] = await Promise.all([isAdmin(userId), getT()]);
   const now = new Date();
   const comps = (admin
-    ? await sql`select id, name, distance_m, start_date, end_date, age_grading, total_km from competitions order by start_date desc, id desc`
-    : await sql`select c.id, c.name, c.distance_m, c.start_date, c.end_date, c.age_grading, c.total_km from competitions c
+    ? await sql`select id, name, distance_m, start_date, end_date, age_grading, best_segment, total_km from competitions order by start_date desc, id desc`
+    : await sql`select c.id, c.name, c.distance_m, c.start_date, c.end_date, c.age_grading, c.best_segment, c.total_km from competitions c
                 join competition_participants p on p.competition_id = c.id and p.user_id = ${userId}
                 order by c.start_date desc, c.id desc`)
     .map((c) => ({ ...c, phase: phase(c, now) }))
@@ -46,6 +47,9 @@ export default async function Gare() {
                 <span className="comp-main">
                   <strong>{c.name}</strong>
                   <small>{fmtDay(c.start_date)} – {fmtDay(c.end_date)}</small>
+                  <small className="comp-rule">{t(c.total_km ? 'Vince chi corre più km: si sommano tutte le corse'
+                    : c.best_segment ? 'Vince il tempo migliore sui {dist} più veloci di una corsa'
+                    : 'Vince il tempo migliore sui primi {dist} di una corsa', { dist: fmtDist(c.distance_m) })}</small>
                   <span className="comp-status">{statusLine(c, now, t)}</span>
                 </span>
                 {leaders[i] && (
