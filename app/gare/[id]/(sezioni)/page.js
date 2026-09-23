@@ -119,7 +119,7 @@ function KmBoard({ rows, c, me, t }) {
       <div className="board-head" aria-hidden="true">
         <span>{t('Pos.')}</span><span /><span>{t('Cugino')}</span><span>{t('Corse')}</span><span>{t('Km')}</span>
       </div>
-      <ol className="board">
+      <ol className="board totale">
         {rows.map((r, i) => (
           <li key={r.user_id} className={[r.user_id === me ? 'me' : '', !r.meters ? 'senza-tempo' : '', i === 0 && r.meters ? 'leader' : ''].filter(Boolean).join(' ') || undefined}>
             <Link href={`/gare/${c.id}/atleta/${r.user_id}`}>

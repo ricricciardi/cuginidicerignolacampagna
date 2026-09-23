@@ -329,8 +329,12 @@ button[data-state="saving"] { opacity: .75; }
 .board small, .history small { color: var(--muted); }
 .board .time { font-size: var(--fs-l); line-height: 1; font-weight: 900; font-style: italic; font-variant-numeric: tabular-nums;
   color: var(--lime); text-shadow: 0 0 14px rgba(215,255,31,.45); }
-.board .leader a { border-color: rgba(255,47,178,.7); box-shadow: 0 0 26px rgba(255,47,178,.35), inset 0 1px 0 rgba(255,255,255,.3); }
-.board .leader .pos { color: var(--pink); text-shadow: 0 0 12px rgba(255,47,178,.7); }
+/* Primo posto nel colore della gara, come nell'elenco: lime; fucsia (con i km) in quelle a km totali. */
+.board .leader a { border-color: rgba(215,255,31,.7); box-shadow: 0 0 26px rgba(215,255,31,.35), inset 0 1px 0 rgba(255,255,255,.3); }
+.board .leader .pos { color: var(--lime); text-shadow: 0 0 12px rgba(215,255,31,.7); }
+.board:where(.totale) .leader a { border-color: rgba(255,47,178,.7); box-shadow: 0 0 26px rgba(255,47,178,.35), inset 0 1px 0 rgba(255,255,255,.3); }
+.board:where(.totale) .leader .pos { color: var(--pink); text-shadow: 0 0 12px rgba(255,47,178,.7); }
+.board:where(.totale) .time { color: var(--pink); text-shadow: 0 0 14px rgba(255,47,178,.45); }
 .board li.me a { border-color: rgba(46,242,255,.6); }
 .board li.me .who::after { content: attr(data-tu); font-size: var(--fs-xs); line-height: var(--lh-snug); font-weight: 800; color: var(--cyan); }
 
