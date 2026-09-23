@@ -40,8 +40,8 @@ export default async function Gare() {
           {comps.map((c, i) => (
             <li key={c.id} className={c.phase}>
               <Link href={`/gare/${c.id}`}>
-                {/* Gara a km totali: al posto della distanza, i km di chi è in testa (0 finché nessuno corre). */}
-                {c.total_km ? <span className="comp-km">{fmtLeaderKm(leaders[i]?.meters ?? 0)}<small>km</small></span> :
+                {/* Gara a km totali: al posto della distanza, i km di chi è in testa (0 finché nessuno corre), in fucsia. */}
+                {c.total_km ? <span className="comp-km totale">{fmtLeaderKm(leaders[i]?.meters ?? 0)}<small>km</small></span> :
                 <span className="comp-km">{c.distance_m < 1000 ? c.distance_m : (c.distance_m / 1000).toLocaleString('it-IT', { maximumFractionDigits: 1 })}<small>{c.distance_m < 1000 ? 'm' : 'km'}</small></span>}
                 <span className="comp-main">
                   <strong>{c.name}</strong>

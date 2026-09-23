@@ -509,6 +509,7 @@ button[data-state="saving"] { opacity: .75; }
 .comps .over a { opacity: .7; }
 .comp-km { display: grid; justify-items: center; font-size: var(--fs-xl); line-height: 1; font-weight: 900; font-style: italic;
   color: var(--lime); text-shadow: 0 0 14px rgba(215,255,31,.5); }
+.comp-km.totale { color: var(--pink); text-shadow: 0 0 14px rgba(255,47,178,.5); }  /* gare a km totali */
 .comp-km small { font-size: var(--fs-xs); font-style: normal; font-weight: 700; color: var(--muted); text-shadow: none; margin-top: var(--s1); }
 .comp-main { display: grid; gap: .125rem; min-width: 0; }
 .comp-main strong { font-size: var(--fs-m); line-height: var(--lh-snug); overflow-wrap: anywhere; }
